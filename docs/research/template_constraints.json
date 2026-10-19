@@ -1,21 +1,61 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "retrieval_date": "2026-10-20",
   "source": "https://developers.facebook.com/docs/whatsapp/message-templates/guidelines",
   "constraints": {
     "max_body_length": 1024,
     "max_header_length": 60,
     "max_footer_length": 60,
+    "max_template_name_length": 512,
+    "template_name_pattern": "^[a-z0-9_]+$",
     "max_variable_value_length": 100,
     "max_otp_code_length": 15,
     "max_header_variables": 1,
     "allow_footer_variables": false,
+    "allow_footer_markdown": false,
     "max_body_variables": 10,
     "allow_newlines_in_variables": false,
     "allow_leading_trailing_variable_whitespace": false,
     "allow_consecutive_variables": false,
     "allow_starting_with_variable": false,
     "allow_ending_with_variable": false,
+    "max_quick_reply_buttons": 3,
+    "max_quick_reply_button_text_length": 25,
+    "max_cta_buttons": 2,
+    "max_cta_button_text_length": 25,
+    "max_url_buttons": 1,
+    "max_phone_number_buttons": 1,
+    "supported_header_types": [
+      "TEXT",
+      "IMAGE",
+      "DOCUMENT",
+      "VIDEO",
+      "LOCATION"
+    ],
+    "unsupported_header_types": [
+      "AUDIO"
+    ],
+    "media_header_limits": {
+      "image": {
+        "max_bytes": 5242880,
+        "supported_mimes": [
+          "image/jpeg",
+          "image/png"
+        ]
+      },
+      "document": {
+        "max_bytes": 104857600,
+        "supported_mimes": [
+          "application/pdf"
+        ]
+      },
+      "video": {
+        "max_bytes": 16777216,
+        "supported_mimes": [
+          "video/mp4"
+        ]
+      }
+    },
     "source_verified": true,
     "constraints_unverified": false
   }

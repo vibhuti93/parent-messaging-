@@ -99,8 +99,8 @@ src/omr_dispatch/
 - **Concurrency & Scaling Boundaries:** Designed for up to 200 students per batch. SQLite connection uses a busy timeout (5000ms) with single-writer serialization to eliminate lock contention. In-memory scheduling is explicitly forbidden to prevent job loss across process restarts.
 
 ### 3.9 `webhooks` & `confirmation`
-- Webhook handles inbound Meta event callbacks, verifying `X-Hub-Signature-256` HMAC with `APP_SECRET`.
-- Updates delivery status idempotently based on `(wamid, status)`.
+- Webhook handles inbound Meta event callbacks, verifying `X-Hub-Signature-256` HMAC with `APP_SECRET` over raw request bytes.
+- **Architectural Decision (Webhook Idempotency & Deduplication):** Because Meta's Cloud API provides no guarantee of strict FIFO delivery and may deliver duplicate webhook events during retries, the webhook processor enforces idempotent deduplication on the composite key `(wamid, status)`. Duplicate events are recorded in audit logs but produce no redundant state transitions. Furthermore, receipt of a `read` status implicitly satisfies and supersedes `delivered`, preventing regressive transitions if a delayed `delivered` webhook arrives after `read`.
 - QR confirmation generates cryptographically secure 256-bit random tokens, stored hashed (SHA-256). Single use, max 5 failed attempts, 72h default TTL.
 
 ### 3.10 `audit`

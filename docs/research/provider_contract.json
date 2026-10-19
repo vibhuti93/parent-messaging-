@@ -1,0 +1,204 @@
+{
+  "contract_version": "1.0.0",
+  "retrieval_date": "2026-10-20",
+  "provider": "meta_whatsapp_cloud_api",
+  "source_base_url": "https://developers.facebook.com/docs/whatsapp/cloud-api",
+  "pinned_version": "v21.0",
+  "active_version_reference_in_docs": "v26.0",
+  "error_codes": {
+    "100": {
+      "code": 100,
+      "http_status": 400,
+      "title": "Invalid Parameter",
+      "description": "Graph API call contains an invalid parameter, missing required structure, or unsupported field value.",
+      "classification": "PERMANENT",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "190": {
+      "code": 190,
+      "http_status": 401,
+      "title": "Access Token Expired or Revoked",
+      "description": "OAuth access token has expired, been revoked, or lifetime exceeded. Requires refreshing System User Token.",
+      "classification": "TRANSIENT",
+      "retryable": true,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "130429": {
+      "code": 130429,
+      "http_status": 429,
+      "title": "Rate Limit Hit (Throughput Exceeded)",
+      "description": "Message send throughput limit (default 80 mps) for phone number exceeded. Requires exponential backoff.",
+      "classification": "TRANSIENT",
+      "retryable": true,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "80007": {
+      "code": 80007,
+      "http_status": 429,
+      "title": "WABA Aggregate Rate Limit Hit",
+      "description": "Aggregate volume limit across all phone numbers under the WhatsApp Business Account reached. Requires backoff.",
+      "classification": "TRANSIENT",
+      "retryable": true,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131000": {
+      "code": 131000,
+      "http_status": 500,
+      "title": "Something Went Wrong",
+      "description": "Unclassified internal Meta server failure or temporary routing glitch. Typically resolves on backoff retry.",
+      "classification": "TRANSIENT",
+      "retryable": true,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131026": {
+      "code": 131026,
+      "http_status": 400,
+      "title": "Message Undeliverable",
+      "description": "Recipient is not an active WhatsApp number, has blocked the sender, has not accepted terms, or client is outdated.",
+      "classification": "PERMANENT",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131047": {
+      "code": 131047,
+      "http_status": 400,
+      "title": "Re-engagement Message Required",
+      "description": "More than 24 hours elapsed since customer's last reply; freeform messages blocked. Must use approved template.",
+      "classification": "PERMANENT",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131048": {
+      "code": 131048,
+      "http_status": 429,
+      "title": "Spam Rate Limit Hit",
+      "description": "Outbound messaging paused or blocked due to low template quality, recipient spam reports, or high block rate.",
+      "classification": "PERMANENT",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131051": {
+      "code": 131051,
+      "http_status": 400,
+      "title": "Unsupported Message Type",
+      "description": "Message type or payload structure not supported by Cloud API endpoint schema.",
+      "classification": "PERMANENT",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131052": {
+      "code": 131052,
+      "http_status": 500,
+      "title": "Media Download Error",
+      "description": "Internal retrieval failure on Meta infrastructure when downloading user-uploaded media. State undetermined.",
+      "classification": "UNKNOWN",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131053": {
+      "code": 131053,
+      "http_status": 400,
+      "title": "Media Upload Error",
+      "description": "Media file exceeds size limit, MIME type is unsupported, or Meta proxy failed to fetch remote link.",
+      "classification": "PERMANENT",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "131056": {
+      "code": 131056,
+      "http_status": 429,
+      "title": "Pair Rate Limit Hit",
+      "description": "Rate limit exceeded for messaging a single specific recipient too quickly. Requires per-user pacing.",
+      "classification": "TRANSIENT",
+      "retryable": true,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    },
+    "130472": {
+      "code": 130472,
+      "http_status": 400,
+      "title": "User In Experiment",
+      "description": "Marketing template blocked because recipient is part of a Meta messaging optimization experiment.",
+      "classification": "PERMANENT",
+      "retryable": false,
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+    }
+  },
+  "classification_counts": {
+    "TRANSIENT": 5,
+    "PERMANENT": 7,
+    "UNKNOWN": 1,
+    "TOTAL": 13
+  },
+  "rate_limits": {
+    "default_phone_throughput_mps": 80,
+    "shared_number_throughput_mps": 20,
+    "high_volume_throughput_mps": 1000,
+    "portfolio_messaging_tiers": {
+      "unverified_new_portfolio": 250,
+      "tier_1_verified": 2000,
+      "tier_2": 10000,
+      "tier_3": 100000,
+      "tier_4": "unlimited"
+    },
+    "per_recipient_pair_rate_limit_error": 131056,
+    "throughput_exceeded_error": 130429,
+    "waba_aggregate_exceeded_error": 80007
+  },
+  "retry_guidance": {
+    "transient_backoff": "exponential_with_jitter",
+    "base_backoff_seconds": 1,
+    "max_backoff_seconds": 32,
+    "max_retries": 4,
+    "honor_retry_after_header": true,
+    "webhook_delivery_retry_window_hours": 36,
+    "webhook_delivery_retry_backoff": "exponential"
+  },
+  "idempotency": {
+    "native_outbound_idempotency_key_supported": false,
+    "native_duplicate_send_protection": false,
+    "documented_guarantee": "no documented guarantee",
+    "required_client_safeguard": "Client must maintain internal dispatch state machine and deduplicate on local job ID before any retry attempt to prevent duplicate messaging and charges."
+  },
+  "webhook_semantics": {
+    "signature_header": "X-Hub-Signature-256",
+    "signature_algorithm": "HMAC-SHA256",
+    "signature_payload": "raw_unparsed_request_body_bytes",
+    "supported_statuses": ["sent", "delivered", "read", "failed"],
+    "guaranteed_fifo_ordering": false,
+    "ordering_key": "timestamp",
+    "deduplication_key": "(wamid, status)",
+    "read_implies_delivered": true,
+    "max_timeout_seconds": 3
+  },
+  "media_limits": {
+    "image": {
+      "max_bytes": 5242880,
+      "supported_mimes": ["image/jpeg", "image/png", "image/webp"]
+    },
+    "audio": {
+      "max_bytes": 16777216,
+      "supported_mimes": ["audio/aac", "audio/mp4", "audio/mpeg", "audio/amr", "audio/ogg; codecs=opus"],
+      "voice_note_format": "audio/ogg; codecs=opus",
+      "required_channels": 1,
+      "required_sampling_rate_hz": 48000
+    },
+    "document": {
+      "max_bytes": 104857600,
+      "supported_mimes": ["application/pdf", "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"]
+    },
+    "video": {
+      "max_bytes": 16777216,
+      "supported_mimes": ["video/mp4", "video/3gpp"]
+    },
+    "media_id_lifetime_days": 30,
+    "media_download_url_lifetime_minutes": 5
+  },
+  "pricing": {
+    "current_model": "Per-Message Pricing (PMP)",
+    "categories": ["marketing", "utility", "authentication", "service"],
+    "free_service_window": "24 hours from customer inbound interaction",
+    "free_entry_point_ad_window_hours": 72,
+    "prerequisites": ["Meta Business Manager active payment method", "Verified payment status"]
+  }
+}

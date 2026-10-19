@@ -44,9 +44,30 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 
 ---
 
+## 5. D-09 / Architecture: Pinned Meta Graph API Version Upgrade (STALE v21.0) (`OWNER-CONFIRM`)
+* **Conflicting / Ambiguous Consideration:**  
+  The engine currently pins Meta Graph API `v21.0` via configuration (`WHATSAPP_CLOUD_API_VERSION=v21.0`). Official source verification on 2026-10-20 shows:
+  - Graph API `v21.0` was released on 2024-10-02.
+  - The 2-year base guarantee expired on 2026-10-02 (18 days ago).
+  - On the official Meta Graph API changelog, `v21.0` availability is stated as ending on **January 21, 2027** (~93 days from 2026-10-20).
+  - Calling an expired version causes Meta to automatically default requests to the next oldest available version, creating breaking change risks.
+  - The official WhatsApp Cloud API documentation now references `v26.0` in its primary examples.
+  - S9 contract fixtures must record the exact version used.
+* **Candidate Versions from Official Documentation:**
+  1. **`v21.0` (Current Pin):** Status: `STALE`. Retains current development baseline. Sunsets 2027-01-21 (~3 months remaining). Low immediate change, but requires forced migration shortly after deployment.
+  2. **`v24.0`:** Released 2025-10-08; available until 2028-02-18 (~16 months remaining). Intermediate stable baseline.
+  3. **`v25.0`:** Released 2026-02-18; available until 2028-07-29 (~21 months remaining). Stable and widely deployed.
+  4. **`v26.0` (Recommended):** Released 2026-07-29; latest version referenced across current WhatsApp Cloud API documentation. Active for full 2+ year support lifecycle (until mid-2028).
+* **Effect of Unpinning vs. Pinning:**
+  - **Pinning (Recommended):** Keeps contracts predictable, ensures reproducible unit and contract test mocks, and shields the engine from unexpected breaking changes when Meta updates platform defaults. The version is configuration-driven (`WHATSAPP_CLOUD_API_VERSION`).
+  - **Unpinning:** Floating versions or omitting the version in request URLs causes Meta to fall back to the oldest active version permitted for the app, creating silent failures when legacy versions sunset.
+* **Status:** Pending Owner Confirmation before S9 provider implementation.
+
+---
+
 # Part 2: Deferred to Pre-Deployment (see docs/PRE_DEPLOYMENT_CHECKLIST.md)
 
-## 5. D-13: Retention Policy & Statutory Compliance (`DEFERRED`)
+## 6. D-13: Retention Policy & Statutory Compliance (`DEFERRED`)
 * **Background:**  
   D-13 establishes the development default: student scans and reports for the active academic year; message/audit logs for 90 days (masked). Deletion on verified request.
 * **Status:**  
