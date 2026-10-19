@@ -1,8 +1,10 @@
 # Open Architectural & Business Decisions (DECISIONS_OPEN.md)
 
-This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and legal review gates per Part C Rule 3. No unapproved business-rule changes are permitted.
+This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and deferred pre-deployment checklists per Part C Rule 3. No unapproved business-rule changes are permitted.
 
 ---
+
+# Part 1: Active Decisions Awaiting Owner Confirmation
 
 ## 1. D-04: Bottom-Quarter PTM Rule for All-Green Batches (`OWNER-CONFIRM`)
 * **Conflicting / Ambiguous Consideration:**  
@@ -23,13 +25,11 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 
 ---
 
-## 3. D-11: Guardian OTP Delivery Channel in India (`OWNER-CONFIRM`)
+## 3. D-11: Guardian OTP Delivery Channel (`OWNER-CONFIRM`)
 * **Conflicting / Ambiguous Consideration:**  
-  D-11 requires OTP challenge to the already verified guardian number, with channel tagged `OWNER-CONFIRM (WhatsApp authentication template vs SMS; S0 must verify prerequisites, including any Indian SMS registration requirements)`.
-* **S0 Source Verification Finding:**  
-  Indian telecom SMS requires TRAI DLT registration (TCCCPR 2018), including Principal Entity (PE) ID, 6-character Header, and Template ID scrubbing. In contrast, WhatsApp Cloud API authentication templates provide structured OTP delivery without carrier-level DLT scrubbing.
+  D-11 requires OTP challenge to the already verified guardian number, with channel tagged `OWNER-CONFIRM (WhatsApp authentication template vs SMS; deferred to pre-deployment checklist)`.
 * **Minimum Safe Resolution (Current Proposal):**  
-  Primary OTP delivery channel: WhatsApp Authentication Template (`category: "authentication"`, `otp_type: "copy_code"`). SMS adapter is treated as a secondary plugin that remains dormant unless explicit `TRAI_DLT_PE_ID` and `TRAI_DLT_TEMPLATE_ID` credentials are provided.
+  Primary OTP delivery channel: WhatsApp Authentication Template (`category: "authentication"`, `otp_type: "copy_code"`). Carrier SMS adapter is treated as an optional secondary plugin that remains dormant unless explicit `TRAI_DLT_PE_ID` and `TRAI_DLT_TEMPLATE_ID` credentials are provided. Carrier registration verification is deferred to pre-deployment.
 * **Status:** Pending Owner Confirmation before S1 freeze.
 
 ---
@@ -44,17 +44,18 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 
 ---
 
-## 5. D-13: Retention Policy & DPDP Alignment (`LEGAL REVIEW REQUIRED`)
-* **Conflicting / Ambiguous Consideration:**  
-  D-13 states: `Retention (proposal only, needs legal review). Scans and reports: current academic year. Message/audit logs: 90 days, masked. Deletion on verified request unless a documented legal hold applies.`  
-  India's DPDP Act 2023 Section 9 mandates verifiable parental consent for children's data and strict data erasure upon purpose completion.
-* **Minimum Safe Resolution (Current Proposal):**  
-  Engine implements hard automated TTL cleanup: 90 days for audit/dispatch tables, academic year boundary for student media/scans. Live messaging remains disabled until institutional legal counsel completes formal review.
-* **Status:** Release-blocking legal review; marked UNVERIFIED for production compliance.
+# Part 2: Deferred to Pre-Deployment (see docs/PRE_DEPLOYMENT_CHECKLIST.md)
+
+## 5. D-13: Retention Policy & Statutory Compliance (`DEFERRED`)
+* **Background:**  
+  D-13 establishes the development default: student scans and reports for the active academic year; message/audit logs for 90 days (masked). Deletion on verified request.
+* **Status:**  
+  **DEFERRED TO PRE-DEPLOYMENT.** Tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md` (Items C-01 and C-03). Development and testing continue using synthetic data only. Prior to production deployment or handling real parent/student data, qualified legal counsel must confirm retention schedules and statutory consent mechanisms under India's DPDP Act, 2023.
 
 ---
 
-## 6. Contradiction Check Result (Gate 0)
+# Part 3: Contradiction Check Result (Gate 0)
+
 * **Status:** **No contradictions found.**
 * **Methodology:** Systematic cross-comparison of `PROJECT_SPEC.md` clauses D-01 through D-14 against:
   1. Global Invariants in `AGENTS.md` (Rules 1–14);
@@ -66,4 +67,3 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
   - Audio duration (<45s) and token-stitch hierarchy (D-08) align with S8 audio engine.
   - Scheduling (D-10) and live messaging default off (D-09) align with Rule 8, S0, and S9 messaging policy.
   - Scale limit (D-14: <=200 students/batch) aligns with SQLite durable store concurrency limits in `docs/architecture_decisions.md`.
-

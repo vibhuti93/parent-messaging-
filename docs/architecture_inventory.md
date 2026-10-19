@@ -37,9 +37,10 @@
 1. **Contracts & Specifications:**
    - `PROJECT_SPEC.md`: Required verbatim copy of Part B plus clear product boundaries (created in S0).
    - `docs/DECISIONS_OPEN.md`: Required documentation of all `OWNER-CONFIRM` proposals and ambiguities (populated in S0).
-2. **Official Source Research & Compliance:**
-   - `docs/research/official_source_verification.md`: Required verification of Meta Cloud API, DPDP Act 2023, TRAI DLT, audio constraints, and parameter limits (created in S0).
-   - Machine-readable `TemplateConstraints`: Required machine-readable specification for WhatsApp template limits (created in S0).
+2. **Official Source Research & Pre-Deployment Checklist:**
+   - `docs/research/official_source_verification.md`: Verification of Meta Cloud API, audio constraints, and parameter limits (created in S0; DPDP and TRAI reviews deferred to pre-deployment checklist).
+   - `docs/PRE_DEPLOYMENT_CHECKLIST.md`: Deferred compliance, legal review, and carrier registration items (created in Stage D).
+   - Machine-readable `template_constraints.json`: Specification for WhatsApp template limits (created in S0).
 3. **Architecture & Governance:**
    - `docs/architecture_decisions.md`: High-level module architecture and durable state planning (created in S0).
    - `docs/privacy_and_security.md`: Data minimization, masking, retention, DPDP alignment (created in S0).

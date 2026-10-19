@@ -37,10 +37,10 @@ Labels are internal; parent-facing copy describes observable facts only (see D-0
 
 **D-10 Schedule.** `Asia/Kolkata`. Primary: Sunday 20:30 IST after the result is finalised. Monday 10:00 IST only when the event has `reminder_enabled = true`, as a distinct reminder identity. Example: event `2026-10-18 14:15+05:30` → primary `2026-10-18 20:30+05:30`; reminder (if enabled) `2026-10-19 10:00+05:30`.
 
-**D-11 Parent confirmation (QR).** Default **disabled**. If enabled: opaque random token, scoped to student/test/PTM event, stored hashed, TTL default 72 h (`OWNER-CONFIRM`), single use, ≤ 5 attempts per token, revocable, HTTPS only, OTP challenge to the already verified guardian number. OTP delivery channel is `OWNER-CONFIRM` (WhatsApp authentication template vs SMS; S0 must verify prerequisites, including any Indian SMS registration requirements).
+**D-11 Parent confirmation (QR).** Default **disabled**. If enabled: opaque random token, scoped to student/test/PTM event, stored hashed, TTL default 72 h (`OWNER-CONFIRM`), single use, ≤ 5 attempts per token, revocable, HTTPS only, OTP challenge to the already verified guardian number. OTP delivery channel is `OWNER-CONFIRM` (WhatsApp authentication template vs SMS; deferred to pre-deployment checklist).
 
 **D-12 Disclosure to parents.** Own child's report + class average + topper score + rank "X out of N present". No other student's response-level data. `OWNER-CONFIRM`: topper score may be shown.
 
-**D-13 Retention (proposal only, needs legal review).** Scans and reports: current academic year. Message/audit logs: 90 days, masked. Deletion on verified request unless a documented legal hold applies.
+**D-13 Retention (development default; legal review deferred, see docs/PRE_DEPLOYMENT_CHECKLIST.md).** Scans and reports: current academic year. Message/audit logs: 90 days, masked. Deletion on verified request unless a documented legal hold applies.
 
 **D-14 Scale.** Up to 200 students per batch; test maximum configurable; golden exam is 300.

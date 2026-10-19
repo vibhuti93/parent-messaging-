@@ -22,7 +22,20 @@ The engine processes student roster data, exam answer keys, raw OMR scans, and d
 
 ---
 
-## 2. Offline vs. Network Features
+## 2. Deployment Status & Compliance Safeguards
+
+> [!IMPORTANT]
+> **Development Mode: Synthetic Data Only.**  
+> Development and automated testing proceed exclusively using synthetic student data. Deployment to real parents and processing of real student records are strictly blocked until all items in [docs/PRE_DEPLOYMENT_CHECKLIST.md](file:///c:/Users/91933/OneDrive/Pictures/Documents/new_pareent_messaging/docs/PRE_DEPLOYMENT_CHECKLIST.md) are completed and signed off.
+> 
+> **Enforced Dual-Switch Gate:**  
+> Any live dispatch command (`send`) refuses to execute unless **both** environment flags are explicitly set:
+> 1. `LIVE_DISPATCH_ENABLED=true`
+> 2. `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=true` (must remain `false` until the checklist is fully closed).
+
+---
+
+## 3. Offline vs. Network Features
 
 | Feature Category | Execution Mode | Default State | Description |
 | :--- | :--- | :--- | :--- |
@@ -38,16 +51,16 @@ The engine processes student roster data, exam answer keys, raw OMR scans, and d
 
 ---
 
-## 3. Environment Setup & Requirements
+## 4. Environment Setup & Requirements
 
-### 3.1 System Prerequisites & UTF-8 Configuration
+### 4.1 System Prerequisites & UTF-8 Configuration
 - **Python:** Pinned to Python 3.12 (`.python-version` holds `3.12`, `requires-python = ">=3.11,<3.14"` in `pyproject.toml`).
 - **UTF-8 & Encoding Invariant:** All file reads and writes across the engine must strictly specify `encoding="utf-8"`. On Windows hosts, set `PYTHONUTF8=1` (PowerShell: `$env:PYTHONUTF8="1"`) to ensure standard UTF-8 mode and avoid Windows cp1252 Devanagari corruption.
 - **Line Endings:** `.gitattributes` enforces `* text=auto eol=lf` across all text files.
 - **FFmpeg:** Required for transcoding audio into Ogg Opus format (mono, 48kHz).
 - **Poppler & Fonts:** Required for PDF rendering and Devanagari script display (`fonts-noto-core`).
 
-### 3.2 Installation
+### 4.2 Installation
 
 Using `uv` (recommended):
 ```bash
@@ -70,7 +83,7 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
-### 3.3 Docker Support
+### 4.3 Docker Support
 A hermetic Debian Bookworm container is provided:
 ```bash
 docker build -t omr-dispatch-engine .
@@ -79,7 +92,7 @@ docker run -it --rm omr-dispatch-engine pytest
 
 ---
 
-## 4. Configuration & Security
+## 5. Configuration & Security
 
 All runtime settings are read from environment variables. Copy `.env.example` to `.env`:
 ```bash
@@ -88,6 +101,7 @@ cp .env.example .env
 
 ### Safety Flags:
 - `LIVE_DISPATCH_ENABLED=false`: Safe-by-default switch. No external WhatsApp messages will be sent unless explicitly flipped to `true`.
+- `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`: Compliance switch. Must remain `false` until all pre-deployment checklist items are satisfied.
 - `WHATSAPP_CLOUD_API_VERSION=v21.0`: Pinned Meta Graph API version. Floating versions are strictly prohibited.
 - `DATA_RETENTION_DAYS_LOGS=90`: Rolling retention window for operational audit logs.
 
@@ -98,7 +112,7 @@ cp .env.example .env
 
 ---
 
-## 5. Development & Verification
+## 6. Development & Verification
 
 ### Running Automated Tests
 ```bash

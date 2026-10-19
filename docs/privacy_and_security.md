@@ -12,6 +12,9 @@
 ### 1.1 Regulatory Scope
 Under Section 9 of India's Digital Personal Data Protection (DPDP) Act, 2023, personal data of individuals under 18 years of age requires verifiable parental consent before processing. Data fiduciaries are prohibited from engaging in tracking, behavioural monitoring, or harmful processing.
 
+> [!NOTE]
+> **Legal Review Status:** Formal regulatory compliance and legal review are deferred to pre-deployment (see [docs/PRE_DEPLOYMENT_CHECKLIST.md](file:///c:/Users/91933/OneDrive/Pictures/Documents/new_pareent_messaging/docs/PRE_DEPLOYMENT_CHECKLIST.md)). During development, the system runs exclusively on synthetic test data with technical safeguards (masking, quarantine, dual-switch live messaging block).
+
 ### 1.2 Core Threats & Mitigations
 1. **Interception by Minor:** A student provides their own phone number as the parent's contact to intercept negative exam reports.  
    *Mitigation:* Pre-dispatch contact hygiene flags identical student/parent numbers (`INTERCEPTION_RISK_SAME_NUMBER`) and blocks dispatch.

@@ -148,7 +148,7 @@
 
 ---
 
-## 8. Guardian Verification & OTP Delivery Channels in India
+## 8. Guardian Verification & OTP Delivery Channels in India (UNVERIFIED — DEFERRED to pre-deployment, see checklist)
 
 * **Exact URL:** `https://trai.gov.in` (TRAI TCCCPR 2018) and `https://developers.facebook.com/docs/whatsapp/business-management-api/authentication-templates`
 * **Section / Title:** "Telecom Commercial Communications Customer Preference Regulations, 2018 (DLT Framework)" and "WhatsApp Authentication Templates (OTP Delivery)"
@@ -166,13 +166,13 @@
        - PE-TM Binding (linking Principal Entity to the Telecom Marketer gateway).
      - Real-time scrubbing blocks any SMS payload lacking matching PE ID, Template ID, or differing in structure.
 * **Conclusion:**
-  - `OWNER-CONFIRM` in D-11: WhatsApp authentication template is the proposed primary OTP channel. SMS fallback requires explicit TRAI DLT registration.
+  - `OWNER-CONFIRM` in D-11: WhatsApp authentication template is the proposed primary OTP channel. Carrier SMS fallback verification is deferred to pre-deployment checklist.
 * **Unresolved Uncertainty:**
-  - `UNVERIFIED` institutional readiness: Whether the school holds registered TRAI DLT PE ID and templates for SMS fallback.
+  - **UNVERIFIED — DEFERRED to pre-deployment (see checklist):** Institutional TRAI DLT registration and template scrubbing verification deferred to `docs/PRE_DEPLOYMENT_CHECKLIST.md` (Item C-04).
 
 ---
 
-## 9. India Digital Personal Data Protection (DPDP) Act, 2023 & DPDP Rules
+## 9. India Digital Personal Data Protection (DPDP) Act, 2023 & DPDP Rules (UNVERIFIED — DEFERRED to pre-deployment, see checklist)
 
 * **Exact URL:** `https://www.meity.gov.in` (DPDP Act No. 22 of 2023 and DPDP Rules Gazette Notifications)
 * **Section / Title:** "Digital Personal Data Protection Act, 2023, Section 9 (Processing of personal data of children)" and "DPDP Rules, 2025 (Commencement and Phased Implementation)"
@@ -187,13 +187,14 @@
        - Immediate commencement (November 2025): Administrative definitions and Data Protection Board of India provisions.
        - 1-Year commencement (November 2026): Rule 4 (Consent Managers).
        - 18-Months commencement (May 2027): Rules 3, 5–16, 22, 23 governing Data Fiduciary operational duties (notice requirements, children's data safeguards, data breach reporting).
-  3. **Impact on `omr_dispatch_engine`:**
+  3. **Handling in `omr_dispatch_engine`:**
      - The engine processes test scores, academic performance, and guardian contact details of minors (<18 years old).
-     - **TREAT AS RELEASE-BLOCKING.**
-     - The engine must not infer parental consent or guardian identity from spreadsheet data alone (Part C Rule 9).
-     - The engine must NEVER claim legal compliance without documented institutional legal review.
+     - Formal legal review is deferred to pre-deployment (tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`, Item C-01).
+     - During development, testing uses synthetic data exclusively.
+     - Engineering safeguards remain active in development: strict data minimization, console/log masking (Rule 10), quarantine of unverified contacts, and live dispatch disabled (`LIVE_DISPATCH_ENABLED=false`).
+     - The engine does not make any legal claims of compliance.
 * **Conclusion:**
-  - All minor data must be minimized, masked in logs, and protected by unverified guardian quarantine.
-  - Live dispatch to parents is blocked (`LIVE_DISPATCH_ENABLED=false`) pending formal institutional legal counsel review.
+  - Engineering safeguards are implemented in code; formal legal sign-off is deferred to the pre-deployment checklist.
+  - Live dispatch to real parents is disabled (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`).
 * **Unresolved Uncertainty:**
-  - `UNVERIFIED` legal clearance: Specific institutional legal sign-off on consent mechanism under DPDP framework remains open in `docs/DECISIONS_OPEN.md`.
+  - **UNVERIFIED — DEFERRED to pre-deployment (see checklist):** Formal legal counsel review and sign-off on consent capture, privacy notice, and retention schedules are tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md` (Items C-01, C-02, C-03).
