@@ -1,0 +1,69 @@
+# Open Architectural & Business Decisions (DECISIONS_OPEN.md)
+
+This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and legal review gates per Part C Rule 3. No unapproved business-rule changes are permitted.
+
+---
+
+## 1. D-04: Bottom-Quarter PTM Rule for All-Green Batches (`OWNER-CONFIRM`)
+* **Conflicting / Ambiguous Consideration:**  
+  D-04 states: `PTM slip required iff ABSENT, or RED, or rank > floor(0.75 * present_count). OWNER-CONFIRM: bottom-quarter rule applies even when a whole batch is GREEN.`  
+  In a high-performing batch where every student achieves > 60% net score (GREEN status), does the bottom quartile still receive a mandatory PTM summons?
+* **Minimum Safe Resolution (Current Proposal):**  
+  Apply the mathematical rule `rank > floor(0.75 * present_count)` strictly to all present students, ensuring deterministic behavior identical to the golden contract. PTM slips are generated for the bottom quartile regardless of status band unless explicitly disabled in batch policy.
+* **Status:** Pending Owner Confirmation before S1 freeze.
+
+---
+
+## 2. D-11: Parent Confirmation (QR) Token TTL (`OWNER-CONFIRM`)
+* **Conflicting / Ambiguous Consideration:**  
+  D-11 proposes a default TTL of 72 hours for the single-use QR acknowledgment token. Parents receiving reports Sunday night at 20:30 IST would see the token expire Wednesday evening at 20:30 IST.
+* **Minimum Safe Resolution (Current Proposal):**  
+  Implement token TTL as an environment configuration parameter `QR_TOKEN_TTL_HOURS`, defaulting to 72 hours, with hard minimum of 12 hours and hard maximum of 168 hours (7 days).
+* **Status:** Pending Owner Confirmation before S1 freeze.
+
+---
+
+## 3. D-11: Guardian OTP Delivery Channel in India (`OWNER-CONFIRM`)
+* **Conflicting / Ambiguous Consideration:**  
+  D-11 requires OTP challenge to the already verified guardian number, with channel tagged `OWNER-CONFIRM (WhatsApp authentication template vs SMS; S0 must verify prerequisites, including any Indian SMS registration requirements)`.
+* **S0 Source Verification Finding:**  
+  Indian telecom SMS requires TRAI DLT registration (TCCCPR 2018), including Principal Entity (PE) ID, 6-character Header, and Template ID scrubbing. In contrast, WhatsApp Cloud API authentication templates provide structured OTP delivery without carrier-level DLT scrubbing.
+* **Minimum Safe Resolution (Current Proposal):**  
+  Primary OTP delivery channel: WhatsApp Authentication Template (`category: "authentication"`, `otp_type: "copy_code"`). SMS adapter is treated as a secondary plugin that remains dormant unless explicit `TRAI_DLT_PE_ID` and `TRAI_DLT_TEMPLATE_ID` credentials are provided.
+* **Status:** Pending Owner Confirmation before S1 freeze.
+
+---
+
+## 4. D-12: Disclosure of Topper Score to Parents (`OWNER-CONFIRM`)
+* **Conflicting / Ambiguous Consideration:**  
+  D-12 states: `Own child's report + class average + topper score + rank "X out of N present". No other student's response-level data. OWNER-CONFIRM: topper score may be shown.`  
+  Some educational institutions prefer displaying only class average to avoid excessive peer comparison.
+* **Minimum Safe Resolution (Current Proposal):**  
+  Include topper score as documented in golden fixtures (`expected_reports.json`), configurable via batch report template flag `show_topper_score` (defaulting to true for golden consistency).
+* **Status:** Pending Owner Confirmation before S1 freeze.
+
+---
+
+## 5. D-13: Retention Policy & DPDP Alignment (`LEGAL REVIEW REQUIRED`)
+* **Conflicting / Ambiguous Consideration:**  
+  D-13 states: `Retention (proposal only, needs legal review). Scans and reports: current academic year. Message/audit logs: 90 days, masked. Deletion on verified request unless a documented legal hold applies.`  
+  India's DPDP Act 2023 Section 9 mandates verifiable parental consent for children's data and strict data erasure upon purpose completion.
+* **Minimum Safe Resolution (Current Proposal):**  
+  Engine implements hard automated TTL cleanup: 90 days for audit/dispatch tables, academic year boundary for student media/scans. Live messaging remains disabled until institutional legal counsel completes formal review.
+* **Status:** Release-blocking legal review; marked UNVERIFIED for production compliance.
+
+---
+
+## 6. Contradiction Check Result (Gate 0)
+* **Status:** **No contradictions found.**
+* **Methodology:** Systematic cross-comparison of `PROJECT_SPEC.md` clauses D-01 through D-14 against:
+  1. Global Invariants in `AGENTS.md` (Rules 1–14);
+  2. Stage specifications in `docs/prompt_pack/` (`S0.md` through `S13.md`).
+* **Verification Details:**
+  - Status bands (D-01), easy question thresholds (D-02), subject diagnosis priority ordering (D-03), and rank arithmetic (D-04, D-05) align exactly with S1 golden contract and S2 diagnostics.
+  - Hindi wording rules and banned terms (D-06) align with Rule 14, S4, and `scripts/guardrails.py`.
+  - Palette colors and contrast (D-07) align with S7 scorecard renderer.
+  - Audio duration (<45s) and token-stitch hierarchy (D-08) align with S8 audio engine.
+  - Scheduling (D-10) and live messaging default off (D-09) align with Rule 8, S0, and S9 messaging policy.
+  - Scale limit (D-14: <=200 students/batch) aligns with SQLite durable store concurrency limits in `docs/architecture_decisions.md`.
+
