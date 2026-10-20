@@ -1,108 +1,116 @@
-# Architecture Decisions & System Design (ADR)
+# Architecture Decisions & System Design (ADR Alignment)
 
 **System Name:** `omr_dispatch_engine`  
 **Runtime:** Python 3.11+ / Pydantic v2  
 **Date:** 2026-10-20  
-**Stage:** S0 (Discovery, Contracts, Source Verification)
+**Stage:** S0-R4 (Foundation Hardening & Architectural Governance)  
+**Governing ADRs:** [docs/adr/](adr/README.md) (ADR-0001 through ADR-0015, all `PROPOSED`)
 
 ---
 
 ## 1. Architectural Philosophy & Product Boundaries
 
-The `omr_dispatch_engine` is a deterministic, offline-capable notification and diagnostics engine for Indian educational institutions.
+The `omr_dispatch_engine` is a deterministic, offline-capable notification and diagnostics engine for Indian educational institutions. It follows a **Hexagonal / Ports & Adapters Architecture** separating a pure deterministic core from outer I/O adapters (ADR-0001).
 
 ### Product Boundary Definition
 * **In Scope:**
   1. Ingestion and strict schema validation of student rosters, exam answer keys, decoded OMR responses, and raw student scan images.
-  2. Deterministic diagnostics computation: gross, bleed, net, percentage, rank, status band, easy question identification, and subject diagnosis labels.
-  3. Parent-facing asset generation: Conversational Bolchal Hindi text, scorecard PNGs, A4 PTM slip PDFs, and stitched Hindi audio voice notes.
+  2. Deterministic diagnostics computation: gross, bleed, net, percentage, rank, status band, easy question identification, and subject diagnosis labels using exact integer and fraction arithmetic (ADR-0002).
+  3. Parent-facing asset generation: Conversational Bolchal Hindi text with Unicode NFC and Latin digits (ADR-0010), scorecard PNGs, A4 PTM slip PDFs, and stitched Hindi audio voice notes.
   4. Contact hygiene and quarantine: E.164 normalization, carrier check, duplicate parent collision resolution, guardian verification, and consent gating.
   5. WhatsApp Cloud API dispatch: Template assembly, image attachment, retry policy, and rate limiting.
   6. Inbound webhook processing: HMAC SHA-256 signature verification and delivery status tracking (`sent`, `delivered`, `read`, `failed`).
   7. Parent acknowledgment: Optional single-use QR token verification with OTP challenge.
-  8. Structured audit logging and automated retention purging.
+  8. Structured audit logging and automated retention purging (ADR-0015).
 * **Explicitly Out of Scope:**
   - Optical bubble detection, sheet corner detection, and pixel alignment. Decoded OMR responses are supplied by an external OMR service whose contract is defined in S2.
 
 ---
 
-## 2. Planned Module Decomposition
+## 2. Layering & Module Decomposition (ADR-0001)
 
-The core package `src/omr_dispatch/` is organized into focused, decoupled modules:
+Per ADR-0001, the system is organized into three distinct layers with strict unidirectional dependency rules:
 
 ```
 src/omr_dispatch/
-├── __init__.py
-├── models/               # Domain Pydantic v2 data models (immutable, strictly typed)
-├── contacts/             # Contact hygiene, E.164 normalization, quarantine logic
-├── ingestion/            # Schema validation for roster, answer keys, OMR JSON
-├── diagnostics/          # Pure deterministic scoring, ranks, bands, easy questions
-├── hindi_templates/      # Conversational Hindi copy generation & constraint checking
-├── omr_proof/            # Visual bubble crop & answer overlay generation
-├── renderer/             # Scorecard PNG (Playwright) and PTM Slip PDF generation
-├── audio_engine/         # Token stitcher, duration guard, FFmpeg Opus transcoding
-├── messaging_policy/     # Consent check, quarantine gating, 24h window guard
-├── provider/             # WhatsApp Cloud API client (pinned v21.0 via env)
-├── scheduler/            # Durable job scheduler (Asia/Kolkata timezone)
-├── durable_store/        # SQLite WAL persistence for jobs, dispatches, tokens
-├── webhooks/             # Webhook HTTP handler, X-Hub-Signature-256 verification
-├── confirmation/         # QR token generator, hash storage, OTP challenge
-├── orchestrator/         # End-to-end pipeline coordinator (fail-closed)
-├── cli/                  # CLI commands for batch run, render, audit, and verify
-└── audit/                # Structured audit logger with automatic field masking
+├── core/                     # LAYER 1: Pure Core (Zero external I/O)
+│   ├── models.py             # Immutable domain schemas, schema_version (ADR-0006)
+│   ├── diagnostics.py        # Exact integer marks, Fraction ratios (ADR-0002)
+│   ├── hindi_templates.py    # Bolchal Hindi copy, NFC, Latin digits (ADR-0010)
+│   └── messaging_policy.py   # Pure consent, hygiene, and service window rules
+│
+├── adapters/                 # LAYER 2: I/O Adapters (Depend on Core protocols)
+│   ├── provider.py           # WhatsApp Cloud API client (pinned v21.0 via env)
+│   ├── durable_store.py      # SQLite WAL append-only repository (ADR-0007)
+│   ├── renderer.py           # Scorecard PNG (Playwright) & PTM PDF generation
+│   ├── audio_engine.py       # Token stitcher, duration guard, FFmpeg transcoder
+│   ├── omr_proof.py          # Bubble crop and answer overlay generation
+│   ├── webhooks.py           # Inbound HTTP handler, X-Hub-Signature-256 verifier
+│   ├── confirmation.py       # Cryptographic token generator and SHA-256 hasher
+│   └── clock.py              # System & Frozen clock adapters (ADR-0005)
+│
+├── orchestrator/             # LAYER 3: Application Orchestration
+│   ├── orchestrator.py       # Pipeline wiring (extends S3 walking skeleton, ADR-0013)
+│   └── retention.py          # Automated purge jobs per D-13 lifecycle (ADR-0015)
+│
+├── cli.py                    # Unified CLI command suite
+├── config.py                 # Central typed Settings object with SecretStr (ADR-0009)
+└── audit.py                  # Structured audit logger with automatic masking (ADR-0008)
 ```
+
+### Layer Dependency Rules
+- **Core** depends on **nothing** external (no network, no database, no subprocess, no `os.environ`, no `datetime.now()`).
+- **Adapters** implement core protocol interfaces and depend on **Core**.
+- **Orchestrator** and **CLI** wire Adapters with Core via dependency injection.
 
 ---
 
-## 3. Module Responsibilities & Invariants
+## 3. Module Responsibilities & Core Architectural Invariants
 
-### 3.1 `models`
-- Contains Pydantic v2 schemas: `Student`, `TestPaper`, `AnswerKey`, `Submission`, `DiagnosticReport`, `ContactRecord`, `DispatchJob`.
-- Strictly enforces type safety and prevents arbitrary field assignment. Full-precision decimals used for arithmetic calculations.
+### 3.1 `models` & `diagnostics` (Numeric Semantics, ADR-0002)
+- Strict Pydantic v2 schemas (`extra="forbid"`). All serialized models carry a `schema_version: int` (ADR-0006).
+- **Exact Numeric Representation (ADR-0002):**
+  - Marks (`gross`, `bleed`, `net`, `positive_marks_not_earned`) are stored as exact **integers** (`int`).
+  - Performance ratios (attempt ratio, accuracy ratio, percentage ratio) are computed as exact **`fractions.Fraction`**.
+  - All boundary threshold comparisons (status bands, easy question 75% accuracy) are evaluated via **integer cross-multiplication** (`correct * 4 >= present * 3`).
+  - Human-facing display percentages use **`decimal.Decimal`** with `ROUND_HALF_UP` to exactly one decimal place.
+  - **Invariant**: The `float` primitive is strictly banned across the core package.
 
-### 3.2 `contacts` (Contact Hygiene)
-- Normalizes Indian phone numbers to E.164 format (`+91XXXXXXXXXX`).
-- Detects invalid prefixes (`5511...`), identical student/parent numbers (`INTERCEPTION_RISK_SAME_NUMBER`), and shared parent numbers with unverified siblings (`DUPLICATE_PARENT_UNVERIFIED`).
-- Quarantines unverified contacts; quarantined contacts are never dispatched.
+### 3.2 `contacts` (Contact Hygiene & Quarantine)
+- Normalizes Indian phone numbers to E.164 format (`+91XXXXXXXXXX`). Format check only (`^[6-9]\d{9}$`).
+- Quarantines contacts with `INTERCEPTION_RISK_SAME_NUMBER` (student == parent) or `DUPLICATE_PARENT_UNVERIFIED` (shared parent number with unverified siblings).
+- **Invariant**: Quarantined contacts are never dispatched. A non-empty phone number does not constitute consent (Rule 9).
 
-### 3.3 `diagnostics`
-- Pure, side-effect-free scoring logic:
-  - Gross marks, bleed marks, net marks, percentage (D-05).
-  - Easy question identification (`accuracy >= 0.75` among present students) (D-02).
-  - Subject classification labels (`ACCURACY_BLEED`, `CONCEPTUAL_SPEED_GAP`, `FOUNDATIONAL_CRISIS`, `MASTERY_ZONE`, `NO_ATTEMPT`, `MODERATE_ZONE`) (D-03).
-  - Competition rank and PTM slip necessity (D-04).
-
-### 3.4 `hindi_templates`
+### 3.3 `hindi_templates` (Text Processing & Unicode, ADR-0010)
 - Generates natural, respectful Bolchal Hindi text for parents.
 - Enforces D-06 vocabulary bans (`ऋणात्मक अंकन`, `प्रतिशतता`, `प्राप्तांक`, `पूर्णांक`, `औसत मान`).
-- Enforces `TemplateConstraints` (body length <= 1024, header <= 60, no newlines in variables, no leading/trailing whitespace, proper punctuation around parameters).
+- Enforces Unicode Normalization Form C (`NFC`) and grapheme-safe truncation.
+- **Digit Policy (ADR-0010, `OWNER-CONFIRM`):** Proposes Latin digits (`0-9`) across all parent-facing text, scorecards, and PTM slips.
+- Enforces `TemplateConstraints` (body <= 1024 chars, header <= 60 chars, no newlines in variables, no leading/trailing variables).
 
-### 3.5 `renderer` & `omr_proof`
-- Scorecard renderer: Generates mobile-optimized PNG cards using Playwright headless Chromium or local Pillow composition.
-- PTM slip renderer: Generates A4 PDF documents for students requiring guardian consultation.
-- OMR proof generator: Crops question response regions and overlays answer key indicators for transparency.
+### 3.4 `renderer` & `audio_engine` (Deterministic Asset Generation, ADR-0011)
+- **Canonical Environment (ADR-0011):** Linux Docker container (`python:3.12-slim` + Debian font packages) is canonical for visual scorecard PNG, PDF slip, and audio transcoding tests. Windows dev is supported for non-render tests.
+- **Scorecard Renderer:** Mobile-optimized PNG cards generated via Playwright Chromium.
+- **PTM Slip Renderer:** A4 PDF documents generated for students requiring guardian consultation.
+- **Audio Engine:** `RECORDED_TOKEN_STITCH` concatenating human Hindi audio clips. Hard duration limit of 45s (fallback to concise script or `AUDIO_UNAVAILABLE` per D-08). Transcoded to OGG Opus (mono, 48kHz RFC 7845 convention) via FFmpeg. Direct file renames are banned.
 
-### 3.6 `audio_engine`
-- Primary engine: `RECORDED_TOKEN_STITCH` concatenating pre-recorded human Hindi audio clips.
-- Enforces hard duration limits: typical 15–25s, hard cutoff at 45s with fallback to concise script or `AUDIO_UNAVAILABLE` (D-08).
-- Transcodes all audio through FFmpeg to Ogg Opus format (mono, 48kHz, 32kbps). Direct file renames are prohibited.
-
-### 3.7 `provider` & `messaging_policy`
-- Communicates with Meta WhatsApp Cloud API using pinned version from environment (`WHATSAPP_CLOUD_API_VERSION`).
-- Live dispatch is disabled by default (`LIVE_DISPATCH_ENABLED=false`).
-- Ensures outbound messages use verified Utility templates. Initial outbound messages never attach audio in headers (not supported by Meta).
-
-### 3.8 `durable_store` & `scheduler`
+### 3.5 `durable_store` (Persistence Strategy, ADR-0007)
 - Persistence layer based on SQLite in WAL (Write-Ahead Logging) mode.
-- Schema tables: `dispatches`, `delivery_events`, `qr_tokens`, `audit_log`.
-- All scheduling is anchored to `Asia/Kolkata` (Sunday 20:30 IST primary dispatch; Monday 10:00 IST reminder).
-- **Concurrency & Scaling Boundaries:** Designed for up to 200 students per batch. SQLite connection uses a busy timeout (5000ms) with single-writer serialization to eliminate lock contention. In-memory scheduling is explicitly forbidden to prevent job loss across process restarts.
+- **Append-Only Event Store:** State transitions are recorded as append-only records in `dispatch_events` table; current status is derived from the latest event.
+- **Persist-Intent-Before-Send:** Dispatch intent (`SUBMITTED`) is committed to the database before the HTTP call is issued.
+- **DB Unique Constraints:** Enforces idempotency via unique index on composite `idempotency_key` (PII-free) and deduplication on `(provider_wamid, event_type)`.
 
-### 3.9 `webhooks` & `confirmation`
-- Webhook handles inbound Meta event callbacks, verifying `X-Hub-Signature-256` HMAC with `APP_SECRET` over raw request bytes.
-- **Architectural Decision (Webhook Idempotency & Deduplication):** Because Meta's Cloud API provides no guarantee of strict FIFO delivery and may deliver duplicate webhook events during retries, the webhook processor enforces idempotent deduplication on the composite key `(wamid, status)`. Duplicate events are recorded in audit logs but produce no redundant state transitions. Furthermore, receipt of a `read` status implicitly satisfies and supersedes `delivered`, preventing regressive transitions if a delayed `delivered` webhook arrives after `read`.
-- QR confirmation generates cryptographically secure 256-bit random tokens, stored hashed (SHA-256). Single use, max 5 failed attempts, 72h default TTL.
+### 3.6 `provider` & `messaging_policy` (Provider Contract & Safety Gates)
+- Communicates with Meta WhatsApp Cloud API using pinned version (`WHATSAPP_CLOUD_API_VERSION=v21.0`).
+- **Safety Gate:** Live dispatch disabled by default (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`).
+- Error handling maps responses into five verified classes: `RETRY_SAFE`, `OUTCOME_UNKNOWN`, `OPERATOR_ACTION`, `PERMANENT`, `UNKNOWN` (ADR-0008). Only `RETRY_SAFE` auto-retries.
 
-### 3.10 `audit`
-- Writes tamper-evident append-only JSON logs.
-- Automatic masking of sensitive personal information (phone numbers, student names, scores, QR tokens, audio payloads) per Part C Rule 10.
+### 3.7 `webhooks` & `confirmation`
+- Webhook processor verifies `X-Hub-Signature-256` HMAC with `APP_SECRET` over raw request bytes.
+- Idempotent deduplication on `(wamid, status)`. Receipt of `read` implicitly satisfies and supersedes `delivered`.
+- QR confirmation generates single-use 256-bit random tokens, stored hashed (SHA-256), 72h default TTL (`OWNER-CONFIRM`), max 5 failed OTP attempts.
+
+### 3.8 `audit` & `retention` (Data Lifecycle & Privacy, ADR-0015)
+- Writes tamper-evident structured JSON logs with automatic logger-level redaction (ADR-0008).
+- Sensitive values (`PhoneNumber`, `Token`, `StudentName`) masked across logs and traces.
+- Enforces D-13 retention lifecycle: scans and reports purged after current academic year; message/audit logs purged after 90 days.

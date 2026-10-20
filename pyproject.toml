@@ -31,7 +31,14 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src", "."]
-addopts = "-ra -q"
+addopts = "-ra -q --strict-markers"
+markers = [
+    "unit: Pure in-memory unit tests with zero external I/O (ADR-0012)",
+    "integration: Local SQLite WAL, persistence, and pipeline integration tests (ADR-0012)",
+    "render: Scorecard PNG and PDF visual generation tests requiring Playwright/fonts (ADR-0011, ADR-0012)",
+    "audio: Audio token stitching and FFmpeg transcoding tests (ADR-0011, ADR-0012)",
+    "network: Local mock HTTP network provider adapter tests (ADR-0012)",
+]
 
 [tool.ruff]
 target-version = "py311"
@@ -44,13 +51,49 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "B"]
-ignore = ["E501"]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # Pyflakes
+    "W",    # pycodestyle warnings
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+    "T20",  # flake8-print (disallows print in src/)
+    "PT",   # flake8-pytest-style
+    "RET",  # flake8-return
+]
+ignore = [
+    "E501",  # Line length handled by formatter
+]
 
+[tool.ruff.lint.per-file-ignores]
+"scripts/*" = ["T201"]  # Allow print in CLI utility/guardrail scripts
+"tests/*" = ["T201"]    # Allow print in test diagnostics
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
+files = ["src"]
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+
+# Documented per-module exceptions for external untyped third-party libraries (ADR-0014)
+[[tool.mypy.overrides]]
+module = [
+    "playwright.*",
+    "PIL.*",
+    "weasyprint.*",
+    "reportlab.*",
+]
+ignore_missing_imports = true
