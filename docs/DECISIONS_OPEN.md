@@ -61,7 +61,7 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 * **Effect of Unpinning vs. Pinning:**
   - **Pinning (Recommended):** Keeps contracts predictable, ensures reproducible unit and contract test mocks, and shields the engine from unexpected breaking changes when Meta updates platform defaults. The version is configuration-driven (`WHATSAPP_CLOUD_API_VERSION`).
   - **Unpinning:** Floating versions or omitting the version in request URLs causes Meta to fall back to the oldest active version permitted for the app, creating silent failures when legacy versions sunset.
-* **Status:** Pending Owner Confirmation before S9 provider implementation.
+* **Status:** Pending Owner Confirmation before Stage S9 provider implementation. **Decision Timing:** The choice of API version must be confirmed by the owner before Stage S9 execution begins, and S9 contract test fixtures (`tests/fixtures/provider_contract/**`) must record the exact API version used.
 
 ---
 

@@ -1,134 +1,684 @@
 {
-  "contract_version": "1.0.0",
+  "contract_version": "2.0.0",
   "retrieval_date": "2026-10-20",
   "provider": "meta_whatsapp_cloud_api",
   "source_base_url": "https://developers.facebook.com/docs/whatsapp/cloud-api",
   "pinned_version": "v21.0",
   "active_version_reference_in_docs": "v26.0",
+  "default_class": "OUTCOME_UNKNOWN",
+  "class_definitions": {
+    "RETRY_SAFE": "The documented behaviour shows the request was rejected and the message was NOT accepted (for example rate-limit/throttle rejections). Retry only with backoff/jitter and honouring Retry-After.",
+    "OUTCOME_UNKNOWN": "The message may or may not have been accepted (HTTP 5xx, timeouts, connection resets, any response the docs don't clearly describe as rejected). Never auto-retry. S9 records UNKNOWN_NEEDS_REVIEW and reconciles through webhook evidence.",
+    "OPERATOR_ACTION": "Cannot be fixed by retrying; needs a human or configuration change (auth/token errors, payment, account/phone-number state, quality/flagged state, template paused/rejected, missing permissions).",
+    "PERMANENT": "The request is invalid or the recipient/message can never succeed as sent (malformed payload, unsupported type, undeliverable, window expired for free-form).",
+    "UNKNOWN": "The docs do not say. Default to OUTCOME_UNKNOWN behaviour."
+  },
   "error_codes": {
-    "100": {
-      "code": 100,
-      "http_status": 400,
-      "title": "Invalid Parameter",
-      "description": "Graph API call contains an invalid parameter, missing required structure, or unsupported field value.",
-      "classification": "PERMANENT",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "190": {
-      "code": 190,
-      "http_status": 401,
-      "title": "Access Token Expired or Revoked",
-      "description": "OAuth access token has expired, been revoked, or lifetime exceeded. Requires refreshing System User Token.",
-      "classification": "TRANSIENT",
-      "retryable": true,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "130429": {
-      "code": 130429,
+    "4": {
+      "code": 4,
       "http_status": 429,
-      "title": "Rate Limit Hit (Throughput Exceeded)",
-      "description": "Message send throughput limit (default 80 mps) for phone number exceeded. Requires exponential backoff.",
-      "classification": "TRANSIENT",
-      "retryable": true,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+      "class": "RETRY_SAFE",
+      "short_reason": "App call rate limit reached",
+      "evidence": "Official docs: 'The app has reached its API call rate limit... try again later or reduce the frequency or amount of API queries the app is making.' Request was rejected by rate limiting before message processing.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
     },
     "80007": {
       "code": 80007,
       "http_status": 429,
-      "title": "WABA Aggregate Rate Limit Hit",
-      "description": "Aggregate volume limit across all phone numbers under the WhatsApp Business Account reached. Requires backoff.",
-      "classification": "TRANSIENT",
-      "retryable": true,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+      "class": "RETRY_SAFE",
+      "short_reason": "WABA aggregate rate limit reached",
+      "evidence": "Official docs: 'The WhatsApp Business Account has reached its rate limit. See WhatsApp Business account Rate Limits. Try again later or reduce the frequency or amount of API queries the app is making.' Request was rejected by WABA rate limiter.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
     },
-    "131000": {
-      "code": 131000,
-      "http_status": 500,
-      "title": "Something Went Wrong",
-      "description": "Unclassified internal Meta server failure or temporary routing glitch. Typically resolves on backoff retry.",
-      "classification": "TRANSIENT",
-      "retryable": true,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "131026": {
-      "code": 131026,
-      "http_status": 400,
-      "title": "Message Undeliverable",
-      "description": "Recipient is not an active WhatsApp number, has blocked the sender, has not accepted terms, or client is outdated.",
-      "classification": "PERMANENT",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "131047": {
-      "code": 131047,
-      "http_status": 400,
-      "title": "Re-engagement Message Required",
-      "description": "More than 24 hours elapsed since customer's last reply; freeform messages blocked. Must use approved template.",
-      "classification": "PERMANENT",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "131048": {
-      "code": 131048,
+    "130429": {
+      "code": 130429,
       "http_status": 429,
-      "title": "Spam Rate Limit Hit",
-      "description": "Outbound messaging paused or blocked due to low template quality, recipient spam reports, or high block rate.",
-      "classification": "PERMANENT",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "131051": {
-      "code": 131051,
-      "http_status": 400,
-      "title": "Unsupported Message Type",
-      "description": "Message type or payload structure not supported by Cloud API endpoint schema.",
-      "classification": "PERMANENT",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "131052": {
-      "code": 131052,
-      "http_status": 500,
-      "title": "Media Download Error",
-      "description": "Internal retrieval failure on Meta infrastructure when downloading user-uploaded media. State undetermined.",
-      "classification": "UNKNOWN",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
-    },
-    "131053": {
-      "code": 131053,
-      "http_status": 400,
-      "title": "Media Upload Error",
-      "description": "Media file exceeds size limit, MIME type is unsupported, or Meta proxy failed to fetch remote link.",
-      "classification": "PERMANENT",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+      "class": "RETRY_SAFE",
+      "short_reason": "Cloud API message throughput limit reached",
+      "evidence": "Official docs: 'Cloud API message throughput has been reached. The app has reached the API’s throughput limit. See Throughput. Try again later or reduce the frequency with which the app sends messages.' Request was rejected before message acceptance.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
     },
     "131056": {
       "code": 131056,
       "http_status": 429,
-      "title": "Pair Rate Limit Hit",
-      "description": "Rate limit exceeded for messaging a single specific recipient too quickly. Requires per-user pacing.",
-      "classification": "TRANSIENT",
-      "retryable": true,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+      "class": "RETRY_SAFE",
+      "short_reason": "Pair rate limit exceeded (sending too fast to single recipient)",
+      "evidence": "Official docs: 'Too many messages sent from the sender phone number to the same recipient phone number in a short period of time. Wait and retry the operation, if you intend to send messages to the same phone number.' Request was rejected; explicitly instructs to wait and retry.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "1": {
+      "code": 1,
+      "http_status": 500,
+      "class": "OUTCOME_UNKNOWN",
+      "short_reason": "Invalid request or possible server error",
+      "evidence": "Official docs: 'Invalid request or possible server error. Check the WhatsApp Business Platform Status page to see API status information.' Server-side failure; message may or may not have been accepted before error.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2": {
+      "code": 2,
+      "http_status": 503,
+      "class": "OUTCOME_UNKNOWN",
+      "short_reason": "Temporary service downtime or overload",
+      "evidence": "Official docs: 'Temporary due to downtime or due to being overloaded. Check the WhatsApp Business Platform Status page to see API status information before trying again.' Unclear if in-flight message was processed.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131000": {
+      "code": 131000,
+      "http_status": 500,
+      "class": "OUTCOME_UNKNOWN",
+      "short_reason": "Message failed to send due to unknown internal error",
+      "evidence": "Official docs: 'Message failed to send due to an unknown error. Try again. If the error persists, open a Direct Support ticket.' Internal 500 error on non-idempotent send path; message may have been partially accepted or queued. Never blind retry.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131016": {
+      "code": 131016,
+      "http_status": 503,
+      "class": "OUTCOME_UNKNOWN",
+      "short_reason": "Service temporarily unavailable",
+      "evidence": "Official docs: 'A service is temporarily unavailable. Check the WhatsApp Business Platform Status page to see API status information before trying again.' Upstream service failure; outcome uncertain.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131052": {
+      "code": 131052,
+      "http_status": 500,
+      "class": "OUTCOME_UNKNOWN",
+      "short_reason": "Media download error (inbound media retrieval failure)",
+      "evidence": "Official docs: 'Unable to download the media sent by the user. The media included in the WhatsApp user’s message could not be downloaded.' Internal retrieval failure on Meta platform; status undetermined.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133004": {
+      "code": 133004,
+      "http_status": 503,
+      "class": "OUTCOME_UNKNOWN",
+      "short_reason": "Server temporarily unavailable during registration/management",
+      "evidence": "Official docs: 'Server is temporarily unavailable. Check the WhatsApp Business Platform Status page to see API status information and check the response details value before trying again.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "134102": {
+      "code": 134102,
+      "http_status": 500,
+      "class": "OUTCOME_UNKNOWN",
+      "short_reason": "Template unavailable for use due to sync error",
+      "evidence": "Official docs: 'Ad synchronization could not be completed for the template you are attempting to send, or you may not be eligible for MM API for WhatsApp... contact support.' Internal platform error (HTTP 500).",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "0": {
+      "code": 0,
+      "http_status": 401,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Unable to authenticate app user",
+      "evidence": "Official docs: 'We were unable to authenticate the app user. Typically this means the included access token has expired, been invalidated, or the app user has changed a setting to prevent all apps from accessing their data. Get a new access token.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "3": {
+      "code": 3,
+      "http_status": 403,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Capability or permissions issue",
+      "evidence": "Official docs: 'Capability or permissions issue. Use the access token debugger to verify that your app has been granted the permissions required by the endpoint.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "10": {
+      "code": 10,
+      "http_status": 403,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Permission not granted or removed / eligibility missing",
+      "evidence": "Official docs: 'Permission is either not granted or has been removed. Use the access token debugger to verify that your app has been granted the permissions required by the endpoint... Check the eligibility requirements for the API.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "33": {
+      "code": 33,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Business phone number has been deleted",
+      "evidence": "Official docs: 'The business phone number has been deleted. Verify that the business phone number is correct.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "190": {
+      "code": 190,
+      "http_status": 401,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Access token expired or revoked",
+      "evidence": "Official docs: 'Your access token has expired. Get a new access token.' Retrying the request cannot fix this; requires human operator intervention to generate and configure a new System User access token.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "200": {
+      "code": 200,
+      "http_status": 401,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "No access token provided",
+      "evidence": "Official docs: 'No access token was provided. The API returns the message “Provide valid app ID”... Ensure your request includes a valid access token.' Requires configuration fix.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "299": {
+      "code": 299,
+      "http_status": 403,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Permission not granted or removed (200-299 range)",
+      "evidence": "Official docs (code range 200-299): 'Permission is either not granted or has been removed. Use the access token debugger to verify that your app has been granted the permissions required by the endpoint.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "368": {
+      "code": 368,
+      "http_status": 403,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "WABA restricted or disabled for policy violation",
+      "evidence": "Official docs: 'The WhatsApp Business Account associated with the app has been restricted or disabled for violating a platform policy. See the Policy Enforcement document to learn about policy violations and how to resolve them.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "130403": {
+      "code": 130403,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Business has blocked the end user on WhatsApp",
+      "evidence": "Official docs: 'Unable to deliver the message. This business has blocked the end user on WhatsApp. Do not retry. Unblock the WhatsApp user to resume sending messages to them.' Requires operator unblocking.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "130497": {
+      "code": 130497,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "WABA restricted from messaging users in certain countries",
+      "evidence": "Official docs: 'The WhatsApp Business Account is restricted from messaging to users in certain countries. See WhatsApp Business Messaging Policy for details on allowed countries.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131005": {
+      "code": 131005,
+      "http_status": 403,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Permission either not granted or removed",
+      "evidence": "Official docs: 'Permission is either not granted or has been removed. Use the access token debugger to verify that your app has been granted the permissions required by the endpoint.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131031": {
+      "code": 131031,
+      "http_status": 403,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "WABA restricted/disabled for policy violation or PIN mismatch",
+      "evidence": "Official docs: 'The WhatsApp Business Account associated with the app has been restricted or disabled for violating a platform policy, or we were unable to verify data included in the request against data set on the WhatsApp Business Account...'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131037": {
+      "code": 131037,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Business phone number does not have approved display name",
+      "evidence": "Official docs: 'The business phone number used to send the request does not have an approved display name. Change the business phone number’s display name.' Requires operator name approval in Business Manager.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131042": {
+      "code": 131042,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Payment method error (credit line exceeded, payment not set)",
+      "evidence": "Official docs: 'There was an error related to your payment method. Common problems: Payment account is not attached... Credit line is over the limit... Credit line not set or active... WABA is suspended.' Requires operator billing action.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131045": {
+      "code": 131045,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Phone number registration error",
+      "evidence": "Official docs: 'Message failed to send due to a phone number registration error. Register the phone number before trying again.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131048": {
+      "code": 131048,
+      "http_status": 429,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Spam rate limit hit (phone number flagged/restricted)",
+      "evidence": "Official docs: 'Message failed to send because there are restrictions on how many messages can be sent from this phone number. This may be because too many previous messages were blocked or flagged as spam. Check your quality status in the WhatsApp Manager.' Requires quality remediation; auto-retry blocked.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131049": {
+      "code": 131049,
+      "http_status": 429,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Message withheld to maintain healthy ecosystem engagement",
+      "evidence": "Official docs: 'This message was not delivered to maintain healthy ecosystem engagement. If you do receive this error code and suspect it is due to the limit, wait at least 24 hours before resending the template message. Doing so will only result in another error response...'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131057": {
+      "code": 131057,
+      "http_status": 503,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Business Account is in maintenance mode",
+      "evidence": "Official docs: 'Business Account is in maintenance mode. The WhatsApp Business account is in maintenance mode. One reason for this could be that the account is undergoing a throughput upgrade.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131063": {
+      "code": 131063,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Marketing templates disabled for Cloud API configuration",
+      "evidence": "Official docs: 'Your template is categorized as Marketing, but marketing templates are currently disabled for your Cloud API configuration. The business has set disable_marketing_messages_on_cloud_api to true.' Requires configuration change.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131064": {
+      "code": 131064,
+      "http_status": 429,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Messaging limit reached due to template classification violations",
+      "evidence": "Official docs: 'Message failed to send because this account has reached its messaging limit due to template classification violations. Review your template classifications and ensure they are categorized correctly.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132001": {
+      "code": 132001,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Template does not exist in specified language or not approved",
+      "evidence": "Official docs: 'The template does not exist in the specified language or the template has not been approved. Make sure your template has been approved and the template name and language locale are correct.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132007": {
+      "code": 132007,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Template content violates a WhatsApp policy",
+      "evidence": "Official docs: 'Template content violates a WhatsApp policy. See our Template review document to learn about possible reasons for the violation.' Requires operator to revise template content.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132015": {
+      "code": 132015,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Template is paused due to low quality",
+      "evidence": "Official docs: 'Template is paused due to low quality so it cannot be sent in a template message. Edit the template to improve its quality and try again once it is approved.' Requires human revision.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132016": {
+      "code": 132016,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Template permanently disabled due to low quality",
+      "evidence": "Official docs: 'Template has been paused too many times due to low quality and is now permanently disabled. Create a new template with different content.' Requires operator to create replacement template.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132068": {
+      "code": 132068,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Flow is in blocked state",
+      "evidence": "Official docs: 'Flow is in blocked state. Correct the Flow.' Requires developer console intervention.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132069": {
+      "code": 132069,
+      "http_status": 429,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Flow is in throttled state",
+      "evidence": "Official docs: 'Flow is in throttled state and 10 messages using this flow were already sent in the last hour. Correct the Flow.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133000": {
+      "code": 133000,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Previous deregistration attempt failed",
+      "evidence": "Official docs: 'A previous deregistration attempt failed. Deregister the number again before registering.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133005": {
+      "code": 133005,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Two-step verification PIN incorrect",
+      "evidence": "Official docs: 'Two-step verification PIN incorrect. Verify that the two-step verification PIN included in the request is correct. To reset the PIN, disable two-step verification, then set a new PIN.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133006": {
+      "code": 133006,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Phone number needs to be verified before registering",
+      "evidence": "Official docs: 'Phone number needs to be verified before registering. Verify and register the phone number.' Requires completing phone verification challenge.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133008": {
+      "code": 133008,
+      "http_status": 429,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Too many two-step verification PIN guesses",
+      "evidence": "Official docs: 'Too many two-step verification PIN guesses for this phone number. Try again after the amount of time specified in the details response value.' Requires operator cooldown.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133009": {
+      "code": 133009,
+      "http_status": 429,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Two-step verification PIN entered too quickly",
+      "evidence": "Official docs: 'Two-step verification PIN was entered too quickly. Check the details response value before trying again.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133010": {
+      "code": 133010,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Phone number not registered on WhatsApp Business Platform",
+      "evidence": "Official docs: 'Phone number not registered on the WhatsApp Business Platform. Register the phone number before trying again.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133015": {
+      "code": 133015,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Phone number deletion in progress",
+      "evidence": "Official docs: 'The phone number you are attempting to register was recently deleted, and deletion has not yet completed. Wait 5 minutes before re-trying the request.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "133016": {
+      "code": 133016,
+      "http_status": 429,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Registration/deregistration attempt limit reached",
+      "evidence": "Official docs: 'Registration or Deregistration failed because there were too many attempts for this phone number in a short period of time. The business phone number is being blocked because it has reached its registration/deregistration attempt limit.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "134011": {
+      "code": 134011,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "WhatsApp Payments terms of service acceptance pending",
+      "evidence": "Official docs: 'Message failed to send because WhatsApp Payments terms of service acceptance is pending for this WhatsApp Business Account. Accept the WhatsApp Payments terms of service using the link provided...'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "134101": {
+      "code": 134101,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Template is still undergoing Ad synchronization",
+      "evidence": "Official docs: 'When you send a message from a template, the template syncing process can take up to 10 minutes to complete. Wait a few minutes, and then try sending your message again. Ad synchronization can take up to 10 minutes.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "1752041": {
+      "code": 1752041,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Duplicate onboarding request from partner",
+      "evidence": "Official docs: 'Duplicate Request is thrown when a client has already been invited to onboard by any partner. Onboarding requests are limited to one per business customer...'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388019": {
+      "code": 2388019,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Message Template Limit Exceeded (max 250 templates)",
+      "evidence": "Official docs: 'You have exceeded the maximum number of message templates you can have for this WhatsApp business account. A Messaging account can have up to 250 message templates.' Requires deleting old templates.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388039": {
+      "code": 2388039,
+      "http_status": 400,
+      "class": "OPERATOR_ACTION",
+      "short_reason": "Message template status cannot be changed",
+      "evidence": "Official docs: 'The status for this message template can’t be changed. You can only delete or add templates... for example, a template that is still in review. Wait until the template is approved or rejected.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "100": {
+      "code": 100,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Invalid parameter / malformed request payload",
+      "evidence": "Official docs: 'The request included one or more unsupported or misspelled parameters... See the endpoint’s reference to determine which parameters are supported and how they are spelled.' Payload invalid as constructed; unretryable.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
     },
     "130472": {
       "code": 130472,
       "http_status": 400,
-      "title": "User In Experiment",
-      "description": "Marketing template blocked because recipient is part of a Meta messaging optimization experiment.",
-      "classification": "PERMANENT",
-      "retryable": false,
-      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes"
+      "class": "PERMANENT",
+      "short_reason": "User in experiment (marketing message blocked)",
+      "evidence": "Official docs: 'Message was not sent as part of an experiment. See Marketing Message Experiment.' The recipient is excluded by Meta platform experiments; cannot be delivered as requested.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131008": {
+      "code": 131008,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Request missing a required parameter",
+      "evidence": "Official docs: 'The request is missing a required parameter. See the endpoint’s reference to determine which parameters are required.' Payload structure is missing mandatory fields.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131009": {
+      "code": 131009,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Parameter value is invalid",
+      "evidence": "Official docs: 'One or more parameter values are invalid. See the endpoint’s reference to determine which values are supported for each parameter.' Payload contains illegal parameter value.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131021": {
+      "code": 131021,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Sender and recipient phone number is the same",
+      "evidence": "Official docs: 'Sender and recipient phone number is the same. Send a message to a phone number different from the sender.' Structurally impossible to deliver.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131026": {
+      "code": 131026,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Message undeliverable (not WhatsApp user, terms unaccepted, obsolete client)",
+      "evidence": "Official docs: 'Unable to deliver message. Reasons can include: The recipient phone number is not a WhatsApp phone number. Recipient has not accepted the new Terms of Service and Privacy Policy. Recipient using an old WhatsApp version...'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131047": {
+      "code": 131047,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Re-engagement message required (24h customer service window expired)",
+      "evidence": "Official docs: 'More than 24 hours have passed since the recipient last replied to the sender number. Send the recipient a template message instead.' Freeform messages permanently blocked outside window.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131050": {
+      "code": 131050,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Recipient opted out of marketing messages from business",
+      "evidence": "Official docs: 'Unable to deliver the message. This recipient has chosen to stop receiving marketing messages on WhatsApp from your business. Do not retry sending messages to this user as they will not be received.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131051": {
+      "code": 131051,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Unsupported message type",
+      "evidence": "Official docs: 'Unsupported message type. See Messages for supported message types before trying again with a supported message type.' Message type or payload schema not recognized.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131053": {
+      "code": 131053,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Media upload error (unsupported type, size exceeded)",
+      "evidence": "Official docs: 'Unable to upload the media used in the message. The media could not be uploaded for one or more reasons, such as an unsupported media type... Inspect any media files that are causing errors.' Unretryable without fixing media asset.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "131055": {
+      "code": 131055,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Method not allowed (only marketing templates supported)",
+      "evidence": "Official docs: 'Method not allowed. Only marketing template messages are supported. You may have attempted to send a non-template message, or an authentication or utility template.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132000": {
+      "code": 132000,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Parameter count mismatch with template definition",
+      "evidence": "Official docs: 'The number of variable parameter values included in the request did not match the number of variable parameters defined in the template. See our Templates document to learn about parameters.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132005": {
+      "code": 132005,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Translated text too long",
+      "evidence": "Official docs: 'Translated text is too long. Check the WhatsApp Manager to verify that your template has been translated.' Payload text exceeds length boundaries for locale.",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132012": {
+      "code": 132012,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Variable parameter values formatted incorrectly",
+      "evidence": "Official docs: 'Variable parameter values formatted incorrectly. The variable parameter values included in the request are not using the format specified in the template.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "132018": {
+      "code": 132018,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Template validation error in request parameters",
+      "evidence": "Official docs: 'Template validation error. There's an issue with the parameters in your template. Review the errors, update the parameters as needed, and resend your message using a correctly configured template.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "134100": {
+      "code": 134100,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Only marketing messages supported on endpoint",
+      "evidence": "Official docs: 'Only marketing messages supported. You're only able to send marketing messages on this API... You are attempting to send a utility or authentication template.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "135000": {
+      "code": 135000,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Unknown error with request parameters syntax",
+      "evidence": "Official docs: 'Message failed to send because of an unknown error with your request parameters. See the endpoint’s reference to determine if you are querying the endpoint using the correct syntax.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388040": {
+      "code": 2388040,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Character limit exceeded in template field",
+      "evidence": "Official docs: 'Character limit exceeded. A field in your template has exceeded the maximum character limit allowed. Refer to the error message for specific details on the affected field.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388047": {
+      "code": 2388047,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Message header format is incorrect",
+      "evidence": "Official docs: 'Message header format is incorrect. Your message header contains invalid formatting.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388072": {
+      "code": 2388072,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Message body format is incorrect",
+      "evidence": "Official docs: 'Message body format is incorrect. Your message body contains invalid formatting.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388073": {
+      "code": 2388073,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Message footer format is incorrect",
+      "evidence": "Official docs: 'Message footer format is incorrect. Your message footer contains invalid formatting.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388293": {
+      "code": 2388293,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Parameters words ratio exceeds limit",
+      "evidence": "Official docs: 'Parameters words ratio exceeds limit. This template has too many variables for its length. Reduce the number of variables or increase the message length.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
+    },
+    "2388299": {
+      "code": 2388299,
+      "http_status": 400,
+      "class": "PERMANENT",
+      "short_reason": "Leading or trailing parameters not allowed",
+      "evidence": "Official docs: 'Leading or trailing parameters not allowed. Variables cannot be at the start or end of the template.'",
+      "source_url": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes",
+      "retrieval_date": "2026-10-20"
     }
   },
   "classification_counts": {
-    "TRANSIENT": 5,
-    "PERMANENT": 7,
-    "UNKNOWN": 1,
-    "TOTAL": 13
+    "RETRY_SAFE": 4,
+    "OUTCOME_UNKNOWN": 7,
+    "OPERATOR_ACTION": 39,
+    "PERMANENT": 23,
+    "UNKNOWN": 0,
+    "TOTAL": 73
   },
   "rate_limits": {
     "default_phone_throughput_mps": 80,
@@ -136,69 +686,116 @@
     "high_volume_throughput_mps": 1000,
     "portfolio_messaging_tiers": {
       "unverified_new_portfolio": 250,
-      "tier_1_verified": 2000,
-      "tier_2": 10000,
-      "tier_3": 100000,
-      "tier_4": "unlimited"
+      "tier_1_scaling_path": 2000,
+      "tier_2_automatic_scaling": 10000,
+      "tier_3_automatic_scaling": 100000,
+      "tier_4_automatic_scaling": "Unlimited"
     },
     "per_recipient_pair_rate_limit_error": 131056,
     "throughput_exceeded_error": 130429,
-    "waba_aggregate_exceeded_error": 80007
+    "waba_aggregate_exceeded_error": 80007,
+    "app_rate_limit_error": 4
   },
   "retry_guidance": {
-    "transient_backoff": "exponential_with_jitter",
+    "auto_retry_classes": [
+      "RETRY_SAFE"
+    ],
+    "never_auto_retry_classes": [
+      "OUTCOME_UNKNOWN",
+      "OPERATOR_ACTION",
+      "PERMANENT",
+      "UNKNOWN"
+    ],
+    "retry_safe_backoff": "exponential_with_jitter",
     "base_backoff_seconds": 1,
     "max_backoff_seconds": 32,
     "max_retries": 4,
     "honor_retry_after_header": true,
-    "webhook_delivery_retry_window_hours": 36,
-    "webhook_delivery_retry_backoff": "exponential"
+    "webhook_delivery_retry_window_days": 7,
+    "webhook_delivery_retry_policy": "Meta retries delivery with decreasing frequency until the request succeeds, for up to 7 days.",
+    "webhook_timeout_seconds": 3
   },
   "idempotency": {
     "native_outbound_idempotency_key_supported": false,
     "native_duplicate_send_protection": false,
     "documented_guarantee": "no documented guarantee",
-    "required_client_safeguard": "Client must maintain internal dispatch state machine and deduplicate on local job ID before any retry attempt to prevent duplicate messaging and charges."
+    "required_client_safeguard": "Client must maintain internal dispatch state machine and deduplicate on local job ID before any retry attempt to prevent duplicate messaging and charges. OUTCOME_UNKNOWN failures require reconciliation via webhook evidence, never a blind retry."
   },
   "webhook_semantics": {
     "signature_header": "X-Hub-Signature-256",
     "signature_algorithm": "HMAC-SHA256",
     "signature_payload": "raw_unparsed_request_body_bytes",
-    "supported_statuses": ["sent", "delivered", "read", "failed"],
+    "supported_statuses": [
+      "sent",
+      "delivered",
+      "read",
+      "failed"
+    ],
     "guaranteed_fifo_ordering": false,
     "ordering_key": "timestamp",
     "deduplication_key": "(wamid, status)",
     "read_implies_delivered": true,
-    "max_timeout_seconds": 3
+    "max_timeout_seconds": 3,
+    "retry_window_days": 7,
+    "retry_frequency": "decreasing frequency for up to 7 days"
   },
   "media_limits": {
     "image": {
       "max_bytes": 5242880,
-      "supported_mimes": ["image/jpeg", "image/png", "image/webp"]
+      "supported_mimes": [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ]
     },
     "audio": {
       "max_bytes": 16777216,
-      "supported_mimes": ["audio/aac", "audio/mp4", "audio/mpeg", "audio/amr", "audio/ogg; codecs=opus"],
-      "voice_note_format": "audio/ogg; codecs=opus",
+      "supported_mimes": [
+        "audio/aac",
+        "audio/mp4",
+        "audio/mpeg",
+        "audio/amr",
+        "audio/ogg"
+      ],
+      "voice_note_format": "audio/ogg (OPUS codecs only; base audio/ogg not supported; mono input only)",
       "required_channels": 1,
-      "required_sampling_rate_hz": 48000
+      "sampling_rate_hz_note": "48000 Hz is standard Opus RFC 7845 / FFmpeg convention; Meta documentation specifies 'OPUS codecs only; base audio/ogg not supported; mono input only' without stating sampling rate."
     },
     "document": {
       "max_bytes": 104857600,
-      "supported_mimes": ["application/pdf", "text/plain", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"]
+      "supported_mimes": [
+        "application/pdf",
+        "text/plain",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      ]
     },
     "video": {
       "max_bytes": 16777216,
-      "supported_mimes": ["video/mp4", "video/3gpp"]
+      "supported_mimes": [
+        "video/mp4",
+        "video/3gpp"
+      ]
     },
     "media_id_lifetime_days": 30,
     "media_download_url_lifetime_minutes": 5
   },
   "pricing": {
     "current_model": "Per-Message Pricing (PMP)",
-    "categories": ["marketing", "utility", "authentication", "service"],
+    "categories": [
+      "marketing",
+      "utility",
+      "authentication",
+      "service"
+    ],
     "free_service_window": "24 hours from customer inbound interaction",
-    "free_entry_point_ad_window_hours": 72,
-    "prerequisites": ["Meta Business Manager active payment method", "Verified payment status"]
+    "prerequisites": [
+      "Meta Business Manager active payment method",
+      "Verified payment status"
+    ]
   }
 }
