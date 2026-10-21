@@ -1,13 +1,13 @@
 # Stage S0-R5/R6 Independent Review Report
 
-**Review Date:** 2026-10-21  
-**Reviewer:** Independent Reviewer Agent  
-**Governing Rules:** `AGENTS.md`, `PROJECT_SPEC.md`, `docs/prompt_pack/W2_review.md`  
-**Target Scope:** `git diff stage-0-r4..stage-0-r6` and current repository state  
-**Commits Inspected:**  
-- Base Tag (`stage-0-r4`): `5e8377d43f206609c71ac4d2ed67bcd1f13f3ec9`  
-- Target Tag (`stage-0-r6`): `8f59ebda2fcf46e52bb76da2c2abdb02c89b4600` (amended from `0b90ac594fb34646cf9e61c126b5a27c5a103279`)  
-- Branch: `agent-run`  
+**Review Date:** 2026-10-21
+**Reviewer:** Independent Reviewer Agent
+**Governing Rules:** `AGENTS.md`, `PROJECT_SPEC.md`, `docs/prompt_pack/W2_review.md`
+**Target Scope:** `git diff stage-0-r4..stage-0-r6` and current repository state
+**Commits Inspected:**
+- Base Tag (`stage-0-r4`): `5e8377d43f206609c71ac4d2ed67bcd1f13f3ec9`
+- Target Tag (`stage-0-r6`): `8f59ebda2fcf46e52bb76da2c2abdb02c89b4600` (amended from `0b90ac594fb34646cf9e61c126b5a27c5a103279`)
+- Branch: `agent-run`
 
 ---
 
@@ -25,7 +25,7 @@
 | **8** | Multi-Tenancy & Credential Rules | **PASS** | Global invariants 15 to 17 are defined in `docs/prompt_pack/00_global_invariants.md`. Every stage prompt requires explicit `org_id` on repository calls, CLI commands, and services; global credentials and shared phone numbers are strictly prohibited. |
 | **9** | Tooling & Verification | **PASS** | `ruff check .` exited with code 0. `python scripts/guardrails.py` exited with code 0. |
 
-**Overall Verdict: PASS**  
+**Overall Verdict: PASS**
 Zero BLOCKER findings. Zero MAJOR findings. Four MINOR findings (whitespace hygiene, root AGENTS.md mirror update, STATE.md commit hash string, unstaged operator edits in working tree).
 
 ---
@@ -124,18 +124,18 @@ Zero BLOCKER findings. Zero MAJOR findings. Four MINOR findings (whitespace hygi
    --- a/docs/prompt_pack/S1.md
    +++ b/docs/prompt_pack/S1.md
    @@ -6,7 +6,7 @@
-    
+
     **Golden exam** (`test_paper_300.json`): 75 questions, IDs 1–75. Q1–25 PHYSICS, Q26–50 CHEMISTRY, Q51–75 MATHS. +4 correct, −1 wrong, 0 blank. `correct_option = ["A","B","C","D"][(q−1) % 4]`. Synthetic 800×600 geometry (fixture-only): `col=(q−1)//15`, `row=(q−1)%15`, `col_x=30+col*150`, `center_y=255+row*17`, option centre x = `col_x+35+opt_index*24`.
-    
+
    -**Roster and responses** (`admissions_300.json`, `submissions_300.json`): `STU_01`–`STU_20`, one submission each; 16 PRESENT (01–16), 4 ABSENT (17–20, empty responses). Materialise every response in JSON. Wrong answer = next option in A→B→C→D→A order after the key.
    +**Roster and responses** (`admissions_300.json`, `submissions_300.json`): `STU_01`–`STU_20`, one submission each; 16 PRESENT (01–16), 4 ABSENT (17–20, empty responses). Roster includes `child_display_name` and `class_section` without altering any frozen score value. Materialise every response in JSON. Wrong answer = next option in A→B→C→D→A order after the key.
     - STU_01: Q1–10 ✓; Q11–20 ✗; Q21–25 blank; Q26–30 ✓; Q31–45 ✗; Q46–50 blank; Q51–55 ✓; Q56–75 blank.
     - STU_02: Q1–70 ✓; Q71–72 ✗; Q73–75 blank.
     - STU_03: Q1–23 ✓; Q26–27 ✗; rest blank.
    @@ -39,10 +39,28 @@ Batch: enrolled 20, present 16, absent 4; class average `1323/16 = 82.6875`; top
-    
+
     Subject labels (D-03): STU_01 Physics `ACCURACY_BLEED`, Chemistry `ACCURACY_BLEED`, Maths `CONCEPTUAL_SPEED_GAP`. STU_02 all `MASTERY_ZONE`. STU_03 Physics `MASTERY_ZONE`, Chemistry `FOUNDATIONAL_CRISIS`, Maths `NO_ATTEMPT`. STU_04 Physics/Chemistry `MASTERY_ZONE`, Maths `NO_ATTEMPT`. STU_05–13 Physics `MASTERY_ZONE`, others `NO_ATTEMPT`. STU_14–16 all `NO_ATTEMPT`. ABSENT: no subject labels.
-    
+
    +**Marks Entry Golden Fixture** (`marks_entry_50.json`, `expected_marks_reports.json`):
    +6 students, Class 8-B, English (Max Marks 50):
    +- ME_01: Aarav, PRESENT, marks 30.0 (60.0%), rank 2 (tie), band YELLOW (D-01 threshold: 30.0%–60.0% inclusive)
@@ -155,12 +155,12 @@ Zero BLOCKER findings. Zero MAJOR findings. Four MINOR findings (whitespace hygi
    +- Direct template-rendering test: Approved MARKS_ENTRY message rendered with Decision 4 sample values as a direct data object matches character-for-character.
    +
     **Edge-case fixture** (`edge_cases.json`, separate from the 20-student golden set): an all-wrong student (net −75 → −25.00 %, RED), a tie-for-first pair, a zero-present batch, and a one-student batch. Percentage boundary values (29.99, 30.0, 60.0, 60.01) are tested at classifier level on raw percentages, since integer marks over 300 can't hit every boundary.
-    
+
     **Manifest:** `manifest.json` with fixture version and SHA-256 hashes. A generator may only reproduce approved bytes. `tests/oracle.py` may contain a minimal, test-local scorer used only for cross-checking arithmetic invariants; it shares no code with `src/`.
-    
+
    -**Tests** (`tests/test_stage1_golden_contract.py`): 75 unique questions/300 max; 20 unique IDs, 16/4 split, one-to-one mapping; per-question accuracy properties; STU_01 arithmetic and missed set; STU_02/03/04 scores; valid option values; contact/consent cases match the contract; hashes match the manifest; every literal above matches `expected_reports.json`.
    +**Tests** (`tests/test_stage1_golden_contract.py`): 75 unique questions/300 max; 20 unique IDs, 16/4 split, one-to-one mapping; per-question accuracy properties; STU_01 arithmetic and missed set; STU_02/03/04 scores; valid option values; contact/consent cases match the contract; marks entry 6-student fixture properties; two-org isolation fixture properties; golden caption and direct template-rendering tests; hashes match the manifest; every literal above matches `expected_reports.json`.
-    
+
     **Gate 1:** `pytest -q tests/test_stage1_golden_contract.py`; report command, exit code, actual test count. 🧑 Human signs off the frozen manifest hash in `docs/STATE.md`.
    ```
 - Every question, response, score, gross marks, bleed deductions, net score, percentage, rank, PTM trigger, easy question missed, and subject diagnostic label for `STU_01` through `STU_20` is bit-for-bit unchanged.

@@ -1,10 +1,10 @@
 # Stage S0-R4 Independent Review Report
 
-**Review Date:** 2026-10-20  
-**Reviewer:** Independent Reviewer Agent (Stage W2)  
-**Governing Rule:** `docs/prompt_pack/W2_review.md` and `AGENTS.md` Invariants  
-**Target Scope:** `git diff stage-0-r3..stage-0-r4` and working tree state (`git diff HEAD`)  
-**Commit Inspected:** `5e8377d43f206609c71ac4d2ed67bcd1f13f3ec9` (`tag: stage-0-r4`) on branch `agent-run`  
+**Review Date:** 2026-10-20
+**Reviewer:** Independent Reviewer Agent (Stage W2)
+**Governing Rule:** `docs/prompt_pack/W2_review.md` and `AGENTS.md` Invariants
+**Target Scope:** `git diff stage-0-r3..stage-0-r4` and working tree state (`git diff HEAD`)
+**Commit Inspected:** `5e8377d43f206609c71ac4d2ed67bcd1f13f3ec9` (`tag: stage-0-r4`) on branch `agent-run`
 
 ---
 
