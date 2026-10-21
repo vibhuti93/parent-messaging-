@@ -15,8 +15,8 @@
 ### Row-Level Summary
 - **Total Rows:** 17
 - **Confidence Distribution:**
-  - **HIGH (12):** R-01, R-02, R-04, R-05, R-06, R-07, R-09, R-10, R-11, R-12, R-14, R-15
-  - **MEDIUM (3):** R-03, R-08, R-13
+  - **HIGH (11):** R-01, R-02, R-04, R-05, R-06, R-07, R-09, R-10, R-11, R-12, R-14, R-15
+  - **MEDIUM (4):** R-03, R-08, R-13
   - **LOW (0):** None
   - **N/A (2):** R-16, R-17
 - **UNVERIFIED Items List (3 total):**
@@ -298,7 +298,7 @@
 * **Section / Title:** "Cloud API Support: Error Codes Reference"
 * **Retrieval Date:** 2026-10-20
 * **Volatility:** `VOLATILE`
-* **Confidence:** `HIGH`
+* **Confidence:** `MEDIUM`
 * **Official Findings & Full Enumeration:**
   1. **Classification Scheme:**
      In accordance with S0-R3 architectural requirements for a send path without native idempotency keys, error codes are classified into five non-overlapping operational classes:
