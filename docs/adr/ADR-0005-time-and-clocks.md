@@ -1,7 +1,7 @@
 # ADR-0005: Time Representation, Timezones, and Injected Clocks
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Dispatch scheduling, customer service window tracking (24h window), webhook timestamps, audit logging, and QR token expirations (72h TTL) depend heavily on time calculations.

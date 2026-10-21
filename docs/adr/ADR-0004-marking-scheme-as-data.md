@@ -1,7 +1,7 @@
 # ADR-0004: Marking Scheme and Question Metadata as Data
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Different examinations employ varying scoring rules (e.g. +4 for correct, -1 for incorrect, 0 for unattempted). Some advanced competitive exams feature multiple-correct choices, numerical values, or matrix matching.

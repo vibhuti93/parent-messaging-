@@ -1,7 +1,7 @@
 # ADR-0017: Multi-Tenant Database Architecture and Isolation Model
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Per Operator Decision 1 (Stage S0-R5), `omr_dispatch_engine` serves multiple educational institutions from inception as a hosted multi-tenant service.

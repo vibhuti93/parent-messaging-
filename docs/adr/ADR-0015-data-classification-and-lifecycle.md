@@ -1,7 +1,7 @@
 # ADR-0015: Data Classification, Masking, and Retention Lifecycle
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 The engine processes sensitive academic performance data and contact coordinates of minor students in India.

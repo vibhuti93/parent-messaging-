@@ -1,7 +1,7 @@
 # ADR-0019: Per-School Sender Identity, Credential Isolation, and Inbound Webhook Routing
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Per Operator Decision 2 (Stage S0-R5), each educational institution uses its **own WhatsApp Business Phone Number**. There is **no shared number** across schools.

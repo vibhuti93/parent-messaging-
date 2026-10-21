@@ -1,7 +1,7 @@
 # ADR-0006: Schema and Contract Versioning
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Educational institutions generate archival records that must be retained for at least the current academic year (per D-13), while dispatch events and audit logs must be retained for 90 days. Over time, schemas evolve: new fields are added to OMR reports, database tables require extra indexing, and external provider contracts shift.

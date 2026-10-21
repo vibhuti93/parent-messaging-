@@ -1,7 +1,7 @@
 # ADR-0018: Application Service Layer, Security Context, and Job Orchestration
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 In a multi-tenant hosted system serving multiple schools, business operations (such as batch evaluation, send plan generation, emergency batch cancellation, review queue resolution, and scorecard retrieval) must be strictly isolated, authorized, auditable, and resilient to system interruptions.
@@ -176,12 +176,16 @@ class JobRecord(BaseModel):
 - Using `last_processed_id`, the worker resumes execution from the exact next item rather than restarting the batch from scratch.
 - State updates are committed in small batches (e.g. every 10 items) to minimize duplicate processing.
 
-### 5. Mandatory Attribution on All Audit and Dispatch Events
+### 5. Mandatory Attribution on All Audit and Dispatch Events & Invariant 17 Logging
 Every audit event (`AuditRecord`) and dispatch event (`dispatch_events`) must record:
 - `org_id: str`
 - `actor_type: str`
 - `actor_id: str`
 This guarantees complete forensic traceability for every single outbound notification, plan approval, or configuration change.
+
+**Application Logging and Invariant 17:**
+- **Primary Rule:** Invariant 17 is the primary logging rule across all application service calls and background jobs: nothing sensitive (`child_display_name`, `class_section`, full phone numbers, student scores, tokens, audio payloads) is ever passed to a logger. Services log strictly opaque surrogate identifiers (`org_id`, `assessment_id`, `student_id`, `job_id`, `actor_id`), event names, and status codes.
+- **Backup Redaction Filter:** The logger-level redaction filter (ADR-0008) operates strictly as a defense-in-depth backup, never as the primary privacy control.
 
 ### 6. Artifact Management by Opaque Identifier
 Artifacts (scorecards, PDFs, audio notes) are stored in an abstract object store (local disk in development, Cloud Storage in production).

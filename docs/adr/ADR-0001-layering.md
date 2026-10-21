@@ -1,7 +1,7 @@
 # ADR-0001: Pure Core vs. I/O Adapters Layering Architecture
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 The `omr_dispatch_engine` performs critical computational tasks: scoring student exams, evaluating diagnostic bands, assembling parent-facing Hindi messages, enforcing communication policies, rendering image/PDF assets, transcoding audio, and dispatching to WhatsApp.

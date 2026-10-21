@@ -34,14 +34,14 @@ We propose **Option 2 (Opaque Surrogate UUIDs, PII-Free Composite Keys, and `org
    - Format: `v1:{org_id}:{test_id}:{student_id}:{channel}:{purpose}:{sequence}`
    - Example: `v1:SCH01:EXAM_20261018:STU_001:WHATSAPP:PRIMARY:0`
    - *Strict Rule*: Phone numbers, guardian names, tokens, and marks are **never** included in the idempotency key.
-3. **Tenancy Scope (`OWNER-CONFIRM`):**
-   - **Proposal**: Include `org_id: str` (e.g. `"DEFAULT_INSTITUTION"` or school code) across all database tables and models from inception.
+3. **Tenancy Scope (Approved):**
+   - **Decision**: Include `org_id: str` (mandatory institutional tenant identifier) across all database tables, models, repositories, and composite idempotency keys from inception (Operator Decision 1, 2026-10-21).
    - *Rationale*: Adding `org_id` now costs negligible overhead; adding it later requires migrating every table, foreign key, and unique constraint.
 
 ## Consequences
 - **Positive**: Complete privacy preservation; bulletproof idempotency without leaking phone numbers to Meta API logging; seamless scaling across multiple batches or branches.
 - **Negative**: Ingestion must generate and map surrogate IDs from raw CSV rows.
-- **Neutral**: Added to `docs/DECISIONS_OPEN.md` for operator confirmation.
+- **Neutral**: Tenancy scope confirmed as multi-tenant from inception per Operator Decision 1 (see ADR-0017).
 
 ## Revisit When
 Revisit if the operator confirms the deployment will permanently remain single-school standalone with no multi-institution requirement.

@@ -1,7 +1,7 @@
 # ADR-0011: Canonical Environment and Determinism
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Visual asset generation (HTML-to-image via Playwright Chromium) and audio transcoding (FFmpeg Ogg Opus) are notoriously sensitive to operating system environments, font rendering engines (FreeType vs Windows DirectWrite), and platform-specific audio codec libraries.

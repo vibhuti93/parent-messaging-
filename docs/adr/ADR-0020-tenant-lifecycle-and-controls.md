@@ -1,7 +1,7 @@
 # ADR-0020: Tenant Lifecycle, Administrative Controls, Fair Scheduling, and Metering
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 As a hosted multi-tenant system serving multiple educational institutions, `omr_dispatch_engine` requires formal lifecycle management for tenant organizations.

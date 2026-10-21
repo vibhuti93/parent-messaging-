@@ -198,7 +198,7 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 
 ## (f) PTM Slips Restricted to PTM-Linked Assessments (`OWNER-CONFIRM`)
 * **Proposal:** Generate printable A4 PTM consultation slips only for assessments carrying the `PTM_LINKED` purpose flag. Routine weekly tests and unit tests do not generate PTM slips unless explicitly flagged.
-* **Status:** PROPOSED (`OWNER-CONFIRM`)
+* **Status:** DECIDED (see S1-BLOCK-01 Option 1, 2026-10-21, operator; PTM eligibility under D-04 applies to every assessment type with `is_ptm_linked` condition removed per ADR-0016 Section 4)
 
 ## (g) Class Average Definition for Marks Entry (`OWNER-CONFIRM`)
 * **Proposal:** Arithmetic mean of net marks among all `PRESENT` students in the assessment cohort: evaluated at full precision (`Fraction`), rendered to 1 decimal place with `ROUND_HALF_UP` on display (e.g. `32.4`). Null if zero present.
