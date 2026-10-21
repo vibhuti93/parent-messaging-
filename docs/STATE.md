@@ -1,21 +1,21 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S0-R6 (`Stage S0-R6 — Fix S0-R5 review findings (docs only, no code)`) — **COMPLETED**
-- **Next Stage:** Stage 1 (`S1 — Golden Dataset and Independent Contract`) — **AWAITING HUMAN GATE**
+- **Active Stage:** Stage S0-R7 (`Stage S0-R7 — Fix Pass (docs and tooling only)`) — **COMPLETED**
+- **Next Stage:** Stage 1 (`S1 — Golden Dataset and Independent Contract`) — **BLOCKED on S1-BLOCK decisions in docs/DECISIONS_OPEN.md & operator sign-off**
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `N/A` (Staged for S1 generation)
-- **Stage Tag:** `stage-0-r6` (commit: `0b90ac594fb34646cf9e61c126b5a27c5a103279` on `agent-run`)
+- **Stage Tag:** `stage-0-r6` (commit: `8f59ebda2fcf46e52bb76da2c2abdb02c89b4600` on `agent-run`); `stage-0-r7` to be tagged by operator upon commit.
 
 ---
 
 ## Architecture Decision Records (ADRs) Summary
-*Per Stage S0-R5/R6 rules, the agent only PROPOSES architectural decisions; the operator ACCEPTS. Zero new ADRs are marked `ACCEPTED`. ADR-0003 is `ACCEPTED (modified)` pointing to ADR-0017.*
+*Per Stage S0-R5/R6 rules, the agent only PROPOSES architectural decisions; the operator ACCEPTS. Zero new ADRs are marked `ACCEPTED`. ADR-0003 is `ACCEPTED (original single-school scope); AMENDMENT PENDING RE-APPROVAL` pointing to ADR-0017.*
 
 1. **[ADR-0001](adr/ADR-0001-layering.md) (Layering):** Pure Core (zero I/O) vs. Adapters architecture (`PROPOSED`).
 2. **[ADR-0002](adr/ADR-0002-numeric-semantics.md) (Numeric Semantics):** Integer marks and half-marks (`Fraction | int`), integer cross-multiplication for threshold comparisons, `Decimal` ROUND_HALF_UP display, zero `float` in core (`PROPOSED`).
-3. **[ADR-0003](adr/ADR-0003-identifiers-and-keys.md) (Identifiers & Keys):** Opaque surrogate UUIDs, composite idempotency keys (`ACCEPTED (modified)` — points to ADR-0017 for multi-tenancy).
+3. **[ADR-0003](adr/ADR-0003-identifiers-and-keys.md) (Identifiers & Keys):** Opaque surrogate UUIDs, composite idempotency keys (`ACCEPTED (original single-school scope); AMENDMENT PENDING RE-APPROVAL` — points to ADR-0017 for multi-tenancy).
 4. **[ADR-0004](adr/ADR-0004-marking-scheme-as-data.md) (Marking Scheme as Data):** Question types and marks as data; Version 1 supports `SINGLE_CORRECT` only (`PROPOSED`).
 5. **[ADR-0005](adr/ADR-0005-time-and-clocks.md) (Time & Clocks):** Injected `Clock` protocol, timezone-aware datetimes in UTC, `Asia/Kolkata` at presentation edges (`PROPOSED`).
 6. **[ADR-0006](adr/ADR-0006-schema-and-contract-versioning.md) (Schema & Contract Versioning):** `schema_version` on every serialized artifact, linear numbered SQL migrations (`PROPOSED`).
@@ -51,4 +51,18 @@
 - Linter Check: `ruff check .` (Exit Code: 0)
 - Guardrails Check: `python scripts/guardrails.py` (Exit Code: 0)
 - Git Scope Check: `git diff --name-status` (Confirmed all changed files strictly within SCOPE).
-- Stage Tag: `stage-0-r6` (Commit hash `0b90ac594fb34646cf9e61c126b5a27c5a103279`).
+- Stage Tag: `stage-0-r6` (Commit hash `8f59ebda2fcf46e52bb76da2c2abdb02c89b4600`).
+
+---
+
+## Stage S0-R7 Execution Evidence (Fix Pass Completed)
+- **F1 (Hindi Text Integrity):** Created `scripts/check_hindi_integrity.py`. Verified all `docs/**/*.md` are strict UTF-8, NFC normalized, zero U+FFFD, zero orphan combining marks, zero unapproved Devanagari digits. Verified D-06 banned terms (as `\u` escapes) appear only on normative line 11 of `message_catalog.md` and zero in templates. Verified byte-exact greeting matching across all notification templates.
+- **F2 (Golden Table Byte Identity):** Created `scripts/check_golden_table_identity.py`. Verified lines 10–40 of `docs/prompt_pack/S1.md` (31 OMR rows and subject labels) are 100% byte-identical to `stage-0-r4`. Documented accurate line-9 roster description edit in `docs/reviews/stage-0-r7-fixes.md`.
+- **F3 (State Hash & Tag Hygiene):** Created `scripts/check_state_hashes.py`. Resolved 40-char commit hash `8f59ebda2fcf46e52bb76da2c2abdb02c89b4600` matching `stage-0-r6` tag.
+- **F4 (S1-Blocking Decisions):** Added `Part 1D: S1-BLOCKING Decisions` to `docs/DECISIONS_OPEN.md` enumerating items S1-BLOCK-01 through S1-BLOCK-06 with options and manifest hash consequences. Added blocking prerequisite note before marks entry fixture in `docs/prompt_pack/S1.md`.
+- **F5 (ADR-0003 Status & Re-approval Record):** Updated ADR-0003 status to `ACCEPTED (original single-school scope); AMENDMENT PENDING RE-APPROVAL`. Added `Re-approval record` section. Updated `docs/adr/README.md` and `docs/STATE.md`.
+- **F6 (Working Tree Cleanup):** Applied operator decisions cleanly: committed R-07 confidence to MEDIUM, committed dev dependencies to `pyproject.toml` and `uv.lock`, reverted uncommitted ADR-0014 and ADR-0016 to `PROPOSED`.
+- **F7 (Stage-Aware Guardrails & Whitespace):** Created `docs/CURRENT_STAGE` with value `S0`. Updated `scripts/guardrails.py` so checks skip only when required stage > `CURRENT_STAGE`. Formatted summary line to print `PASSED n / SKIPPED n / FAILED n`. Fixed whitespace and EOF errors via `git diff --check`.
+- **F8 (Invariants Synchronization):** Synchronized Invariants 15, 16, 17 into root `AGENTS.md`. Created `scripts/check_invariants_sync.py` enforcing exact alignment. Documented wording discrepancy (never logged vs masked).
+- **F9 (Meta Pricing & Voice Notes):** Re-verified row R-05 against official Meta pricing docs with retrieval date 2026-10-21 and exact India rates. Recorded 1 Oct 2026 service-window utility charging conflict as OPEN. Added row R-16 for `"voice": true` (Ogg/Opus mono) and renumbered R-17/R-18. Added item `(s)` for 24h customer service window opening to `DECISIONS_OPEN.md`, referenced in `S9.md` and `ADR-0019`.
+- **F10 (Review Rigor Requirements):** Updated `docs/prompt_pack/W2_review.md` adding requirements for raw command evidence, clean worktree execution, mandatory "Attempts to falsify" section (min 3 attempts), and zero-defect gating.

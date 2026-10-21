@@ -13,15 +13,15 @@
 - **N/A**: Deferred or UNVERIFIED.
 
 ### Row-Level Summary
-- **Total Rows:** 17
+- **Total Rows:** 18
 - **Confidence Distribution:**
-  - **HIGH (11):** R-01, R-02, R-04, R-05, R-06, R-07, R-09, R-10, R-11, R-12, R-14, R-15
-  - **MEDIUM (4):** R-03, R-08, R-13
+  - **HIGH (12):** R-01, R-02, R-04, R-05, R-06, R-07, R-09, R-10, R-12, R-14, R-15, R-16
+  - **MEDIUM (4):** R-03, R-08, R-11, R-13
   - **LOW (0):** None
-  - **N/A (2):** R-16, R-17
+  - **N/A (2):** R-17, R-18
 - **UNVERIFIED Items List (3 total):**
-  1. `R-16`: Indian Carrier SMS via TRAI DLT Framework (PE ID, Header, Template ID registration deferred to `docs/PRE_DEPLOYMENT_CHECKLIST.md`, Item C-04).
-  2. `R-17`: Statutory compliance under India DPDP Act, 2023 & DPDP Rules, 2025 (Section 9 verifiable parental consent deferred to `docs/PRE_DEPLOYMENT_CHECKLIST.md`, Items C-01, C-02, C-03).
+  1. `R-17`: Indian Carrier SMS via TRAI DLT Framework (PE ID, Header, Template ID registration deferred to `docs/PRE_DEPLOYMENT_CHECKLIST.md`, Item C-04).
+  2. `R-18`: Statutory compliance under India DPDP Act, 2023 & DPDP Rules, 2025 (Section 9 verifiable parental consent deferred to `docs/PRE_DEPLOYMENT_CHECKLIST.md`, Items C-01, C-02, C-03).
   3. `R-03 (institutional part)`: Deploying school institutional KYC, Meta Business Manager account verification, and active payment method setup (unverified pending institution onboarding).
 
 ---
@@ -34,7 +34,7 @@
 | **R-02** | Customer Service Window & Messaging Rules | `https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages` and `https://developers.facebook.com/docs/whatsapp/pricing` | 2026-10-20 | VOLATILE | HIGH | Stated explicitly on Send Messages guide (24h customer window, error 131047 outside window) and Pricing guide (Per-Message Pricing). | Inbound message opens 24h service window for free-form messages. Outside 24h, any approved template (Utility, Marketing, Authentication) can be sent. Freeform messages outside window fail with error 131047. Pricing transitioned to Per-Message Pricing (PMP). | Meta may dynamically reclassify template categories. Recheck cadence: Monthly. |
 | **R-03** | Account Prerequisites & Business Verification | `https://developers.facebook.com/docs/whatsapp/overview/business-opt-in` and `https://developers.facebook.com/docs/whatsapp/phone-numbers` | 2026-10-20 | VOLATILE | MEDIUM | Platform prerequisites stated explicitly on Meta docs; institutional KYC and account verification for deploying school is UNVERIFIED pending onboarding. | Explicit user opt-in required outside 24h window. Institution requires Meta Business Manager verification, payment method, and registered Phone Number ID in `CONNECTED` status. Starting portfolio limit: 250 unique users/24h. | UNVERIFIED at institutional level: Deploying school KYC and account setup. Recheck cadence: Pre-deployment. |
 | **R-04** | Phone Display Name & Quality Rating | `https://developers.facebook.com/docs/whatsapp/phone-numbers` and `https://developers.facebook.com/docs/whatsapp/messaging-limits` | 2026-10-20 | VOLATILE | HIGH | Stated explicitly on Display Names guide (verification required) and Messaging Limits guide (Green/Yellow/Red quality rating, FLAGGED state). | Display name requires approval (`VERIFIED_NAME`). Quality rating (Green/Yellow/Red) derived from 7-day rolling user feedback. Red rating causes FLAGGED status and blocks tier scaling. | Quality score calculation uses proprietary Meta heuristics. Recheck cadence: Weekly during live dispatch. |
-| **R-05** | Billing & Per-Message Pricing Model | `https://developers.facebook.com/docs/whatsapp/pricing` | 2026-10-20 | VOLATILE | HIGH | Stated explicitly on WhatsApp Business Platform Pricing guide (Per-Message Pricing model, rate categories, free 24h service window). | Billed under Per-Message Pricing (PMP) per delivered message by destination and category. Service messages in 24h window are free. Active payment method required in Business Manager. | Per-message rate cards change periodically by country. Recheck cadence: Quarterly. |
+| **R-05** | Billing & Per-Message Pricing Model | `https://developers.facebook.com/docs/whatsapp/pricing` | 2026-10-21 | VOLATILE | HIGH | Stated explicitly on WhatsApp Business Platform Pricing guide (Per-Message Pricing model, rate categories, free 24h service window, India billing localization). | Billed under Per-Message Pricing (PMP) per delivered message. India (+91) rates: Utility ₹0.1150, Authentication ₹0.1150, Marketing ₹0.8631. Service messages: 1,000 free delivered/month per business phone number; ₹0.1150 thereafter. Mandatory INR migration by Dec 31, 2026. Conflict (OPEN): Partner docs claim utility templates inside customer service window become chargeable in India from 1 Oct 2026, while Meta docs state messages inside customer service window are free. | Per-message rate cards change periodically by country. Recheck cadence: Quarterly. |
 | **R-06** | Template Categories, Review, & Reclassification | `https://developers.facebook.com/docs/whatsapp/message-templates/guidelines` and `https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates` | 2026-10-20 | VOLATILE | HIGH | Stated explicitly on Template Guidelines (Utility/Marketing/Authentication categories, automated review statuses, automatic reclassification to Marketing). | Categories: Utility, Marketing, Authentication. Automated review approves or rejects. Meta may reclassify Utility to Marketing if promotional text is detected. Editing templates triggers re-review (`IN_REVIEW`). | Automated reclassification algorithms are subject to periodic platform tuning. Recheck cadence: Monthly. |
 | **R-07** | Media Supported in Templates (Header Formats) | `https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/components` | 2026-10-20 | STABLE | HIGH | Stated explicitly on Components guide (TEXT, IMAGE, DOCUMENT, VIDEO, LOCATION supported in headers; AUDIO explicitly absent from header component options). | Headers support TEXT (60 chars, 1 var), IMAGE (JPEG/PNG), DOCUMENT (PDF), VIDEO (MP4), LOCATION. **AUDIO IS NOT SUPPORTED IN TEMPLATE HEADERS.** Audio cannot be sent on initial outbound contact. | Component specifications are stable; monitor changelog for potential new header media types. Recheck cadence: Quarterly. |
 | **R-08** | Audio Payload Specifications & Transcoding | `https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media` and `https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#media-object` | 2026-10-20 | STABLE | MEDIUM | Stated explicitly on Media reference for MIME types and mono channel requirement ("mono input only"); 48 kHz sampling rate is inferred from Opus RFC 7845 convention, not explicit on Meta docs. | Standalone audio (24h window) supports AAC, MP3, AMR, and OGG Opus. OGG requires OPUS codec, mono channel. 48kHz is standard Opus convention. Direct file renames fail; must transcode via FFmpeg. | Audio container specifications adhere to RFC 7845; client playback on fragmented Android builds may vary. Recheck cadence: Annual. |
@@ -45,8 +45,9 @@
 | **R-13** | Idempotency & Duplicate-Send Guarantees | `https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages` and `https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks` | 2026-10-20 | STABLE | MEDIUM | Inferred from absence of any `Idempotency-Key` or deduplication header in official `POST /{phone-number-id}/messages` reference documentation. | **No documented guarantee**; Cloud API does NOT support idempotency keys (no `Idempotency-Key` header). Blind HTTP retries cause duplicate outbound sends and duplicate charges. Client must guard state. | Absence of outbound idempotency header confirmed across API reference; monitor for feature drops. Recheck cadence: Quarterly. |
 | **R-14** | Webhook Signatures & Status Semantics | `https://developers.facebook.com/docs/graph-api/webhooks/getting-started` and `https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/components` | 2026-10-20 | VOLATILE | HIGH | Stated explicitly on Webhook documentation (`X-Hub-Signature-256`, raw HMAC-SHA256, statuses `sent`/`delivered`/`read`/`failed`, out-of-order delivery, timestamp sorting). | `X-Hub-Signature-256` HMAC-SHA256 verified over raw payload bytes. Statuses: `sent`, `delivered`, `read`, `failed`. No FIFO delivery guarantee; out-of-order arrival requires timestamp sorting. `read` implies `delivered`. | Webhook payload schemas and status property additions evolve across API versions. Recheck cadence: Quarterly. |
 | **R-15** | Media Upload Limits, Types, & Expiration | `https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media` | 2026-10-20 | STABLE | HIGH | Stated explicitly on Media API Reference (5MB image, 16MB audio/video, 100MB doc; 30-day media ID retention, 5-minute temporary URL lifetime). | Upload limits: Image <= 5MB, Audio <= 16MB, Document <= 100MB, Video <= 16MB. Media ID expires in 30 days (`POST /{phone-id}/media`). Temporary download URLs expire in 5 minutes (`GET /{media-id}`). | Storage retention and download URL lifetimes are stable per current API reference. Recheck cadence: Annual. |
-| **R-16** | Guardian OTP & Carrier SMS (TRAI DLT) | `https://trai.gov.in/sites/default/files/RegulationUcc19072018.pdf` and `https://developers.facebook.com/docs/whatsapp/business-management-api/authentication-templates` | 2026-10-20 | VOLATILE | N/A | Deferred to pre-deployment checklist (`docs/PRE_DEPLOYMENT_CHECKLIST.md`, Item C-04); institutional TRAI DLT registration not yet verified. | WhatsApp authentication template is primary OTP channel. Indian carrier SMS requires TRAI DLT registration (PE ID, Header, Template ID). **UNVERIFIED — DEFERRED to pre-deployment (see checklist)**. | Institutional PE registration and carrier scrubbing compliance deferred to pre-deployment checklist. |
-| **R-17** | India DPDP Framework (Children's Data) | `https://www.meity.gov.in/content/digital-personal-data-protection-act-2023` | 2026-10-20 | VOLATILE | N/A | Deferred to pre-deployment checklist (`docs/PRE_DEPLOYMENT_CHECKLIST.md`, Items C-01, C-02, C-03); formal statutory compliance review not yet completed. | DPDP Act Section 9 requires verifiable parental consent for children (<18). Phased rules implementation. **UNVERIFIED — DEFERRED to pre-deployment (see checklist)**. | Statutory legal review, consent notices, and retention periods deferred to pre-deployment checklist. |
+| **R-16** | Audio Messages Voice Note Flag ("voice": true) | `https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#media-object` | 2026-10-21 | STABLE | HIGH | Stated explicitly in Meta Messages API reference under audio media object specifications. | Supported optional `"voice": true` boolean parameter on audio messages. When set, renders audio in WhatsApp client as an interactive push-to-talk voice note with waveform UI rather than a generic file attachment. Mandates: Ogg container with Opus codec (`audio/ogg; codecs=opus`), mono channel input only. Non-Opus or multi-channel audio causes client playback/rendering failure. | Verify client waveform rendering across older Android versions. Recheck cadence: Annual. |
+| **R-17** | Guardian OTP & Carrier SMS (TRAI DLT) | `https://trai.gov.in/sites/default/files/RegulationUcc19072018.pdf` and `https://developers.facebook.com/docs/whatsapp/business-management-api/authentication-templates` | 2026-10-20 | VOLATILE | N/A | Deferred to pre-deployment checklist (`docs/PRE_DEPLOYMENT_CHECKLIST.md`, Item C-04); institutional TRAI DLT registration not yet verified. | WhatsApp authentication template is primary OTP channel. Indian carrier SMS requires TRAI DLT registration (PE ID, Header, Template ID). **UNVERIFIED — DEFERRED to pre-deployment (see checklist)**. | Institutional PE registration and carrier scrubbing compliance deferred to pre-deployment checklist. |
+| **R-18** | India DPDP Framework (Children's Data) | `https://www.meity.gov.in/content/digital-personal-data-protection-act-2023` | 2026-10-20 | VOLATILE | N/A | Deferred to pre-deployment checklist (`docs/PRE_DEPLOYMENT_CHECKLIST.md`, Items C-01, C-02, C-03); formal statutory compliance review not yet completed. | DPDP Act Section 9 requires verifiable parental consent for children (<18). Phased rules implementation. **UNVERIFIED — DEFERRED to pre-deployment (see checklist)**. | Statutory legal review, consent notices, and retention periods deferred to pre-deployment checklist. |
 
 ---
 
@@ -143,8 +144,8 @@
 
 ### 5. Billing & Per-Message Pricing Model (R-05)
 * **Exact URL:** `https://developers.facebook.com/docs/whatsapp/pricing`
-* **Section / Title:** "WhatsApp Business Platform Pricing"
-* **Retrieval Date:** 2026-10-20
+* **Section / Title:** "WhatsApp Business Platform: Pricing" and "Billing Localization for India"
+* **Retrieval Date:** 2026-10-21
 * **Volatility:** `VOLATILE`
 * **Confidence:** `HIGH`
 * **Official Findings:**
@@ -152,14 +153,22 @@
   2. Rates vary depending on:
      - The recipient's country code (`+91` for India).
      - The message category: **Marketing**, **Utility**, **Authentication**, or **Service**.
-  3. Utility messages (transactional scorecards) carry a lower per-message rate than Marketing templates.
-  4. Service messages delivered inside the customer service window (replies to inbound parent inquiries) are free of charge.
-  5. Billing Prerequisites: An active credit card or Meta-approved monthly invoice line of credit must be linked to the Meta Business Manager portfolio.
+  3. **Official India (+91) Per-Message Rates (INR):**
+     - **Utility:** ₹0.1150 per delivered message.
+     - **Authentication:** ₹0.1150 per delivered message.
+     - **Marketing:** ₹0.8631 per delivered message.
+     - **Service:** 1,000 delivered service messages per month free per business phone number; ₹0.1150 per message after the free tier has been used.
+  4. **Billing Localization for India:** Launched on January 1, 2026 for directly integrated businesses in India. Eligible customers must ensure all messaging accounts in their Business Portfolio are migrated to INR by December 31, 2026 to avoid service disruption.
+  5. **Pricing & Customer Service Window Conflict (OPEN):**
+     - Certain partner / BSP sources claim that effective 1 October 2026, utility templates sent inside an open 24-hour customer service window become chargeable in India.
+     - Conversely, Meta's official pricing documentation states that marketing, utility, authentication, and service messages delivered inside a customer service window (CSW) remain free of charge (effective July 1, 2025).
+     - Status: **`OPEN`** pending official Meta platform clarification. The engine assumes defensive budgeting.
+  6. Billing Prerequisites: An active payment method or Meta-approved monthly invoice line of credit must be linked to the Meta Business Manager portfolio.
 * **Conclusion:**
-  - The engine must classify templates strictly as Utility to avoid higher Marketing rates.
-  - Price figures must not be hardcoded in application code, as rates are variable.
+  - The engine must classify academic/attendance templates strictly as Utility to avoid higher Marketing rates.
+  - Price figures must not be hardcoded in application logic, as rates fluctuate and volume tiers may apply.
 * **Unresolved Uncertainty & Recheck Cadence:**
-  - Market-specific per-message rate cards for India (`+91`) are revised periodically by Meta. Recheck cadence: Quarterly.
+  - Market-specific per-message rate cards for India (`+91`) and service-window utility template charging rules. Status: **`OPEN`**. Recheck cadence: Monthly.
 
 ---
 
@@ -419,7 +428,29 @@
 
 ---
 
-### 16. Guardian Verification & OTP Delivery Channels in India (UNVERIFIED — DEFERRED to pre-deployment, see checklist) (R-16)
+### 16. Audio Messages Voice Note Flag ("voice": true) (R-16)
+* **Exact URL:** `https://developers.facebook.com/docs/whatsapp/cloud-api/reference/messages#media-object`
+* **Section / Title:** "Messages API: Audio Media Object Specification"
+* **Retrieval Date:** 2026-10-21
+* **Volatility:** `STABLE`
+* **Confidence:** `HIGH`
+* **Official Findings:**
+  1. Meta Cloud API Messages endpoint supports an optional `"voice": true` boolean parameter on audio media objects.
+  2. When `"voice": true` is specified, the WhatsApp mobile client renders the audio payload as an interactive, inline push-to-talk voice message with a playable waveform scrubber UI, rather than a generic audio file attachment.
+  3. **Technical Container and Codec Requirements:**
+     - Container: OGG container format.
+     - Codec: Opus audio codec (`audio/ogg; codecs=opus`). Base `audio/ogg` (Vorbis) is unsupported.
+     - Channels: Strictly single channel (**`mono input only`**). Stereo or multi-channel audio will fail or produce rendering errors.
+     - Bitrate: Standard speech bitrate 24–32 kbps; 48 kHz Opus internal rate.
+  4. Voice note messages cannot be delivered as template headers (prohibited by R-07); they can only be sent as service messages inside an open 24-hour customer service window.
+* **Conclusion:**
+  - Audio payloads intended for parent voice notes must be transcoded with FFmpeg to mono Opus inside an Ogg container and dispatched with `"voice": true`.
+* **Unresolved Uncertainty & Recheck Cadence:**
+  - Client rendering consistency of waveform scrubber across older Android builds. Recheck cadence: Annual.
+
+---
+
+### 17. Guardian Verification & OTP Delivery Channels in India (UNVERIFIED — DEFERRED to pre-deployment, see checklist) (R-17)
 * **Exact URL:** `https://trai.gov.in/sites/default/files/RegulationUcc19072018.pdf` (TRAI TCCCPR 2018) and `https://developers.facebook.com/docs/whatsapp/business-management-api/authentication-templates`
 * **Section / Title:** "Telecom Commercial Communications Customer Preference Regulations, 2018 (DLT Framework)" and "WhatsApp Authentication Templates (OTP Delivery)"
 * **Retrieval Date:** 2026-10-20
@@ -444,7 +475,7 @@
 
 ---
 
-### 17. India Digital Personal Data Protection (DPDP) Act, 2023 & DPDP Rules (UNVERIFIED — DEFERRED to pre-deployment, see checklist) (R-17)
+### 18. India Digital Personal Data Protection (DPDP) Act, 2023 & DPDP Rules (UNVERIFIED — DEFERRED to pre-deployment, see checklist) (R-18)
 * **Exact URL:** `https://www.meity.gov.in/content/digital-personal-data-protection-act-2023` (DPDP Act No. 22 of 2023 and DPDP Rules Gazette Notifications)
 * **Section / Title:** "Digital Personal Data Protection Act, 2023, Section 9 (Processing of personal data of children)" and "DPDP Rules, 2025 (Commencement and Phased Implementation)"
 * **Retrieval Date:** 2026-10-20

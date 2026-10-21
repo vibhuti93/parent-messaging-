@@ -1,7 +1,7 @@
 # ADR-0003: Identifiers, Idempotency Keys, and Institutional Tenancy
 
 ## Status
-`ACCEPTED (modified)` (Accepted by operator, 2026-10-20; single-school scope superseded by operator decision 2026-10-21 establishing multi-tenant hosted service from inception. See ADR-0017 for multi-school tenancy architecture. ADR-0003 core text, opaque UUIDs, and composite idempotency key design are retained.)
+`ACCEPTED (original single-school scope); AMENDMENT PENDING RE-APPROVAL` (Accepted by operator, 2026-10-20; single-school scope superseded by operator decision 2026-10-21 establishing multi-tenant hosted service from inception. Multi-tenant amendment awaiting operator re-approval. See ADR-0017 for multi-school tenancy architecture. ADR-0003 core text, opaque UUIDs, and composite idempotency key design are retained.)
 
 ## Context
 The system tracks students, exams, scanned sheets, diagnostic records, delivery attempts, and parent confirmations.
@@ -45,3 +45,6 @@ We propose **Option 2 (Opaque Surrogate UUIDs, PII-Free Composite Keys, and `org
 
 ## Revisit When
 Revisit if the operator confirms the deployment will permanently remain single-school standalone with no multi-institution requirement.
+
+## Re-approval record
+Operator re-approval of multi-tenant amendment: PENDING [OPERATOR: fill date + reference, or leave PENDING]

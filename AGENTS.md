@@ -4,7 +4,7 @@ You are building `omr_dispatch_engine` (Python 3.11+, Pydantic v2, `src/omr_disp
 
 ## Process
 1. Read `AGENTS.md`, `PROJECT_SPEC.md`, `docs/STATE.md` before acting. Work on exactly one stage per session. Stop at the end of the stage and report; never start the next one.
-2. Inspect the repo before editing. Never overwrite user work. Stay inside the stage's Allowed files.
+2. Inspect the repo before editing. Never overwrite user work. Stay inside the stage's **Allowed files**.
 3. If two requirements conflict, or a decision is missing, write it to `docs/DECISIONS_OPEN.md` with the conflicting clauses and the minimum safe resolution, then stop and ask. Never make an unapproved business-rule change.
 4. Report only evidence: files changed, commands actually run, exit codes, actual test counts, skips with reasons. Do not write "passed", "verified", "compliant", "delivered", or "production-ready" without matching evidence.
 5. Update `docs/STATE.md` at the end of each stage (status, evidence, open questions, fixture manifest hash).
@@ -21,6 +21,9 @@ You are building `omr_dispatch_engine` (Python 3.11+, Pydantic v2, `src/omr_disp
 12. Do not assert any external API, pricing, template, or legal fact that is not recorded in `docs/research/official_source_verification.md`. Unverified → mark `UNVERIFIED` and keep the dependent feature disabled.
 13. Fail closed: uncertain input → `REVIEW_REQUIRED` / block / defer, never a guess. An uncertain send outcome is `UNKNOWN_NEEDS_REVIEW`, never a blind retry.
 14. Parent-facing text describes observable indicators only; no claims about intent, lying, or psychology.
+15. Every repository call requires an explicit org context (`org_id`); calls without an org context must fail closed.
+16. No global credentials or shared phone-number IDs; every provider call resolves credentials from the calling org's sender identity.
+17. Child names (`child_display_name`) and class/section labels are never logged in application logs.
 
 ## Stop-and-Ask Triggers
 Stop and ask the operator when:

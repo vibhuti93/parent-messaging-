@@ -1,7 +1,7 @@
 # Pre-Deployment Regulatory & Compliance Checklist
 
-**Status:** Deferred by the operator. The project is NOT cleared for deployment or for real student/parent data until every item is closed.  
-**Date Deferred:** 2026-10-20  
+**Status:** Deferred by the operator. The project is NOT cleared for deployment or for real student/parent data until every item is closed.
+**Date Deferred:** 2026-10-20
 **Governing Rule:** Development and automated testing proceed exclusively using synthetic test fixtures. All legal reviews, regulatory registrations, and production account clearances are strictly gated behind this pre-deployment checklist.
 
 ---
@@ -32,26 +32,26 @@
 
 The following items were removed from active development gates and transferred to this checklist per operator authorization:
 
-1. **PROJECT_SPEC.md (Line 44, D-13):**  
-   - *Original text:* `**D-13 Retention (proposal only, needs legal review).**`  
+1. **PROJECT_SPEC.md (Line 44, D-13):**
+   - *Original text:* `**D-13 Retention (proposal only, needs legal review).**`
    - *Transferred item:* Legal review of retention schedules transferred to Item **C-03** above.
-2. **PROJECT_SPEC.md (Line 40, D-11):**  
-   - *Original text:* `S0 must verify prerequisites, including any Indian SMS registration requirements`  
+2. **PROJECT_SPEC.md (Line 40, D-11):**
+   - *Original text:* `S0 must verify prerequisites, including any Indian SMS registration requirements`
    - *Transferred item:* Indian carrier SMS TRAI DLT verification transferred to Item **C-04** above.
-3. **docs/prompt_pack/S0.md (Line 20):**  
-   - *Original text:* `India's DPDP framework: current legal texts, commencement/rules status, children's-data and guardian-consent requirements. Treat as release-blocking, needing documented legal review. Do not claim compliance.`  
+3. **docs/prompt_pack/S0.md (Line 20):**
+   - *Original text:* `India's DPDP framework: current legal texts, commencement/rules status, children's-data and guardian-consent requirements. Treat as release-blocking, needing documented legal review. Do not claim compliance.`
    - *Transferred item:* DPDP legal review requirement transferred to Item **C-01** above.
-4. **docs/prompt_pack/S0.md (Line 19):**  
-   - *Original text:* `OTP delivery options for guardian verification (authentication templates vs SMS) and any Indian SMS registration prerequisites;`  
+4. **docs/prompt_pack/S0.md (Line 19):**
+   - *Original text:* `OTP delivery options for guardian verification (authentication templates vs SMS) and any Indian SMS registration prerequisites;`
    - *Transferred item:* SMS registration verification transferred to Item **C-04** above.
-5. **docs/prompt_pack/S13.md (Line 8, W8):**  
-   - *Original text:* Release blocker gate on legal/DPDP review recorded.  
+5. **docs/prompt_pack/S13.md (Line 8, W8):**
+   - *Original text:* Release blocker gate on legal/DPDP review recorded.
    - *Transferred item:* Development blocker replaced by pre-deployment checklist closure verification (Item **P-04**).
-6. **docs/DECISIONS_OPEN.md (Section 5):**  
-   - *Original text:* `D-13: Retention Policy & DPDP Alignment (LEGAL REVIEW REQUIRED)`  
+6. **docs/DECISIONS_OPEN.md (Section 5):**
+   - *Original text:* `D-13: Retention Policy & DPDP Alignment (LEGAL REVIEW REQUIRED)`
    - *Transferred item:* Moved to "Deferred to pre-deployment" section in `docs/DECISIONS_OPEN.md`.
-7. **docs/research/official_source_verification.md (Sections 8 & 9):**  
-   - *Original text:* Active development release blockers for TRAI DLT readiness and DPDP institutional sign-off.  
+7. **docs/research/official_source_verification.md (Sections 8 & 9):**
+   - *Original text:* Active development release blockers for TRAI DLT readiness and DPDP institutional sign-off.
    - *Transferred item:* Marked `UNVERIFIED — DEFERRED to pre-deployment (see checklist)`.
 
 ---
@@ -69,4 +69,3 @@ The following operational, legal, and security items govern the hosted multi-sch
 | **P-09** | **Per-School Cost Allocation & Metering** | `NOT STARTED` | Implementation and verification of automated per-school message metering and cost allocation reports reconciling monthly platform-delivered template counts against Meta billing invoices. |
 | **P-10** | **Multi-Tenant Hosting, Backups, and Incident Response** | `NOT STARTED` | Production deployment on managed PostgreSQL with automated point-in-time recovery (PITR), off-site encrypted backups, tenant-filtered logical restore tooling, 99.9% uptime SLA monitoring, and a 24/7 security incident response runbook. |
 | **P-11** | **Pre-Launch Cross-Tenant Isolation Test with External Review** | `NOT STARTED` | Independent third-party security audit and penetration test validating: (a) PostgreSQL Row-Level Security (RLS) enforcement, (b) repository-level tenant context gating, (c) webhook routing isolation by `phone_number_id`, and (d) zero cross-tenant data leakage under concurrent batch execution (ADR-0017). |
-

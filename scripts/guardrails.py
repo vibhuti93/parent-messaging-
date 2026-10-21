@@ -1,24 +1,42 @@
 #!/usr/bin/env python3
 """
-W3 Guardrail Checker for omr_dispatch_engine
+W3 Guardrail Checker for omr_dispatch_engine.
+
 Enforces:
   1. Forbidden pattern scan (banned flags, hardcoded versions, .ogg renames, unmasked numbers, localhost)
   2. Banned Hindi vocabulary lint over templates and golden outputs (W3 & D-06)
   3. Secrets scanner (API keys, private keys, access tokens)
-  4. Staged fixture-hash validation (manifest.json check once S1 completes)
-  5. Test-count integrity check (monotonically non-decreasing test count)
-  6. Foundation lint rules (ADR-0002, ADR-0005, ADR-0008, ADR-0009):
+  4. Hindi integrity checker (scripts/check_hindi_integrity.py)
+  5. State hash and tag checker (scripts/check_state_hashes.py)
+  6. Invariants synchronization checker (scripts/check_invariants_sync.py)
+  7. Git diff whitespace / EOF checker (git diff --check)
+  8. Staged fixture-hash validation (manifest.json check once S1 completes)
+  9. Test-count integrity check (monotonically non-decreasing test count)
+ 10. Foundation lint rules (ADR-0002, ADR-0005, ADR-0008, ADR-0009):
      - No datetime.now/utcnow or naive datetime in src/ (ADR-0005)
      - No float in core package once it exists (ADR-0002)
      - No os.environ outside settings module once it exists (ADR-0009)
      - No print( in src/ (ADR-0008)
+
+Stage-aware skip policy (F7):
+A check may SKIP only when its required stage is strictly later than docs/CURRENT_STAGE.
+If the stage has been reached and its required artefact is missing, the check FAILS.
+Summary line format: PASSED n / SKIPPED n / FAILED n
 """
+
+from __future__ import annotations
+
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+# Reconfigure stdout for utf-8 output on Windows consoles
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -40,13 +58,13 @@ FORBIDDEN_LOCALHOST_FILES = [
     re.compile(r"^\.env\.production$"),
 ]
 
-# 2. Banned Hindi vocabulary per D-06 (scanned ONLY in templates and golden outputs per W3)
+# 2. Banned Hindi vocabulary per D-06 (scanned strictly in templates and golden outputs per W3)
 BANNED_HINDI_TERMS = [
-    "ऋणात्मक अंकन",
-    "प्रतिशतता",
-    "प्राप्तांक",
-    "पूर्णांक",
-    "औसत मान",
+    "\u090b\u0923\u093e\u0924\u094d\u092e\u0915 \u0905\u0902\u0915\u0928",
+    "\u092a\u094d\u0930\u0924\u093f\u0936\u0924\u0924\u093e",
+    "\u092a\u094d\u0930\u093e\u092a\u094d\u0924\u093e\u0902\u0915",
+    "\u092a\u0942\u0930\u094d\u0923\u093e\u0902\u0915",
+    "\u0914\u0938\u0924 \u092e\u093e\u0928",
 ]
 
 # 3. Secrets scanner (scanned across all text files)
@@ -59,7 +77,22 @@ SECRET_PATTERNS = [
 TEXT_EXTENSIONS = {".py", ".html", ".j2", ".json", ".yaml", ".yml", ".md", ".sh", ".txt"}
 
 
-def check_forbidden_patterns_and_secrets() -> list[str]:
+def get_current_stage() -> int:
+    stage_file = REPO_ROOT / "docs" / "CURRENT_STAGE"
+    if not stage_file.exists():
+        raise RuntimeError("docs/CURRENT_STAGE file is missing!")
+    stage_text = stage_file.read_text(encoding="utf-8").strip()
+    match = re.search(r"(\d+)", stage_text)
+    if not match:
+        raise RuntimeError(f"Cannot parse stage number from docs/CURRENT_STAGE: '{stage_text}'")
+    return int(match.group(1))
+
+
+# ==============================================================================
+# S0 Check Implementations
+# ==============================================================================
+
+def check_forbidden_patterns_and_secrets() -> tuple[str, list[str]]:
     violations = []
     for path in REPO_ROOT.rglob("*"):
         if not path.is_file() or path.suffix not in TEXT_EXTENSIONS:
@@ -101,17 +134,83 @@ def check_forbidden_patterns_and_secrets() -> list[str]:
         if is_hindi_target:
             for term in BANNED_HINDI_TERMS:
                 if term in content:
-                    violations.append(f"[{rel_path}] Banned user-facing Hindi term '{term}' detected (D-06 rule)")
+                    violations.append(f"[{rel_path}] Banned user-facing Hindi term detected (D-06 rule)")
 
-    return violations
+    if violations:
+        return "FAILED", violations
+    return "PASSED", []
 
 
-def check_fixture_hashes() -> list[str]:
-    """W3 Fixture hash check: Staged for activation once S1 creates manifest.json."""
+def check_hindi_integrity_tool() -> tuple[str, list[str]]:
+    script_path = REPO_ROOT / "scripts" / "check_hindi_integrity.py"
+    if not script_path.exists():
+        return "FAILED", ["scripts/check_hindi_integrity.py not found"]
+
+    proc = subprocess.run([sys.executable, str(script_path)], cwd=REPO_ROOT, capture_output=True, text=True)
+    if proc.returncode != 0:
+        output_lines = [l.strip() for l in proc.stdout.splitlines() if l.strip()]
+        err_lines = [l.strip() for l in proc.stderr.splitlines() if l.strip()]
+        return "FAILED", output_lines + err_lines
+    return "PASSED", []
+
+
+def check_state_hashes_tool() -> tuple[str, list[str]]:
+    script_path = REPO_ROOT / "scripts" / "check_state_hashes.py"
+    if not script_path.exists():
+        return "FAILED", ["scripts/check_state_hashes.py not found"]
+
+    proc = subprocess.run([sys.executable, str(script_path)], cwd=REPO_ROOT, capture_output=True, text=True)
+    if proc.returncode != 0:
+        output_lines = [l.strip() for l in proc.stdout.splitlines() if l.strip()]
+        err_lines = [l.strip() for l in proc.stderr.splitlines() if l.strip()]
+        return "FAILED", output_lines + err_lines
+    return "PASSED", []
+
+
+def check_invariants_sync_tool() -> tuple[str, list[str]]:
+    script_path = REPO_ROOT / "scripts" / "check_invariants_sync.py"
+    if not script_path.exists():
+        return "FAILED", ["scripts/check_invariants_sync.py not found"]
+
+    proc = subprocess.run([sys.executable, str(script_path)], cwd=REPO_ROOT, capture_output=True, text=True)
+    if proc.returncode != 0:
+        output_lines = [l.strip() for l in proc.stdout.splitlines() if l.strip()]
+        err_lines = [l.strip() for l in proc.stderr.splitlines() if l.strip()]
+        return "FAILED", output_lines + err_lines
+    return "PASSED", []
+
+
+def check_git_diff_whitespace() -> tuple[str, list[str]]:
+    # Run git diff --check on HEAD (or cached staged diffs), excluding frozen historical reviews
+    # per hard boundary ("Do not edit the old review").
+    cmd = [
+        "git", "diff", "--check", "HEAD", "--", ".",
+        ":(exclude)docs/reviews/stage-0-r4.md",
+        ":(exclude)docs/reviews/stage-0-r5-r6.md",
+    ]
+    proc = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
+    if proc.returncode != 0:
+        violations = [
+            l.strip() for l in proc.stdout.splitlines()
+            if "trailing whitespace" in l or "new blank line at EOF" in l
+        ]
+        if not violations:
+            violations = [l.strip() for l in proc.stdout.splitlines() if l.strip()]
+        return "FAILED", violations
+    return "PASSED", []
+
+
+# ==============================================================================
+# S1+ Stage-Aware Check Implementations
+# ==============================================================================
+
+def check_fixture_hashes(current_stage: int) -> tuple[str, list[str]]:
     manifest_path = REPO_ROOT / "fixtures" / "golden" / "manifest.json"
+    if current_stage < 1:
+        return "SKIPPED", ["fixtures/golden/manifest.json staged for S1"]
+
     if not manifest_path.exists():
-        print("[FIXTURE GUARD] fixtures/golden/manifest.json not present yet (S1 pending) -> SKIPPED")
-        return []
+        return "FAILED", ["[FIXTURE GUARD] fixtures/golden/manifest.json missing in Stage S1+!"]
 
     violations = []
     try:
@@ -130,20 +229,23 @@ def check_fixture_hashes() -> list[str]:
     except Exception as e:
         violations.append(f"Failed to validate manifest.json: {e}")
 
-    return violations
+    if violations:
+        return "FAILED", violations
+    return "PASSED", []
 
 
-def check_test_count_integrity() -> list[str]:
-    """Ensure test counts never decrease (W3 rule)."""
+def check_test_count_integrity(current_stage: int) -> tuple[str, list[str]]:
     baseline_file = REPO_ROOT / "docs" / ".test_count_baseline"
+    if current_stage < 1:
+        return "SKIPPED", ["docs/.test_count_baseline staged for S1"]
+
     if not baseline_file.exists():
-        print("[TEST INTEGRITY] docs/.test_count_baseline not found -> SKIPPED (staged for S1)")
-        return []
+        return "FAILED", ["docs/.test_count_baseline missing in Stage S1+!"]
 
     try:
         prev_count = int(baseline_file.read_text(encoding="utf-8").strip())
     except ValueError:
-        return ["docs/.test_count_baseline contains an invalid integer"]
+        return "FAILED", ["docs/.test_count_baseline contains an invalid integer"]
 
     cmd = ["pytest", "--collect-only", "-q"]
     proc = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
@@ -151,7 +253,7 @@ def check_test_count_integrity() -> list[str]:
     current_count = int(match.group(1)) if match else 0
 
     if current_count < prev_count:
-        return [
+        return "FAILED", [
             f"[TEST COUNT DROP] Current test count ({current_count}) is less than baseline ({prev_count})! "
             "Tests may never be weakened, skipped, or deleted (Part C rule 6, W3 rule)."
         ]
@@ -160,26 +262,22 @@ def check_test_count_integrity() -> list[str]:
         baseline_file.write_text(str(current_count), encoding="utf-8")
         print(f"[TEST INTEGRITY] Updated baseline test count: {prev_count} -> {current_count}")
 
-    return []
+    return "PASSED", []
 
 
-# ==============================================================================
-# S0-R4 Foundation Guardrail Checks (ADR-0002, ADR-0005, ADR-0008, ADR-0009)
-# ==============================================================================
-
-def check_time_hygiene() -> list[str]:
-    """ADR-0005: Ban datetime.now() without tz, datetime.utcnow(), and naive datetimes in src/."""
-    violations = []
+def check_time_hygiene(current_stage: int) -> tuple[str, list[str]]:
     src_dir = REPO_ROOT / "src"
+    if current_stage < 2:
+        return "SKIPPED", ["src/ application code staged for S2"]
+
     if not src_dir.exists():
-        print("[TIME HYGIENE] src/ directory not present yet -> SKIPPED")
-        return []
+        return "FAILED", ["src/ directory missing in Stage S2+!"]
 
     py_files = [p for p in src_dir.rglob("*.py") if p.is_file() and p.name != "__init__.py"]
     if not py_files:
-        print("[TIME HYGIENE] No application source files in src/ yet -> SKIPPED")
-        return []
+        return "FAILED", ["No application source files in src/ for Stage S2+!"]
 
+    violations = []
     banned_time_patterns = [
         (re.compile(r"datetime\.(?:utcnow|today)\s*\("), "datetime.utcnow() or datetime.today() is forbidden; use injected Clock or datetime.now(timezone.utc) per ADR-0005"),
         (re.compile(r"datetime\.now\s*\(\s*\)"), "datetime.now() without explicit timezone is forbidden; use injected Clock or datetime.now(timezone.utc) per ADR-0005"),
@@ -197,12 +295,15 @@ def check_time_hygiene() -> list[str]:
             if regex.search(content):
                 violations.append(f"[{rel}] [TIME HYGIENE] {msg}")
 
-    return violations
+    if violations:
+        return "FAILED", violations
+    return "PASSED", []
 
 
-def check_no_float_in_core() -> list[str]:
-    """ADR-0002: Ban float types and float conversions in the pure core package once it exists."""
-    violations = []
+def check_no_float_in_core(current_stage: int) -> tuple[str, list[str]]:
+    if current_stage < 2:
+        return "SKIPPED", ["Core package staged for S2"]
+
     core_candidates = [
         REPO_ROOT / "src" / "omr_dispatch" / "core",
         REPO_ROOT / "src" / "omr_dispatch" / "diagnostics.py",
@@ -217,9 +318,9 @@ def check_no_float_in_core() -> list[str]:
             core_files.extend([p for p in cand.rglob("*.py") if p.is_file() and p.name != "__init__.py"])
 
     if not core_files:
-        print("[CORE NUMERICS] Core package not present yet -> SKIPPED (ADR-0002 staged)")
-        return []
+        return "FAILED", ["Core package missing in Stage S2+!"]
 
+    violations = []
     banned_float_patterns = [
         (re.compile(r":\s*float\b"), "Type annotation 'float' is forbidden in core package; use int, Fraction, or Decimal per ADR-0002"),
         (re.compile(r"->\s*float\b"), "Return type 'float' is forbidden in core package; use int, Fraction, or Decimal per ADR-0002"),
@@ -238,25 +339,27 @@ def check_no_float_in_core() -> list[str]:
             if regex.search(content):
                 violations.append(f"[{rel}] [CORE NUMERICS] {msg}")
 
-    return violations
+    if violations:
+        return "FAILED", violations
+    return "PASSED", []
 
 
-def check_os_environ_hygiene() -> list[str]:
-    """ADR-0009: Ban os.environ / os.getenv reads outside of the settings module once it exists."""
-    violations = []
+def check_os_environ_hygiene(current_stage: int) -> tuple[str, list[str]]:
     src_dir = REPO_ROOT / "src"
+    if current_stage < 2:
+        return "SKIPPED", ["src/ application code staged for S2"]
+
     if not src_dir.exists():
-        print("[ENV HYGIENE] src/ directory not present yet -> SKIPPED")
-        return []
+        return "FAILED", ["src/ directory missing in Stage S2+!"]
 
     py_files = [
         p for p in src_dir.rglob("*.py")
         if p.is_file() and p.name != "__init__.py" and p.name not in ("config.py", "settings.py")
     ]
     if not py_files:
-        print("[ENV HYGIENE] No non-settings source files in src/ yet -> SKIPPED (ADR-0009 staged)")
-        return []
+        return "FAILED", ["No application source files in src/ for Stage S2+!"]
 
+    violations = []
     banned_env_patterns = [
         (re.compile(r"\bos\.environ\b"), "Direct read of 'os.environ' is forbidden outside settings module; use Settings object per ADR-0009"),
         (re.compile(r"\bos\.getenv\s*\("), "Direct read of 'os.getenv()' is forbidden outside settings module; use Settings object per ADR-0009"),
@@ -274,22 +377,24 @@ def check_os_environ_hygiene() -> list[str]:
             if regex.search(content):
                 violations.append(f"[{rel}] [ENV HYGIENE] {msg}")
 
-    return violations
+    if violations:
+        return "FAILED", violations
+    return "PASSED", []
 
 
-def check_no_print_in_src() -> list[str]:
-    """ADR-0008: Ban raw print() statements in src/."""
-    violations = []
+def check_no_print_in_src(current_stage: int) -> tuple[str, list[str]]:
     src_dir = REPO_ROOT / "src"
+    if current_stage < 2:
+        return "SKIPPED", ["src/ application code staged for S2"]
+
     if not src_dir.exists():
-        print("[LOGGING HYGIENE] src/ directory not present yet -> SKIPPED")
-        return []
+        return "FAILED", ["src/ directory missing in Stage S2+!"]
 
     py_files = [p for p in src_dir.rglob("*.py") if p.is_file() and p.name != "__init__.py"]
     if not py_files:
-        print("[LOGGING HYGIENE] No application source files in src/ yet -> SKIPPED (ADR-0008 staged)")
-        return []
+        return "FAILED", ["No application source files in src/ for Stage S2+!"]
 
+    violations = []
     banned_print = re.compile(r"\bprint\s*\(")
 
     for p in py_files:
@@ -306,50 +411,60 @@ def check_no_print_in_src() -> list[str]:
                 "Use structured logger with automatic redaction per ADR-0008."
             )
 
-    return violations
-
-
-def main():
-    all_violations = []
-
-    print("=== Running W3 & Foundation Guardrails ===")
-    violations = check_forbidden_patterns_and_secrets()
     if violations:
-        all_violations.extend(violations)
+        return "FAILED", violations
+    return "PASSED", []
 
-    hash_violations = check_fixture_hashes()
-    if hash_violations:
-        all_violations.extend(hash_violations)
 
-    test_violations = check_test_count_integrity()
-    if test_violations:
-        all_violations.extend(test_violations)
+def main() -> int:
+    current_stage = get_current_stage()
+    print(f"=== Running Guardrails (Current Stage: S{current_stage}) ===")
 
-    time_violations = check_time_hygiene()
-    if time_violations:
-        all_violations.extend(time_violations)
+    checks: list[tuple[str, tuple[str, list[str]]]] = [
+        ("Forbidden Patterns & Secrets", check_forbidden_patterns_and_secrets()),
+        ("Hindi Integrity Check", check_hindi_integrity_tool()),
+        ("State Hashes & Tags Check", check_state_hashes_tool()),
+        ("Invariants Synchronization Check", check_invariants_sync_tool()),
+        ("Git Diff & Whitespace Check", check_git_diff_whitespace()),
+        ("Fixture Hash Validation", check_fixture_hashes(current_stage)),
+        ("Test Count Integrity Check", check_test_count_integrity(current_stage)),
+        ("Time Hygiene Check", check_time_hygiene(current_stage)),
+        ("Core Numerics Check", check_no_float_in_core(current_stage)),
+        ("Environment Hygiene Check", check_os_environ_hygiene(current_stage)),
+        ("Logging Hygiene Check", check_no_print_in_src(current_stage)),
+    ]
 
-    float_violations = check_no_float_in_core()
-    if float_violations:
-        all_violations.extend(float_violations)
+    passed_count = 0
+    skipped_count = 0
+    failed_count = 0
+    all_failures: list[str] = []
 
-    env_violations = check_os_environ_hygiene()
-    if env_violations:
-        all_violations.extend(env_violations)
+    for name, (status, msgs) in checks:
+        if status == "PASSED":
+            passed_count += 1
+            print(f"  [PASS] {name}")
+        elif status == "SKIPPED":
+            skipped_count += 1
+            skip_msg = f" ({msgs[0]})" if msgs else ""
+            print(f"  [SKIP] {name}{skip_msg}")
+        elif status == "FAILED":
+            failed_count += 1
+            print(f"  [FAIL] {name}")
+            for m in msgs:
+                all_failures.append(f"[{name}] {m}")
 
-    print_violations = check_no_print_in_src()
-    if print_violations:
-        all_violations.extend(print_violations)
+    print("\n------------------------------------------------------------")
+    print(f"PASSED {passed_count} / SKIPPED {skipped_count} / FAILED {failed_count}")
+    print("------------------------------------------------------------")
 
-    if all_violations:
-        print("\n[GUARDRAIL FAILURE] Found violations:")
-        for v in all_violations:
-            print(f"  - {v}")
-        sys.exit(1)
+    if failed_count > 0:
+        print("\nFailures:")
+        for f in all_failures:
+            print(f"  - {f}")
+        return 1
 
-    print("[GUARDRAIL PASS] All pre-commit guardrails satisfied.")
-    sys.exit(0)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

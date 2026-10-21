@@ -110,6 +110,7 @@ In accordance with `AGENTS.md` Invariant 12, the engine makes **no claims** rega
 2. *Webhook Subscription:* Can a single Meta App receive webhooks from multiple distinct WABA accounts across different business entities, or must each WABA register its own webhook subscription?
 3. *Token Lifecycle:* Are permanent System User tokens issued per WABA, or are short-lived tokens refreshed via OAuth2?
 4. *Billing Liability:* Does Meta bill each school's attached credit card directly, or does the SaaS platform invoice via consolidated partner billing?
+5. *Service-Window Opening for Audio Notes:* How the parent's 24-hour service window is opened before sending non-template voice notes is undecided (governed by open decision item (s) in `docs/DECISIONS_OPEN.md`, marked `UNVERIFIED` / `OWNER-CONFIRM`).
 
 *Engineering Stance:* All dependent multi-account onboarding automation remains disabled. Development uses statically configured sender identities via environment references.
 

@@ -226,4 +226,3 @@ It defines the PII classification, operational purpose, development retention li
 | `mime_type` | `str` | `OPERATIONAL_SYSTEM` | `image/png`, `application/pdf`, `audio/ogg`.| Current academic year | `ALLOWED` | Destroyed on purge. |
 | `size_bytes` | `int` | `OPERATIONAL_SYSTEM` | File byte length. | Current academic year | `ALLOWED` | Destroyed on purge. |
 | `sha256_hash` | `str` | `OPERATIONAL_SYSTEM` | Cryptographic integrity checksum. | Current academic year | `ALLOWED` | Destroyed on purge. |
-

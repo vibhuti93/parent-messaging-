@@ -190,4 +190,3 @@ This document enumerates every parent-facing WhatsApp notification message suppo
 Per release verification and privacy invariants, only the following message artifacts in the system lack explicit child name and class/section tokens:
 1. **`GUARDIAN_OTP_CHALLENGE`**: Standard authentication template message delivering 6-digit verification passcodes. Lacks student name and class due to Meta WhatsApp Authentication category restrictions.
 2. **Recorded Token Audio Note (`voice_note_script_hi`)**: Companion voice note payload delivering spoken diagnostics. Uses gender-neutral phrasing (`"आपके बच्चे"`) without spoken child name or class (ADR-0010, S7). It is strictly delivered inside the 24-hour service window as an optional extra or quoted reply to the primary named text message, and never dispatched standalone.
-

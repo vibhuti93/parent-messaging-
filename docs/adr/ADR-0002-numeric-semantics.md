@@ -48,30 +48,40 @@ We propose **Option 3 (Integer Marks, Exact Fractions, Cross-Multiplication, Dec
    - `net = 55`, `max = 300`.
    - Exact ratio: `Fraction(55, 300) = Fraction(11, 60)`.
    - Percentage: `55 * 100 / 300 = 5500 / 300 = 18.333333...%`.
-   - Threshold check: `55 * 100 = 5500`; `300 * 30 = 9000`. `5500 < 9000` $ightarrow$ **RED**.
-   - Display quantization: `Decimal('5500') / Decimal('300') = 18.333...` $ightarrow$ **`"18.3%"`**.
+   - Threshold check: `55 * 100 = 5500`; `300 * 30 = 9000`. `5500 < 9000` $
+ightarrow$ **RED**.
+   - Display quantization: `Decimal('5500') / Decimal('300') = 18.333...` $
+ightarrow$ **`"18.3%"`**.
 2. **Boundary Example (80 out of 300 marks):**
    - `net = 80`, `max = 300`.
    - Exact percentage: `8000 / 300 = 26.666666...%`.
-   - Threshold check: `8000 < 9000` $ightarrow$ **RED**.
-   - Display quantization: `26.666...` with `ROUND_HALF_UP` $ightarrow$ **`"26.7%"`**.
+   - Threshold check: `8000 < 9000` $
+ightarrow$ **RED**.
+   - Display quantization: `26.666...` with `ROUND_HALF_UP` $
+ightarrow$ **`"26.7%"`**.
 3. **High Scorer (278 out of 300 marks):**
    - `net = 278`, `max = 300`.
    - Exact percentage: `27800 / 300 = 92.666666...%`.
-   - Threshold check: `278 * 100 = 27800`; `300 * 60 = 18000`. `27800 > 18000` $ightarrow$ **GREEN**.
-   - Display quantization: `92.666...` with `ROUND_HALF_UP` $ightarrow$ **`"92.7%"`**.
+   - Threshold check: `278 * 100 = 27800`; `300 * 60 = 18000`. `27800 > 18000` $
+ightarrow$ **GREEN**.
+   - Display quantization: `92.666...` with `ROUND_HALF_UP` $
+ightarrow$ **`"92.7%"`**.
 4. **Exact 30.0% Boundary (90 out of 300 marks):**
    - `net = 90`, `max = 300`.
-   - Threshold check: `90 * 100 = 9000`; `300 * 30 = 9000`. `9000 >= 9000` and `9000 <= 18000` $ightarrow$ **YELLOW**.
+   - Threshold check: `90 * 100 = 9000`; `300 * 30 = 9000`. `9000 >= 9000` and `9000 <= 18000` $
+ightarrow$ **YELLOW**.
    - Display quantization: **`"30.0%"`**.
 5. **Exact 60.0% Boundary (180 out of 300 marks):**
    - `net = 180`, `max = 300`.
-   - Threshold check: `180 * 100 = 18000`; `300 * 60 = 18000`. `18000 <= 18000` (inclusive boundary per D-01) $ightarrow$ **YELLOW**.
+   - Threshold check: `180 * 100 = 18000`; `300 * 60 = 18000`. `18000 <= 18000` (inclusive boundary per D-01) $
+ightarrow$ **YELLOW**.
    - Display quantization: **`"60.0%"`**.
 6. **Negative Net Score (Gross 10, Bleed 25 -> Net -15 out of 300 marks):**
    - `net = -15`, `max = 300`.
-   - Threshold check: `-15 * 100 = -1500 < 9000` $ightarrow$ **RED**.
-   - Display quantization: `Decimal('-1500') / Decimal('300') = -5.0` $ightarrow$ **`"-5.0%"`**.
+   - Threshold check: `-15 * 100 = -1500 < 9000` $
+ightarrow$ **RED**.
+   - Display quantization: `Decimal('-1500') / Decimal('300') = -5.0` $
+ightarrow$ **`"-5.0%"`**.
    - Voice note script uses explicit "minus" token per D-08.
 
 ### S0-R5 Amendment: Fractional Marks (Half Marks) in Manual Marks Entry

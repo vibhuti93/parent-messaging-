@@ -1,9 +1,9 @@
 # Architecture Decisions & System Design (ADR Alignment)
 
-**System Name:** `omr_dispatch_engine`  
-**Runtime:** Python 3.11+ / Pydantic v2  
-**Date:** 2026-10-21  
-**Stage:** S0-R5 (Multi-School Hosted Service, Assessment Model, and Message Identity)  
+**System Name:** `omr_dispatch_engine`
+**Runtime:** Python 3.11+ / Pydantic v2
+**Date:** 2026-10-21
+**Stage:** S0-R5 (Multi-School Hosted Service, Assessment Model, and Message Identity)
 **Governing ADRs:** [docs/adr/](adr/README.md) (ADR-0001 through ADR-0020)
 
 ---

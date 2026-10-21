@@ -23,3 +23,9 @@ Check and report PASS/FAIL with file and line references for each:
 14. Confirm each operator decision in DECISIONS_OPEN.md items 1-4 and 6-8 is consistent with the ADR or spec text it relates to (for example: the Latin-digit decision against the golden Hindi strings in S1 and S4, and the org_id decision against the idempotency-key design in ADR-0003).
 15. Multi-tenancy and credential isolation: when reviewing S8, S9, S12 and S13, verify that every repository call requires an explicit org context (`org_id`), and that no global credentials or global phone-number IDs exist (every provider call resolves credentials from the calling org's sender identity).
 Do not edit anything except docs/reviews/stage-0-r4.md.
+
+## Mandatory Rigor Requirements for All Future Reviews
+- **Raw Command Evidence:** Every check must include its exact command and its raw output (or tail), not just a bare PASS statement.
+- **Clean Worktree Execution:** Guardrails and tooling must run on a clean `git worktree` checkout of the tag, and the report must explicitly state the SKIPPED count.
+- **Attempts to Falsify (Min 3):** The report must include an "Attempts to falsify" section with at least 3 concrete attempts to find a defect, including the exact commands and results.
+- **Zero-Defect Gating:** A report containing zero findings at MAJOR or BLOCKER severity is allowed only if the "Attempts to falsify" section is fully populated.

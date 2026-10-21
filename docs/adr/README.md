@@ -16,7 +16,7 @@ This directory documents architectural decisions for `omr_dispatch_engine`.
 | :---: | :--- | :---: | :--- |
 | [ADR-0001](ADR-0001-layering.md) | Pure Core vs. I/O Adapters Architecture | `PROPOSED` | None |
 | [ADR-0002](ADR-0002-numeric-semantics.md) | Numeric Semantics, Exact Fractions, and Integer Arithmetic | `PROPOSED` | Amended in S0-R5 for fractional half-marks |
-| [ADR-0003](ADR-0003-identifiers-and-keys.md) | Opaque Identifiers, Idempotency Keys, and Institutional Tenancy | `ACCEPTED (modified)` | Accepted 2026-10-20; single-school scope superseded by ADR-0017 |
+| [ADR-0003](ADR-0003-identifiers-and-keys.md) | Opaque Identifiers, Idempotency Keys, and Institutional Tenancy | `ACCEPTED (original single-school scope); AMENDMENT PENDING RE-APPROVAL` | Accepted 2026-10-20; single-school scope superseded by ADR-0017 |
 | [ADR-0004](ADR-0004-marking-scheme-as-data.md) | Marking Scheme and Question Metadata as Data | `PROPOSED` | None |
 | [ADR-0005](ADR-0005-time-and-clocks.md) | Time Representation, Timezones, and Injected Clocks | `PROPOSED` | None |
 | [ADR-0006](ADR-0006-schema-and-contract-versioning.md) | Artifact Schema and SQL Migration Versioning | `PROPOSED` | None |

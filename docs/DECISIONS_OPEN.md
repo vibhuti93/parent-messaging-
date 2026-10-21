@@ -249,6 +249,65 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 * **Proposal:** In v1, audio voice notes never speak the child's name or class (avoiding synthetic pronunciation errors); recorded audio uses gender-neutral "आपके बच्चे". Audio is an optional extra sent only inside the open 24h window (R-02, R-07, R-08), sent as a quoted reply to the named text message for sibling disambiguation. School-recorded name clips are deferred to post-v1.
 * **Status:** PROPOSED (`OWNER-CONFIRM`)
 
+## (s) 24-Hour Customer Service Window Initiation for Audio Notes (`OWNER-CONFIRM`)
+* **Question:** How is the parent's 24-hour service window opened before sending non-template voice notes? (e.g. a quick-reply button on the first template, such as 'ऑडियो सुनें' / 'Listen to Audio').
+* **Status:** PROPOSED (`OWNER-CONFIRM`, `UNVERIFIED`)
+* **Design Note:** Per Stage S0-R7 instructions, no solution is designed at this stage. Formally recorded as an open question referenced in `docs/prompt_pack/S9.md` and `docs/adr/ADR-0019-per-school-sender-identity-and-routing.md`.
+
+---
+
+# Part 1D: S1-BLOCKING Decisions (`OWNER-CONFIRM`)
+
+The following OWNER-CONFIRM items directly block the finalization and freeze of the signed Stage 1 fixture manifest hash (`fixtures/golden/manifest.json`). Tests never compute expectations dynamically (Part C Rule 6); every expected report attribute in `expected_reports.json` and `expected_marks_reports.json` is a literal derived from approved decisions.
+
+### S1-BLOCK-01: D-04 / ADR-0016 Scope of `requires_ptm_slip` on Marks Entry Reports (`OWNER-CONFIRM`)
+* **What it changes:** Whether `expected_marks_reports.json` records `requires_ptm_slip = true` for students triggering D-04 criteria (ABSENT student ME_06, RED students ME_04 and ME_05, and bottom-quartile students), or whether PTM slips are generated strictly when an assessment carries the `PTM_LINKED` purpose flag per ADR-0016 Section 4.
+* **Options:**
+  - *Option 1 (Literal D-04 Invariant):* Apply D-04 universally. Any student who is ABSENT, RED, or bottom-quarter receives `requires_ptm_slip = true` regardless of assessment kind or purpose.
+  - *Option 2 (ADR-0016 Purpose-Gated):* Restrict PTM slip generation to assessments flagged `PTM_LINKED`. Routine single-subject marks entry assessments (e.g. `marks_entry_50.json`) set `requires_ptm_slip = false` for all students.
+* **Consequence for S1 Hash:** Inverts `requires_ptm_slip` booleans in `expected_marks_reports.json` across 4 out of 6 students in the golden marks-entry fixture, altering the signed fixture manifest SHA-256 hash.
+* **Status:** OPEN (`OWNER-CONFIRM`)
+
+### S1-BLOCK-02: OMR Present Parent Message Body String (Item (a) / `MSG-OMR-PRESENT`) (`OWNER-CONFIRM`)
+* **What it changes:** The literal rendered message text in `expected_reports.json` for PRESENT OMR students (STU_01 through STU_16).
+* **Options:**
+  - *Option 1 (Full Diagnostics):* Wrap the frozen score-line string with greeting, child name, class/section, present count, rank, class average, topper marks, gross marks, and bleed marks.
+  - *Option 2 (Concise Variant):* Wrap frozen score line with greeting, child name, class/section, rank, and class average (omitting mark-bleed breakdown).
+* **Consequence for S1 Hash:** Alters expected message strings across 16 student report objects in `expected_reports.json`, modifying the fixture SHA-256 hash.
+* **Status:** OPEN (`OWNER-CONFIRM`)
+
+### S1-BLOCK-03: Absent Message Template Copy (Item (b) / `MSG-ABSENT`) (`OWNER-CONFIRM`)
+* **What it changes:** Rendered notification strings for absent students (STU_17–STU_20 in OMR and ME_06 in marks entry).
+* **Options:**
+  - *Option 1 (Full Context):* Factual notice including assessment name, cohort maximum marks, and total students attending.
+  - *Option 2 (Minimal Notice):* Single-sentence factual notice naming the child, class/section, and assessment only.
+* **Consequence for S1 Hash:** Directly alters `message_text` for absent student objects in `expected_reports.json` and `expected_marks_reports.json`.
+* **Status:** OPEN (`OWNER-CONFIRM`)
+
+### S1-BLOCK-04: Marks Entry Competition Rank Scope (Item (c) / `RANK-SCOPE-ME`) (`OWNER-CONFIRM`)
+* **What it changes:** The `rank` attribute in `expected_marks_reports.json`.
+* **Options:**
+  - *Option 1 (Subject Cohort Rank):* Rank evaluated within the single-subject participant cohort (Aarav and Rohan tied at rank 2; topper Priya at rank 1).
+  - *Option 2 (Composite Assessment Rank):* Rank computed only across multi-subject totals, omitting rank from single-subject reports.
+* **Consequence for S1 Hash:** Alters numeric `rank` field across student records in `expected_marks_reports.json`.
+* **Status:** OPEN (`OWNER-CONFIRM`)
+
+### S1-BLOCK-05: Class Average Numeric Quantization for Marks Entry (Item (g) / `CLASS-AVG-ME`) (`OWNER-CONFIRM`)
+* **What it changes:** String/numeric representation of `class_average` in `expected_marks_reports.json`.
+* **Options:**
+  - *Option 1:* 1 decimal place with `ROUND_HALF_UP` display quantization (`"21.9"` for batch sum 109.5 over 5 present).
+  - *Option 2:* Exact rational / 2 decimal places (`"21.90"`).
+* **Consequence for S1 Hash:** Changes JSON representation of batch metrics in `expected_marks_reports.json`.
+* **Status:** OPEN (`OWNER-CONFIRM`)
+
+### S1-BLOCK-06: Student Roll Number Policy in Message Body (Item (l) / `ROLL-IN-TEXT`) (`OWNER-CONFIRM`)
+* **What it changes:** Whether rendered parent text in `expected_reports.json` and `expected_marks_reports.json` includes `"(रोल नं. X)"`.
+* **Options:**
+  - *Option 1:* Default `include_roll_in_text=false` (omitted from WhatsApp text, present on scorecard PNG and PDF).
+  - *Option 2:* `include_roll_in_text=true` (inserted into text next to class/section).
+* **Consequence for S1 Hash:** Adds or removes roll tokens from message text in golden fixture expectations.
+* **Status:** OPEN (`OWNER-CONFIRM`)
+
 ---
 
 # Part 2: Deferred to Pre-Deployment (see docs/PRE_DEPLOYMENT_CHECKLIST.md)

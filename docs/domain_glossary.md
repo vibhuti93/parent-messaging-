@@ -147,4 +147,3 @@ The **Hindi Parent-Facing Wording** reflects respectful, non-judgmental conversa
 | **Artifact Handle** | `artifact_id: str` | Opaque identifier for rendered assets (`v1:{org_id}:{assessment_id}:{student_id}:{type}`). | Replaces physical paths; tenant isolated. |
 | **Tenant Kill-Switch** | `emergency_kill_switch: bool`| Instant halt of all background jobs and dispatches for a specific tenant. | Single-org scope; other schools unaffected. |
 | **Fair Scheduling** | `FAIR_SCHEDULER` | Deficit Round-Robin dispatch preventing large batches from starving small schools. | Interleaved batch dispatch. |
-

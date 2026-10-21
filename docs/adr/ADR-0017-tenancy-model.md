@@ -70,7 +70,7 @@ We propose **Option 1 (Shared Database & Schema with Mandatory `org_id`, Tenant-
    -- Example RLS Policy Blueprint for Dispatches
    ALTER TABLE dispatches ENABLE ROW LEVEL SECURITY;
    ALTER TABLE dispatches FORCE ROW LEVEL SECURITY;
-   
+
    CREATE POLICY tenant_isolation_policy ON dispatches
        FOR ALL
        USING (org_id = current_setting('app.current_org_id', true))
