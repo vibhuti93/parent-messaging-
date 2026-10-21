@@ -1,17 +1,17 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S0-R5 (`Stage S0-R5: Assessment model, message identity and multi-school service design (docs/ADR only, no code)`) — **COMPLETED**
+- **Active Stage:** Stage S0-R6 (`Stage S0-R6 — Fix S0-R5 review findings (docs only, no code)`) — **COMPLETED**
 - **Next Stage:** Stage 1 (`S1 — Golden Dataset and Independent Contract`) — **AWAITING HUMAN GATE**
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `N/A` (Staged for S1 generation)
-- **Stage Tag:** `stage-0-r5` (commit: `095559852103e9baedf31750f7ef6a7df4d69110` on `agent-run`)
+- **Stage Tag:** `stage-0-r6` (commit: `0b90ac594fb34646cf9e61c126b5a27c5a103279` on `agent-run`)
 
 ---
 
 ## Architecture Decision Records (ADRs) Summary
-*Per Stage S0-R5 rules, the agent only PROPOSES architectural decisions; the operator ACCEPTS. Zero new ADRs are marked `ACCEPTED`. ADR-0003 was modified to `ACCEPTED (modified)` pointing to ADR-0017.*
+*Per Stage S0-R5/R6 rules, the agent only PROPOSES architectural decisions; the operator ACCEPTS. Zero new ADRs are marked `ACCEPTED`. ADR-0003 is `ACCEPTED (modified)` pointing to ADR-0017.*
 
 1. **[ADR-0001](adr/ADR-0001-layering.md) (Layering):** Pure Core (zero I/O) vs. Adapters architecture (`PROPOSED`).
 2. **[ADR-0002](adr/ADR-0002-numeric-semantics.md) (Numeric Semantics):** Integer marks and half-marks (`Fraction | int`), integer cross-multiplication for threshold comparisons, `Decimal` ROUND_HALF_UP display, zero `float` in core (`PROPOSED`).
@@ -36,27 +36,14 @@
 
 ---
 
-## Operator Decisions Recorded (Decisions 1–5, 2026-10-21)
-Recorded in `docs/DECISIONS_OPEN.md`:
-1. Multi-tenant hosted service from inception superseding single-school part of ADR-0003.
-2. Per-school WhatsApp Business number; no shared number.
-3. v1 assessment source kinds: `OMR_MCQ` and `MARKS_ENTRY_TOTALS`.
-4. Approved golden message for `MARKS_ENTRY_TOTALS`:
-   `"प्रिय अभिभावक, आरव (कक्षा 8-B) के यूनिट टेस्ट 1 (अंग्रेज़ी) में 50 में से 30 नंबर आए हैं (60.0%)। 18 उपस्थित बच्चों में आरव का रैंक 7 है। क्लास का औसत स्कोर 32.4 है। क्लास में सबसे ज़्यादा नंबर 47 हैं।"`
-5. Every parent-facing message names child and class/section after fixed leading greeting; never as first token; roll number omitted from text by default (`include_roll_in_text=False`).
-
----
-
-## Stage S0-R5 Execution Evidence
-- **All 5 new ADRs created:** `ADR-0016`, `ADR-0017`, `ADR-0018`, `ADR-0019`, `ADR-0020` (all marked `PROPOSED`).
-- **ADR-0002 amended:** Half-marks representation, worked examples (2.5, 0.5, net -75 -> -25.0% RED), OMR golden values unchanged.
-- **ADR-0003 updated:** Status `ACCEPTED (modified)` with pointer to ADR-0017.
-- **ADR-0007 amended:** PostgreSQL target database, SQLite local tests, dual-engine repository contract suite.
-- **Message Catalog & Templates:** Created `docs/message_catalog.md` and 5 templates in `docs/templates/**` with status `UNVERIFIED` for Meta approvals/categories.
-- **Domain Glossary & Data Map:** Appended Sections 8-10 in glossary, updated data map with `child_display_name`, `class_section`, and Sections 2.11-2.15.
-- **Pre-Deployment Checklist:** Appended items P-05 through P-11 (Section 4).
-- **Prompt Pack Amendments:** `00_global_invariants.md`, `W2_review.md`, and stage prompts S1 to S4 and S6 to S13 amended (few lines each; S5 unchanged).
-- **Decisions Open:** Recorded Operator Decisions 1-5 and proposed items (a) through (r) as `OWNER-CONFIRM`.
+## Stage S0-R6 Execution Evidence (Review Findings Fixed)
+- **F1 (Marks Entry Fixture Bands):** Corrected ME_01 and ME_03 in `docs/prompt_pack/S1.md` to `band YELLOW` per D-01 threshold (`30.0%–60.0%` inclusive; only `>60.0%` is GREEN).
+- **F2 (Hindi Text Integrity):** Verified exact UTF-8 strings with Python across all documents: approved marks entry present message, greeting (`"प्रिय अभिभावक, "`), frozen OMR score line (`"कुल नंबर: 300 में से 55 नंबर आए हैं (18.3%)"`), and `"आपके बच्चे"`. Zero corruptions or missing conjuncts.
+- **F3 (S2 Marks Representation):** Specified in `docs/prompt_pack/S2.md` that `MarksEntryRow` marks are parsed directly as exact `Fraction` from decimal text, never converted to `float` (ADR-0002).
+- **F4 (OTP Child Name Exemption):** Added explicit child/class naming exemption for authentication/OTP messages in `docs/prompt_pack/S13.md`, `docs/prompt_pack/S4.md`, and `docs/message_catalog.md`. Documented `GUARDIAN_OTP_CHALLENGE` template and listed message types lacking child name.
+- **F5 (S9 Webhook Path Notice):** Marked `entry[].changes[].value.metadata.phone_number_id` as `UNVERIFIED` in `docs/prompt_pack/S9.md` and instructed S9 to verify against contract fixtures.
+- **F6 (Self-Check Evidence):** Verified ADR-0016 through ADR-0020 contain all 5 required sections with >=2 options; zero new ADRs marked `ACCEPTED`; git diff against `stage-0-r4` confirms zero changes to the frozen 20-student OMR golden table; approved message matches character-for-character.
+- **F7 (Commit Hygiene):** Documented pre-existing uncommitted operator edits from 2026-10-20 that were part of the working tree during `stage-0-r5`.
 
 ---
 
@@ -64,4 +51,4 @@ Recorded in `docs/DECISIONS_OPEN.md`:
 - Linter Check: `ruff check .` (Exit Code: 0)
 - Guardrails Check: `python scripts/guardrails.py` (Exit Code: 0)
 - Git Scope Check: `git diff --name-status` (Confirmed all changed files strictly within SCOPE).
-- Stage Tag: `stage-0-r5` (Commit hash `095559852103e9baedf31750f7ef6a7df4d69110`).
+- Stage Tag: `stage-0-r6` (Commit hash `0b90ac594fb34646cf9e61c126b5a27c5a103279`).

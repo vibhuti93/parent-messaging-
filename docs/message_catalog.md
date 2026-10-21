@@ -10,6 +10,9 @@ This document enumerates every parent-facing WhatsApp notification message suppo
 5. **Latin Digits:** All numbers, scores, ranks, and percentages strictly use Latin digits (`0-9`) per approved Operator Decision on ADR-0010.
 6. **Vocabulary Compliance (D-06):** Banned terms are strictly prohibited (`ऋणात्मक अंकन`, `प्रतिशतता`, `प्राप्तांक`, `पूर्णांक`, `औसत मान`).
 7. **Observable Facts Only:** Copy describes observable indicators only; no inferences of intent, laziness, or psychology. Absent messages carry zero score, rank, or performance framing.
+8. **Exemptions from Child/Class Naming:** The invariant to name the child and class/section applies to all student academic and attendance notifications (`MARKS_ENTRY_PRESENT`, `OMR_PRESENT`, `OMR_ABSENT`, `MARKS_ENTRY_ABSENT`, `PTM_SLIP_TEXT`). It explicitly **does not apply** to:
+   - **`GUARDIAN_OTP_CHALLENGE`** (Authentication category): Security passcodes for parent confirmation / consent verification. Meta's authentication template guidelines strictly restrict template bodies to one-time passcodes and security copy, forbidding arbitrary recipient PII variables.
+   - **Follow-up Audio Notes** (Media payload): Voice notes use gender-neutral phrasing (`"आपके बच्चे"`) without spoken child names or classes (ADR-0010, S7); they are never sent standalone without the accompanying named text message.
 
 ---
 
@@ -22,6 +25,7 @@ This document enumerates every parent-facing WhatsApp notification message suppo
 | `OMR_ABSENT` | `OMR_MCQ` | `ABSENT` | **`PROPOSED`** | Factual absence notice for OMR exam with test context. |
 | `MARKS_ENTRY_ABSENT` | `MARKS_ENTRY_TOTALS` | `ABSENT` | **`PROPOSED`** | Factual absence notice for marks entry exam with subject context. |
 | `PTM_SLIP_TEXT` | Both (PTM-linked) | Any | **`PROPOSED`** | Invitation to parent-teacher consultation meeting. |
+| `GUARDIAN_OTP_CHALLENGE` | N/A (Authentication) | N/A | **`PROPOSED`** | 6-digit OTP challenge for PTM confirmation (exempt from naming child/class). |
 
 ---
 
@@ -161,3 +165,29 @@ This document enumerates every parent-facing WhatsApp notification message suppo
 ```text
 प्रिय अभिभावक, {child_name} ({class_section}) के लिए आगामी अभिभावक-शिक्षक बैठक (PTM) में सादर आमंत्रित किया जाता है। तारीख: {ptm_date}।
 ```
+
+---
+
+## 6. `GUARDIAN_OTP_CHALLENGE` (Parent Confirmation OTP)
+* **Status:** **`PROPOSED`** (Awaiting Operator Approval).
+* **Category:** Authentication (Meta WhatsApp Authentication Template).
+* **Name Exemption:** **EXEMPT** from child and class/section naming invariants. Meta's strict authentication template specification restricts body content to one-time passcodes and standard security guidance, completely prohibiting recipient PII variables.
+
+### Proposed Template Definition
+```text
+{{1}} आपका सत्यापन कोड है। आपकी सुरक्षा के लिए, इस कोड को किसी के साथ साझा न करें।
+```
+
+### Template Variables
+- `{{1}}`: `otp_code` (e.g. `"482910"`)
+
+### Button
+- Copy Code button: `Copy Code` / `कोड कॉपी करें`
+
+---
+
+## Message Types in Catalog Lacking Child Name & Class
+Per release verification and privacy invariants, only the following message artifacts in the system lack explicit child name and class/section tokens:
+1. **`GUARDIAN_OTP_CHALLENGE`**: Standard authentication template message delivering 6-digit verification passcodes. Lacks student name and class due to Meta WhatsApp Authentication category restrictions.
+2. **Recorded Token Audio Note (`voice_note_script_hi`)**: Companion voice note payload delivering spoken diagnostics. Uses gender-neutral phrasing (`"आपके बच्चे"`) without spoken child name or class (ADR-0010, S7). It is strictly delivered inside the 24-hour service window as an optional extra or quoted reply to the primary named text message, and never dispatched standalone.
+
