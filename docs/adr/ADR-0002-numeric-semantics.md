@@ -74,10 +74,43 @@ We propose **Option 3 (Integer Marks, Exact Fractions, Cross-Multiplication, Dec
    - Display quantization: `Decimal('-1500') / Decimal('300') = -5.0` $ightarrow$ **`"-5.0%"`**.
    - Voice note script uses explicit "minus" token per D-08.
 
+### S0-R5 Amendment: Fractional Marks (Half Marks) in Manual Marks Entry
+Per Stage S0-R5, teacher marks entry (`MARKS_ENTRY_TOTALS`) permits fractional half marks (multiples of `0.5`, e.g. `0.5`, `2.5`).
+
+#### Representation Proposal
+We evaluate two exact representations for half marks:
+1. **Option A: Exact `fractions.Fraction`:** Store marks directly as `Fraction(numerator, 2)` (e.g. `Fraction(5, 2)` for 2.5, `Fraction(1, 2)` for 0.5). Integer marks are represented as `Fraction(n, 1)` or `int`.
+2. **Option B: Integer Mark-Units (Scaled Integers):** Store marks as integer half-mark units (`mark_units = int(round(marks * 2))`). Every integer mark is 2 units; 0.5 marks = 1 unit; 2.5 marks = 5 units. Max marks is also scaled: `max_units = max_marks * 2`. Threshold comparisons remain pure integer arithmetic: `net_units * 100 < max_units * 30`.
+
+**Recommendation:** `fractions.Fraction` is proposed as the primary domain type (`int | Fraction`), with scaled integer mark-units supported internally for high-performance comparisons. Floating-point `float` remains strictly forbidden in the core package.
+
+#### Worked Examples with Fractional Marks
+7. **Fractional Mark: 2.5 out of 10 marks:**
+   - `net = Fraction(5, 2)`, `max = 10`.
+   - Scaled units check: `net_units = 5`, `max_units = 20`.
+   - Threshold comparison: `5 * 100 = 500`; `20 * 30 = 600`. `500 < 600` -> **RED**.
+   - Exact percentage: `Fraction(5, 2) / 10 * 100 = Fraction(500, 20) = 25.0%`.
+   - Display quantization: `Decimal('25.0')` -> **`"25.0%"`**.
+8. **Fractional Mark: 0.5 out of 50 marks:**
+   - `net = Fraction(1, 2)`, `max = 50`.
+   - Scaled units check: `net_units = 1`, `max_units = 100`.
+   - Threshold comparison: `1 * 100 = 100`; `100 * 30 = 3000`. `100 < 3000` -> **RED**.
+   - Exact percentage: `Fraction(1, 2) / 50 * 100 = Fraction(100, 100) = 1.0%`.
+   - Display quantization: `Decimal('1.0')` -> **`"1.0%"`**.
+9. **All-Wrong Negative Net Score (-75 out of 300 marks, Edge Case Fixture):**
+   - Exam: 75 questions, all answered incorrectly.
+   - `gross = 0`, `bleed = 75 * 1 = 75`, `net = 0 - 75 = -75`, `max = 300`.
+   - Exact ratio: `Fraction(-75, 300) = Fraction(-1, 4)`.
+   - Threshold check: `-75 * 100 = -7500 < 300 * 30 = 9000` -> **RED**.
+   - Display quantization: `Decimal('-7500') / Decimal('300') = -25.0` -> **`"-25.0%"`**.
+   - Golden values: Matches edge case fixture `edge_cases.json` exactly.
+
+*Golden OMR Invariant:* Frozen OMR golden values (`expected_reports.json`) are completely unaffected because all OMR questions and scores in the frozen dataset remain exact integers (+4/-1).
+
 ## Consequences
-- **Positive**: Zero risk of floating-point classification errors; perfect alignment with frozen spec rules D-01, D-02, D-05.
-- **Negative**: Developers cannot casually use `/` division in core code; all arithmetic must use integer ops or `Fraction`.
+- **Positive**: Supports half-marks in manual marks entry without precision loss; preserves strict zero-float rule in core; supports negative scores down to -75.
+- **Negative**: Core arithmetic functions must accept `int | Fraction` for marks.
 - **Neutral**: Enforced via pre-commit guardrail `no_float_in_core`.
 
 ## Revisit When
-Revisit only if fractional marking schemes (e.g. 0.33 marks per question) are approved by the operator in a future version.
+Revisit if non-half-mark fractions (e.g. 0.33, 0.25) are introduced by a future examination board.

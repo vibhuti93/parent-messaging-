@@ -109,3 +109,42 @@ The **Hindi Parent-Facing Wording** reflects respectful, non-judgmental conversa
 | **Operator Action** | `ErrorClass.OPERATOR_ACTION` | Auth failure, expired token, WABA maintenance, payment issue, paused template. Requires human intervention. |
 | **Permanent** | `ErrorClass.PERMANENT` | Malformed request, invalid recipient number, expired window, unsupported media. Drop and log. |
 | **Unknown** | `ErrorClass.UNKNOWN` | Unclassified error code. Defaults strictly to `OUTCOME_UNKNOWN` behaviour. |
+
+---
+
+## 8. Multi-Kind Assessment & Cohort Model (ADR-0016)
+
+| Term | English Code Identifier | Technical Definition & Invariants | Hindi Parent-Facing Copy |
+| :--- | :--- | :--- | :--- |
+| **Assessment** | `assessment: Assessment` | Canonical examination entity persisting across runs (`assessment_id`, `org_id`, `kind`, `name`, `date`, `cohort_id`, `subjects`, `max_marks`). | "परीक्षा" / "यूनिट टेस्ट" (e.g. "यूनिट टेस्ट 1") |
+| **Assessment Kind** | `kind: AssessmentKind` | Evaluation format: `OMR_MCQ` (v1), `MARKS_ENTRY_TOTALS` (v1), `MARKS_ENTRY_QUESTION_WISE` (post-v1). | Contextual |
+| **Cohort** | `cohort_id: str`, `cohort_label: str` | Group of students sitting the assessment together (e.g. a section or full grade). Cohort label is used as class descriptor. | "कक्षा" (e.g. "कक्षा 8-B") |
+| **Marks Entry Totals** | `MARKS_ENTRY_TOTALS` | Manual teacher score entry: single mark total per student, per subject, per assessment. | Contextual |
+| **Not Available Sentinel**| `NOT_AVAILABLE` | Explicit sentinel for metrics not computable under an assessment kind (e.g. question-level diagnostics in totals entry). Never reported as zero. | Omitted from copy |
+
+---
+
+## 9. Message Identity & Personalization (Decision 4 & 5, ADR-0010)
+
+| Term | English Code Identifier | Technical Definition & Invariants | Hindi Parent-Facing Copy |
+| :--- | :--- | :--- | :--- |
+| **Child Display Name** | `child_display_name: str` | Normalized student name (Unicode NFC, max 40 graphemes). Appears immediately after fixed greeting. | Student name (e.g. "आरव") |
+| **Class / Section** | `class_section: str` | Human cohort descriptor. Required for all dispatches. | "कक्षा N-X" (e.g. "कक्षा 8-B") |
+| **Fixed Leading Greeting**| `GREETING_PREFIX` | Fixed leading string required before child name in templates. | "प्रिय अभिभावक, " |
+| **Include Roll in Text** | `include_roll_in_text: bool` | Institutional setting. Default `false`. If `true`, adds roll number to message body text. | "रोल नं. X" |
+| **Audio Voice Persona** | `AUDIO_VOICE_PERSONA` | Recorded token voice. Uses gender-neutral "आपके बच्चे". Spoken audio never says child name or class. | "आपके बच्चे" |
+| **Quoted Reply Audio** | `quoted_message_id: str \| None` | Sending audio as a quoted reply to an earlier named text message to disambiguate siblings. (API capability UNVERIFIED). | N/A |
+
+---
+
+## 10. Multi-School Tenancy & Service Context (ADR-0017, ADR-0018, ADR-0019, ADR-0020)
+
+| Term | English Code Identifier | Technical Definition & Invariants | Operational Handling |
+| :--- | :--- | :--- | :--- |
+| **Principal** | `principal: Principal` | Authenticated security context (`actor_type`, `actor_id`, `org_id`, `roles`) passed to every service call. | Mandatory service boundary parameter. |
+| **Sender Identity** | `sender: SenderIdentity` | Institutional WhatsApp identity (`waba_id`, `phone_number_id`, `verified_display_name`, status, secrets). | Dedicated per school; no shared number. |
+| **Resumable Job** | `job: JobRecord` | Persisted asynchronous execution state (`job_id`, `org_id`, `kind`, `state`, `progress`). | Resumes from `last_processed_id` on restart. |
+| **Artifact Handle** | `artifact_id: str` | Opaque identifier for rendered assets (`v1:{org_id}:{assessment_id}:{student_id}:{type}`). | Replaces physical paths; tenant isolated. |
+| **Tenant Kill-Switch** | `emergency_kill_switch: bool`| Instant halt of all background jobs and dispatches for a specific tenant. | Single-org scope; other schools unaffected. |
+| **Fair Scheduling** | `FAIR_SCHEDULER` | Deficit Round-Robin dispatch preventing large batches from starving small schools. | Interleaved batch dispatch. |
+

@@ -1,7 +1,7 @@
 # ADR-0010: Text Processing, Unicode Normalization, and Script Digit Policy
 
 ## Status
-`PROPOSED` (Contains `OWNER-CONFIRM` item on Latin vs. Devanagari Digits)
+`ACCEPTED` (Accepted by operator, 2026-10-20. Digit-style decision recorded in `docs/DECISIONS_OPEN.md`, item 8.)
 
 ## Context
 The parent communication engine operates primarily in conversational Bolchal Hindi (D-06). Devanagari script text contains complex grapheme clusters: combining vowel signs (matras, e.g. `ि`, `ी`), nuktas (`़`), and viramas (`्`).

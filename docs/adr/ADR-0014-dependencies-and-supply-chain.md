@@ -49,3 +49,6 @@ We propose **Option 2 (Strict Justification, Dependency Aging, and Sealed Adapte
 
 ## Revisit When
 Revisit quarterly during scheduled dependency security audits.
+
+## Dependency log
+- **2026-10-20**: Added `mypy` (2.4.0) and `pre-commit` (4.7.0) as dev dependencies via `uv add --dev`. Reason: type checking and pre-commit hooks configured in S0-R4 (ADR-0012, ADR-0014) could not run without them; found during the W2 review of S0-R4. Dev tools only, not imported by application code.

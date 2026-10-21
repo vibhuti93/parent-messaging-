@@ -1,7 +1,7 @@
 # ADR-0003: Identifiers, Idempotency Keys, and Institutional Tenancy
 
 ## Status
-`PROPOSED` (Contains `OWNER-CONFIRM` item on Tenancy Scope)
+`ACCEPTED (modified)` (Accepted by operator, 2026-10-20; single-school scope superseded by operator decision 2026-10-21 establishing multi-tenant hosted service from inception. See ADR-0017 for multi-school tenancy architecture. ADR-0003 core text, opaque UUIDs, and composite idempotency key design are retained.)
 
 ## Context
 The system tracks students, exams, scanned sheets, diagnostic records, delivery attempts, and parent confirmations.

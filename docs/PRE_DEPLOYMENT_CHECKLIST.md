@@ -53,3 +53,20 @@ The following items were removed from active development gates and transferred t
 7. **docs/research/official_source_verification.md (Sections 8 & 9):**  
    - *Original text:* Active development release blockers for TRAI DLT readiness and DPDP institutional sign-off.  
    - *Transferred item:* Marked `UNVERIFIED — DEFERRED to pre-deployment (see checklist)`.
+
+---
+
+## 4. Multi-Tenant Service & School Governance Prerequisites (Stage S0-R5 Additions)
+
+The following operational, legal, and security items govern the hosted multi-school deployment and must be completed prior to production launch:
+
+| # | Item Description | Status | Verification Requirement & Primary Source Criteria |
+| :- | :--- | :---: | :--- |
+| **P-05** | **Data-Processing Agreements (DPA) & Defined Roles** | `NOT STARTED` | Formal Data Processing Agreement executed with each participating educational institution, explicitly defining statutory roles under India's DPDP Act, 2023 (School = Data Fiduciary / Controller; SaaS Platform = Data Processor), specifying data processing purposes, security safeguards, sub-processor disclosures, and mandatory breach notification timelines. |
+| **P-06** | **Per-School WhatsApp Business Setup & Template Approval** | `NOT STARTED` | Provisioning and verification of dedicated WhatsApp Business Account (WABA), official phone number ID, verified institutional display name (`VERIFIED_NAME`), and pre-approval of utility templates for each onboarded school in Meta Business Manager. |
+| **P-07** | **Meta Multi-Business Onboarding Architecture (UNVERIFIED)** | `NOT STARTED` | Official verification and legal resolution of Meta multi-business onboarding architecture (R-03, ADR-0019): confirm whether schools onboard via Meta Tech Provider / Partner Onboarding API, whether a single Meta App can receive webhooks from multiple distinct client WABAs, and determine token issuance/refresh lifecycles. |
+| **P-08** | **Meta Billing Responsibility & Liability (Who Pays Meta)** | `NOT STARTED` | Formal operational resolution of WhatsApp Per-Message Pricing (PMP) payment responsibility: confirm whether each school attaches its own institutional credit card directly in its Meta Business Manager account, or if the platform acts as an authorized WhatsApp solution provider managing consolidated billing with appropriate liability agreements. |
+| **P-09** | **Per-School Cost Allocation & Metering** | `NOT STARTED` | Implementation and verification of automated per-school message metering and cost allocation reports reconciling monthly platform-delivered template counts against Meta billing invoices. |
+| **P-10** | **Multi-Tenant Hosting, Backups, and Incident Response** | `NOT STARTED` | Production deployment on managed PostgreSQL with automated point-in-time recovery (PITR), off-site encrypted backups, tenant-filtered logical restore tooling, 99.9% uptime SLA monitoring, and a 24/7 security incident response runbook. |
+| **P-11** | **Pre-Launch Cross-Tenant Isolation Test with External Review** | `NOT STARTED` | Independent third-party security audit and penetration test validating: (a) PostgreSQL Row-Level Security (RLS) enforcement, (b) repository-level tenant context gating, (c) webhook routing isolation by `phone_number_id`, and (d) zero cross-tenant data leakage under concurrent batch execution (ADR-0017). |
+

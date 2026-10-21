@@ -25,8 +25,10 @@ It defines the PII classification, operational purpose, development retention li
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `student_id` | `str (UUID)` | `INDIRECT_PII` | Opaque surrogate primary key for cross-module correlation. | Current academic year | `ALLOWED` | Deleted on student profile purge. |
 | `org_id` | `str` | `OPERATIONAL_SYSTEM` | Institutional tenant isolation. | Current academic year | `ALLOWED` | Deleted on tenant purge. |
-| `roll_number` | `str` | `INDIRECT_PII` | School-assigned identifier for student recognition on reports. | Current academic year | `MASKED` | Deleted on academic year expiry. |
-| `student_name` | `str` | `DIRECT_PII` | Personalization of scorecard and PTM consultation slip. | Current academic year | `NEVER` in clear; `MASKED` in logs | Hard deleted on consent revocation. |
+| `roll_number` | `str` | `INDIRECT_PII` | School-assigned identifier for student recognition on scorecards/slips. | Current academic year | `MASKED` | Deleted on academic year expiry. |
+| `student_name` | `str` | `DIRECT_PII` | Official student name for archival records and PTM consultation slips. | Current academic year | `NEVER` in clear; `MASKED` in logs | Hard deleted on consent revocation. |
+| `child_display_name`| `str` | `DIRECT_PII` | Personalization of parent WhatsApp messages and scorecards. NFC normalized. | Current academic year | `NEVER` in logs | Hard deleted on consent revocation. |
+| `class_section` | `str` | `INDIRECT_PII` | Cohort descriptor appearing in message body and scorecard. | Current academic year | `NEVER` in logs (masked if linked) | Deleted on academic year expiry. |
 | `guardian_salutation` | `str` | `DIRECT_PII` | Respectful Hindi Bolchal salutation (e.g. "श्री राजेश शर्मा जी"). | Current academic year | `NEVER` in clear; `MASKED` in logs | Hard deleted on consent revocation. |
 | `section` | `str` | `INDIRECT_PII` | Batch grouping and classroom teacher consultation. | Current academic year | `ALLOWED` | Deleted on academic year expiry. |
 
@@ -150,3 +152,78 @@ It defines the PII classification, operational purpose, development retention li
 | `actor` | `str` | `OPERATIONAL_SYSTEM` | User or automated service initiating the action. | 90 days | `ALLOWED` | Purged after 90 days. |
 | `details_json` | `str (JSON)` | `OPERATIONAL_SYSTEM` | Structured action details (all PII pre-masked). | 90 days | `MASKED` | Purged after 90 days. |
 | `timestamp_utc` | `datetime` | `OPERATIONAL_SYSTEM` | Tamper-evident audit timestamp. | 90 days | `ALLOWED` | Purged after 90 days. |
+
+---
+
+### 2.11 Multi-Kind Assessment Metadata (`AssessmentRecord`)
+
+| Field Name | Data Type | PII Class | Business Purpose | Retention Policy (D-13 Dev Default) | Logging Policy | Deletion / Purge Behaviour |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `assessment_id` | `str (UUID)` | `OPERATIONAL_SYSTEM` | Unique identifier for the assessment. | Current academic year | `ALLOWED` | Deleted on academic year purge. |
+| `org_id` | `str` | `OPERATIONAL_SYSTEM` | Institutional tenant owner. | Current academic year | `ALLOWED` | Deleted on tenant purge. |
+| `kind` | `str (Enum)` | `OPERATIONAL_SYSTEM` | `OMR_MCQ`, `MARKS_ENTRY_TOTALS`, `MARKS_ENTRY_QUESTION_WISE`. | Current academic year | `ALLOWED` | Deleted on purge. |
+| `name` | `str` | `OPERATIONAL_SYSTEM` | Assessment display name (e.g. "यूनिट टेस्ट 1"). | Current academic year | `ALLOWED` | Deleted on purge. |
+| `date` | `date` | `OPERATIONAL_SYSTEM` | Administration date of the test. | Current academic year | `ALLOWED` | Deleted on purge. |
+| `cohort_id` | `str` | `OPERATIONAL_SYSTEM` | Cohort identifier (e.g. "GRADE_8_B"). | Current academic year | `ALLOWED` | Deleted on purge. |
+| `cohort_label` | `str` | `OPERATIONAL_SYSTEM` | Human display class label (e.g. "कक्षा 8-B"). | Current academic year | `ALLOWED` | Deleted on purge. |
+| `subjects` | `list[str]` | `OPERATIONAL_SYSTEM` | Subject list assessed. | Current academic year | `ALLOWED` | Deleted on purge. |
+| `max_marks_per_subject`| `dict[str, int]`| `OPERATIONAL_SYSTEM`| Maximum marks per subject. | Current academic year | `ALLOWED` | Deleted on purge. |
+| `purpose_flags` | `list[str]` | `OPERATIONAL_SYSTEM` | Purpose categorization (`UNIT_TEST`, `PTM_LINKED`). | Current academic year | `ALLOWED` | Deleted on purge. |
+
+---
+
+### 2.12 Per-School Sender Identity & Credentials Reference (`SenderIdentityRecord`)
+
+| Field Name | Data Type | PII Class | Business Purpose | Retention Policy (D-13 Dev Default) | Logging Policy | Deletion / Purge Behaviour |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `sender_id` | `str (UUID)` | `OPERATIONAL_SYSTEM` | Unique sender configuration identifier. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+| `org_id` | `str` | `OPERATIONAL_SYSTEM` | Institutional tenant owner. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+| `waba_id` | `str` | `OPERATIONAL_SYSTEM` | Meta WhatsApp Business Account ID. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+| `phone_number_id` | `str` | `OPERATIONAL_SYSTEM` | Meta registered Phone Number ID. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+| `display_phone_number`| `str` | `OPERATIONAL_SYSTEM`| E.164 business number displayed to parents. | Active tenant lifetime | `MASKED` | Deleted on tenant offboarding. |
+| `verified_display_name`| `str`| `OPERATIONAL_SYSTEM`| Meta-approved institutional display name. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+| `credential_secret_ref`| `str`| `OPERATIONAL_SYSTEM`| Opaque pointer to access token secret. | Active tenant lifetime | `ALLOWED` (pointer only) | Deleted on tenant offboarding. |
+| `app_secret_ref` | `str` | `OPERATIONAL_SYSTEM` | Opaque pointer to webhook app secret. | Active tenant lifetime | `ALLOWED` (pointer only) | Deleted on tenant offboarding. |
+| `template_registry` | `dict`| `OPERATIONAL_SYSTEM` | Approved template statuses for this sender. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+
+---
+
+### 2.13 Resumable Asynchronous Job Records (`JobRecord`)
+
+| Field Name | Data Type | PII Class | Business Purpose | Retention Policy (D-13 Dev Default) | Logging Policy | Deletion / Purge Behaviour |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `job_id` | `str (UUID)` | `OPERATIONAL_SYSTEM` | Unique background job identifier. | 90 days | `ALLOWED` | Purged after 90 days. |
+| `org_id` | `str` | `OPERATIONAL_SYSTEM` | Institutional tenant owner. | 90 days | `ALLOWED` | Purged after 90 days. |
+| `kind` | `str (Enum)` | `OPERATIONAL_SYSTEM` | Job type (`BATCH_EVALUATE`, `DISPATCH_BATCH`).| 90 days | `ALLOWED` | Purged after 90 days. |
+| `state` | `str (Enum)` | `OPERATIONAL_SYSTEM` | Lifecycle state (`QUEUED`, `RUNNING`, etc.). | 90 days | `ALLOWED` | Purged after 90 days. |
+| `progress_current` | `int` | `OPERATIONAL_SYSTEM` | Processed items count for progress bar. | 90 days | `ALLOWED` | Purged after 90 days. |
+| `progress_total` | `int` | `OPERATIONAL_SYSTEM` | Total batch size. | 90 days | `ALLOWED` | Purged after 90 days. |
+| `last_processed_id` | `str \| None`| `OPERATIONAL_SYSTEM` | Cursor checkpoint for crash recovery. | 90 days | `ALLOWED` | Purged after 90 days. |
+| `error_code` | `str \| None`| `OPERATIONAL_SYSTEM` | Classified failure code if failed. | 90 days | `ALLOWED` | Purged after 90 days. |
+
+---
+
+### 2.14 Tenant Settings & Administrative Controls (`TenantSettingsRecord`)
+
+| Field Name | Data Type | PII Class | Business Purpose | Retention Policy (D-13 Dev Default) | Logging Policy | Deletion / Purge Behaviour |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `org_id` | `str` | `OPERATIONAL_SYSTEM` | Institutional tenant identifier. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+| `school_name` | `str` | `OPERATIONAL_SYSTEM` | Official school name. | Active tenant lifetime | `ALLOWED` | Deleted on tenant offboarding. |
+| `emergency_kill_switch`| `bool` | `OPERATIONAL_SYSTEM` | Tenant-level pause switch. | Active tenant lifetime | `ALLOWED` | Updated on toggle. |
+| `daily_message_quota` | `int` | `OPERATIONAL_SYSTEM` | Maximum dispatches allowed per 24 hours. | Active tenant lifetime | `ALLOWED` | Updated on configuration. |
+| `include_roll_in_text`| `bool` | `OPERATIONAL_SYSTEM` | Whether roll number is appended in text copy. | Active tenant lifetime | `ALLOWED` | Updated on configuration. |
+| `default_send_window` | `str` | `OPERATIONAL_SYSTEM` | Standard dispatch window schedule. | Active tenant lifetime | `ALLOWED` | Updated on configuration. |
+
+---
+
+### 2.15 Opaque Artifact Metadata (`ArtifactMetadataRecord`)
+
+| Field Name | Data Type | PII Class | Business Purpose | Retention Policy (D-13 Dev Default) | Logging Policy | Deletion / Purge Behaviour |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `artifact_id` | `str` | `OPERATIONAL_SYSTEM` | Opaque handle (`v1:{org}:{assessment}:{stu}:{type}`). | Current academic year | `ALLOWED` | Destroyed with student profile purge. |
+| `org_id` | `str` | `OPERATIONAL_SYSTEM` | Institutional tenant owner. | Current academic year | `ALLOWED` | Destroyed on tenant purge. |
+| `artifact_type` | `str (Enum)` | `OPERATIONAL_SYSTEM` | `SCORECARD_PNG`, `PTM_PDF`, `AUDIO_OGG`. | Current academic year | `ALLOWED` | Destroyed on purge. |
+| `mime_type` | `str` | `OPERATIONAL_SYSTEM` | `image/png`, `application/pdf`, `audio/ogg`.| Current academic year | `ALLOWED` | Destroyed on purge. |
+| `size_bytes` | `int` | `OPERATIONAL_SYSTEM` | File byte length. | Current academic year | `ALLOWED` | Destroyed on purge. |
+| `sha256_hash` | `str` | `OPERATIONAL_SYSTEM` | Cryptographic integrity checksum. | Current academic year | `ALLOWED` | Destroyed on purge. |
+

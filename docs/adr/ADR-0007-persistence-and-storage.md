@@ -1,7 +1,7 @@
 # ADR-0007: Persistence Strategy, SQLite WAL, and Append-Only Events
 
 ## Status
-`PROPOSED` (Contains `OWNER-CONFIRM` item on Encryption at Rest)
+`ACCEPTED` (Accepted by operator, 2026-10-20. Encryption decision recorded in `docs/DECISIONS_OPEN.md`, item 7.)
 
 ## Context
 Dispatching notifications involves money (WhatsApp Per-Message Pricing), strict compliance (parental consent and service windows), and severe deduplication requirements.
@@ -64,5 +64,11 @@ CREATE UNIQUE INDEX idx_wamid_status_dedup ON dispatch_events(provider_wamid, ev
 - **Negative**: Requires writing migration scripts and maintaining clean repository abstractions.
 - **Neutral**: Added `OWNER-CONFIRM` item on encryption to `docs/DECISIONS_OPEN.md`.
 
+### S0-R5 Amendment: PostgreSQL Target Database & Dual-Engine Contract Tests
+Per Stage S0-R5 operator decision establishing the multi-tenant hosted service:
+1. **Target Database:** **PostgreSQL** is the authoritative production database engine for the hosted multi-school service, providing robust Row-Level Security (RLS), connection pooling, concurrent multi-tenant transactional safety, and automated backups.
+2. **Local Tests Engine:** **SQLite** is retained exclusively for fast, zero-dependency offline local test runs and developer workstations.
+3. **Dual-Engine Contract Suite:** From Stage S8 onward, a repository contract test suite (`test_stage8_repository_contract.py`) runs identically against both PostgreSQL (via test container/Postgres instance in CI) and SQLite to ensure strict query portability and dialect neutrality.
+
 ## Revisit When
-Revisit if concurrent batch ingestion from multiple physical campuses exceeds 1,000 writes/sec, requiring PostgreSQL clustering.
+Revisit if distributed multi-region database sharding is required beyond a single managed PostgreSQL cluster.
