@@ -1,7 +1,7 @@
 # ADR-0002: Numeric Semantics, Exact Fractions, and Integer Arithmetic
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Scoring academic examinations and categorizing student performance into high-stakes bands (RED, YELLOW, GREEN) requires absolute mathematical precision.

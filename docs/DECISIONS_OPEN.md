@@ -175,18 +175,18 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
   `"प्रिय अभिभावक, {child_name} ({class_section}) के {test_name} में कुल नंबर: {max_marks} में से {net_marks} नंबर आए हैं ({net_percentage})। {present_count} उपस्थित बच्चों में {child_name} का रैंक {rank} है। क्लास का औसत स्कोर {class_average} है। क्लास में सबसे ज़्यादा नंबर {topper_marks} हैं। सही जवाबों से मिले {gross_marks} नंबर, गलत जवाबों से {bleed_marks} नंबर कट गए।"`
   Fallback shorter variant:
   `"प्रिय अभिभावक, {child_name} ({class_section}) के {test_name} में कुल नंबर: {max_marks} में से {net_marks} नंबर आए हैं ({net_percentage})। {present_count} उपस्थित बच्चों में {child_name} का रैंक {rank} है। क्लास का औसत स्कोर {class_average} है।"`
-* **Status:** PROPOSED (`OWNER-CONFIRM`)
+* **Status:** DECIDED (see S1-BLOCK-02, 2026-10-21, operator)
 
 ## (b) Absent Message Wordings & Absent Scorecard Card (`OWNER-CONFIRM`)
 * **Proposal:** Three factual absence wordings carrying zero score, rank, or performance framing:
   1. `OMR_ABSENT`: `"प्रिय अभिभावक, {child_name} ({class_section}) {test_name} के टेस्ट में अनुपस्थित रहे। कुल {max_marks} नंबर का टेस्ट आयोजित किया गया था जिसमें {present_count} बच्चे उपस्थित रहे।"`
   2. `MARKS_ENTRY_ABSENT`: `"प्रिय अभिभावक, {child_name} ({class_section}) {test_name} ({subject}) के टेस्ट में अनुपस्थित रहे। कुल {max_marks} नंबर का टेस्ट आयोजित किया गया था जिसमें {present_count} बच्चे उपस्थित रहे।"`
   3. Absent Scorecard Card: Neutral grey `#5F6368` banner with white text `"टेस्ट में अनुपस्थित"`, omitting proof strip, scores, rank, and diagnostics.
-* **Status:** PROPOSED (`OWNER-CONFIRM`)
+* **Status:** DECIDED (see S1-BLOCK-03, 2026-10-21, operator)
 
 ## (c) Rank Scope (`OWNER-CONFIRM`)
 * **Proposal:** For marks entry, compute standard competition rank per subject within the assessment among `PRESENT` students. An overall assessment rank is computed only when an assessment has multiple subjects and every present student has scores across all subjects.
-* **Status:** PROPOSED (`OWNER-CONFIRM`)
+* **Status:** DECIDED (see S1-BLOCK-04, 2026-10-21, operator)
 
 ## (d) Message Scope per Assessment (`OWNER-CONFIRM`)
 * **Proposal:** Dispatch one message per subject for routine assessments, with a configurable option for a weekly digest consolidating multiple subject assessments into a single summary report.
@@ -202,7 +202,7 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 
 ## (g) Class Average Definition for Marks Entry (`OWNER-CONFIRM`)
 * **Proposal:** Arithmetic mean of net marks among all `PRESENT` students in the assessment cohort: evaluated at full precision (`Fraction`), rendered to 1 decimal place with `ROUND_HALF_UP` on display (e.g. `32.4`). Null if zero present.
-* **Status:** PROPOSED (`OWNER-CONFIRM`)
+* **Status:** DECIDED (see S1-BLOCK-05, 2026-10-21, operator)
 
 ## (h) Multi-Tenant Database Architecture (`OWNER-CONFIRM`)
 * **Proposal:** Adopt Option 1 of ADR-0017: Shared database and schema with indexed `org_id` on every table, mandatory `org_id` enforcement in repositories, and PostgreSQL Row-Level Security (RLS) as defence in depth.
@@ -222,7 +222,7 @@ This document tracks items tagged `OWNER-CONFIRM`, requirement ambiguities, and 
 
 ## (l) `include_roll_in_text` Default Setting (`OWNER-CONFIRM`)
 * **Proposal:** Per-organization configuration parameter `include_roll_in_text` defaults to `false`. Roll numbers appear on scorecard PNG images and PTM slips, but are omitted from WhatsApp text bodies unless explicitly enabled by the school.
-* **Status:** PROPOSED (`OWNER-CONFIRM`)
+* **Status:** DECIDED (see S1-BLOCK-06, 2026-10-21, operator)
 
 ## (m) Proposed Wording to Widen Product Boundary in `PROJECT_SPEC.md` (`OWNER-CONFIRM`)
 * **Proposal (Wording draft only; PROJECT_SPEC.md is NOT modified):**
@@ -265,8 +265,8 @@ The following OWNER-CONFIRM items directly block the finalization and freeze of 
 * **Options:**
   - *Option 1 (Literal D-04 Invariant):* Apply D-04 universally. Any student who is ABSENT, RED, or bottom-quarter receives `requires_ptm_slip = true` regardless of assessment kind or purpose.
   - *Option 2 (ADR-0016 Purpose-Gated):* Restrict PTM slip generation to assessments flagged `PTM_LINKED`. Routine single-subject marks entry assessments (e.g. `marks_entry_50.json`) set `requires_ptm_slip = false` for all students.
-* **Consequence for S1 Hash:** Inverts `requires_ptm_slip` booleans in `expected_marks_reports.json` across 4 out of 6 students in the golden marks-entry fixture, altering the signed fixture manifest SHA-256 hash.
-* **Status:** OPEN (`OWNER-CONFIRM`)
+* **Consequence for S1 Hash:** Inverts `requires_ptm_slip` booleans in `expected_marks_reports.json` across 3 out of 6 students in the golden marks-entry fixture, altering the signed fixture manifest SHA-256 hash.
+* **Status:** DECIDED (Option 1, 2026-10-21, operator)
 
 ### S1-BLOCK-02: OMR Present Parent Message Body String (Item (a) / `MSG-OMR-PRESENT`) (`OWNER-CONFIRM`)
 * **What it changes:** The literal rendered message text in `expected_reports.json` for PRESENT OMR students (STU_01 through STU_16).
@@ -274,7 +274,7 @@ The following OWNER-CONFIRM items directly block the finalization and freeze of 
   - *Option 1 (Full Diagnostics):* Wrap the frozen score-line string with greeting, child name, class/section, present count, rank, class average, topper marks, gross marks, and bleed marks.
   - *Option 2 (Concise Variant):* Wrap frozen score line with greeting, child name, class/section, rank, and class average (omitting mark-bleed breakdown).
 * **Consequence for S1 Hash:** Alters expected message strings across 16 student report objects in `expected_reports.json`, modifying the fixture SHA-256 hash.
-* **Status:** OPEN (`OWNER-CONFIRM`)
+* **Status:** DECIDED (Option 1, 2026-10-21, operator)
 
 ### S1-BLOCK-03: Absent Message Template Copy (Item (b) / `MSG-ABSENT`) (`OWNER-CONFIRM`)
 * **What it changes:** Rendered notification strings for absent students (STU_17–STU_20 in OMR and ME_06 in marks entry).
@@ -282,7 +282,7 @@ The following OWNER-CONFIRM items directly block the finalization and freeze of 
   - *Option 1 (Full Context):* Factual notice including assessment name, cohort maximum marks, and total students attending.
   - *Option 2 (Minimal Notice):* Single-sentence factual notice naming the child, class/section, and assessment only.
 * **Consequence for S1 Hash:** Directly alters `message_text` for absent student objects in `expected_reports.json` and `expected_marks_reports.json`.
-* **Status:** OPEN (`OWNER-CONFIRM`)
+* **Status:** DECIDED (Option 1, 2026-10-21, operator)
 
 ### S1-BLOCK-04: Marks Entry Competition Rank Scope (Item (c) / `RANK-SCOPE-ME`) (`OWNER-CONFIRM`)
 * **What it changes:** The `rank` attribute in `expected_marks_reports.json`.
@@ -290,7 +290,7 @@ The following OWNER-CONFIRM items directly block the finalization and freeze of 
   - *Option 1 (Subject Cohort Rank):* Rank evaluated within the single-subject participant cohort (Aarav and Rohan tied at rank 2; topper Priya at rank 1).
   - *Option 2 (Composite Assessment Rank):* Rank computed only across multi-subject totals, omitting rank from single-subject reports.
 * **Consequence for S1 Hash:** Alters numeric `rank` field across student records in `expected_marks_reports.json`.
-* **Status:** OPEN (`OWNER-CONFIRM`)
+* **Status:** DECIDED (Option 1, 2026-10-21, operator)
 
 ### S1-BLOCK-05: Class Average Numeric Quantization for Marks Entry (Item (g) / `CLASS-AVG-ME`) (`OWNER-CONFIRM`)
 * **What it changes:** String/numeric representation of `class_average` in `expected_marks_reports.json`.
@@ -298,7 +298,7 @@ The following OWNER-CONFIRM items directly block the finalization and freeze of 
   - *Option 1:* 1 decimal place with `ROUND_HALF_UP` display quantization (`"21.9"` for batch sum 109.5 over 5 present).
   - *Option 2:* Exact rational / 2 decimal places (`"21.90"`).
 * **Consequence for S1 Hash:** Changes JSON representation of batch metrics in `expected_marks_reports.json`.
-* **Status:** OPEN (`OWNER-CONFIRM`)
+* **Status:** DECIDED (Option 1, 2026-10-21, operator)
 
 ### S1-BLOCK-06: Student Roll Number Policy in Message Body (Item (l) / `ROLL-IN-TEXT`) (`OWNER-CONFIRM`)
 * **What it changes:** Whether rendered parent text in `expected_reports.json` and `expected_marks_reports.json` includes `"(रोल नं. X)"`.
@@ -306,7 +306,7 @@ The following OWNER-CONFIRM items directly block the finalization and freeze of 
   - *Option 1:* Default `include_roll_in_text=false` (omitted from WhatsApp text, present on scorecard PNG and PDF).
   - *Option 2:* `include_roll_in_text=true` (inserted into text next to class/section).
 * **Consequence for S1 Hash:** Adds or removes roll tokens from message text in golden fixture expectations.
-* **Status:** OPEN (`OWNER-CONFIRM`)
+* **Status:** DECIDED (Option 1, 2026-10-21, operator)
 
 ---
 

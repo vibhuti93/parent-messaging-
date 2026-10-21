@@ -1,7 +1,7 @@
 # ADR-0016: Assessment Entity, Multi-Kind Assessment Foundation, and Reporting Policy
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 The engine was initially conceived around single-batch optical mark recognition (`OMR_MCQ`) examinations. However, educational institutions assess students using multiple evaluation formats throughout an academic term:
@@ -86,7 +86,7 @@ For each core diagnostic metric, availability is defined per kind:
 | **D-04: Competition Rank** | `competition_rank` | Available | Available | Standard competition rank within cohort among present students. |
 | **D-04: Class Average** | `class_average_net` | Available | Available | Arithmetic mean of present students in cohort. |
 | **D-04: Class Topper Score** | `class_topper_net` | Available | Available | Maximum score among present students in cohort. |
-| **D-04: PTM Slip Requirement** | `requires_ptm_slip` | Available | Available (if PTM-linked)| Generated only if assessment purpose includes `PTM_LINKED`. |
+| **D-04: PTM Slip Requirement** | `requires_ptm_slip` | Available | Available | Computed per D-04 for every assessment (S1-BLOCK-01, Option 1). Restricting slips to `PTM_LINKED` assessments is OPEN (DECISIONS_OPEN item (f)). |
 | **D-05: Gross Marks** | `gross_marks` | Available | `NOT_AVAILABLE` | Equal to net marks in non-negative marking; omitted from copy. |
 | **D-05: Bleed Marks (Deductions)**| `bleed_marks` | Available | `NOT_AVAILABLE` | Zero deduction concept; omitted from copy (never shown as 0). |
 
@@ -128,8 +128,8 @@ The marks entry ingestion pipeline accepts tabular data with the following contr
 ### 7. Reporting Policy by Purpose (Weekly, Midterm, PTM-Linked)
 Assessments carry purpose flags that govern parent communication:
 1. **PTM-Linked Assessments (`PTM_LINKED`):**
-   - PTM consultation slips (A4 PDF) and PTM invitation messages are generated **only** if the assessment has the `PTM_LINKED` purpose flag.
-   - Routine weekly tests or unit tests do not generate PTM slips unless explicitly flagged.
+   - The `requires_ptm_slip` flag follows D-04 for every assessment (S1-BLOCK-01, Option 1). Restricting PTM slip and invitation generation to `PTM_LINKED` assessments is **OPEN** (`DECISIONS_OPEN.md` item (f)).
+   - Whether routine weekly and unit tests print PTM slips is **OPEN** (item (f)).
 2. **Consent Scope Alignment:**
    - The existing consent model (`docs/data_map.md`, Section 2.3) specifies `consent_scope: str`.
    - The engine validates that guardian consent covers the assessment purpose:
