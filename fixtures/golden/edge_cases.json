@@ -1,0 +1,102 @@
+{
+  "all_wrong_student": {
+    "attempted": 75,
+    "blank": 0,
+    "bleed_marks": 75,
+    "correct": 0,
+    "gross_marks": 0,
+    "max_marks": 300,
+    "net_marks": -75,
+    "net_percentage": "-25.0%",
+    "requires_ptm_slip": true,
+    "status_band": "RED",
+    "student_id": "EDGE_ALL_WRONG",
+    "total_questions": 75,
+    "wrong": 75
+  },
+  "one_student_batch": {
+    "absent_count": 0,
+    "class_average": "200.0",
+    "enrolled_count": 1,
+    "present_count": 1,
+    "student": {
+      "competition_rank": 1,
+      "max_marks": 300,
+      "net_marks": 200,
+      "status_band": "GREEN",
+      "student_id": "EDGE_SOLO"
+    },
+    "topper_net_marks": 200
+  },
+  "percentage_boundaries": [
+    {
+      "expected_band": "RED",
+      "input_pct": "29.99"
+    },
+    {
+      "expected_band": "YELLOW",
+      "input_pct": "30.0"
+    },
+    {
+      "expected_band": "YELLOW",
+      "input_pct": "60.0"
+    },
+    {
+      "expected_band": "GREEN",
+      "input_pct": "60.01"
+    },
+    {
+      "expected_band": "RED",
+      "input_pct": "-25.0"
+    },
+    {
+      "expected_band": "RED",
+      "input_pct": "0.0"
+    }
+  ],
+  "rounding_tie_batch": {
+    "absent_count": 0,
+    "class_average_display": "12.3",
+    "class_average_exact": "12.25",
+    "class_average_fraction": "49/4",
+    "enrolled_count": 4,
+    "present_count": 4,
+    "scores": [
+      12,
+      12,
+      12,
+      13
+    ],
+    "total_score_sum": 49
+  },
+  "schema_version": 1,
+  "tie_for_first_pair": {
+    "present_count": 3,
+    "students": [
+      {
+        "competition_rank": 1,
+        "net_marks": 250,
+        "student_id": "EDGE_TIE_A"
+      },
+      {
+        "competition_rank": 1,
+        "net_marks": 250,
+        "student_id": "EDGE_TIE_B"
+      },
+      {
+        "competition_rank": 3,
+        "net_marks": 200,
+        "student_id": "EDGE_TIE_C"
+      }
+    ]
+  },
+  "zero_present_batch": {
+    "absent_count": 5,
+    "class_average": null,
+    "easy_question_ids": [],
+    "enrolled_count": 5,
+    "present_count": 0,
+    "topper_net_marks": null,
+    "total_score_sum": null
+  }
+}

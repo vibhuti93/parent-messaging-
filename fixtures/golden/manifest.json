@@ -1,0 +1,16 @@
+{
+  "files": {
+    "fixtures/golden/README.md": "bc5eb8c37ce63a8391c88945936702a7ebc5d73d1278ff610ec050ce2c9d7dcf",
+    "fixtures/golden/admissions_300.json": "2e3f34dbd4c1767e65f1b5fc52f85c5375516bd5e1f48a9b868f78d1228ace3c",
+    "fixtures/golden/edge_cases.json": "bb5ce52e72f7313d6b2d7177d250654482c0eb5bbb1460f303c676eae67f797a",
+    "fixtures/golden/expected_contacts.json": "b7f6fcbd1cc64bb55809ee80d8e22a9a01479c4919c61b31bdf7369719869508",
+    "fixtures/golden/expected_marks_reports.json": "b1c9c177d02f88dda6fb03bc4a224d07a05b70448e83d7195951047ef7de9208",
+    "fixtures/golden/expected_reports.json": "a13abad0990bf86fbc0df96e910f30973ea10666a16938c62b11b39f01b5e407",
+    "fixtures/golden/isolation_two_orgs.json": "fb52a7ea748e2b4f10564a95355e887b66f43a095ae290bd415524c297900809",
+    "fixtures/golden/marks_entry_50.json": "19479248afd8f6ecbc6f3668ea2534a8820b8324ce640fd6dc3174182414cfb2",
+    "fixtures/golden/submissions_300.json": "b8321da221f4433fe5fc571aa29c8f1aebcfb027b2a8a4d7548c1b02341283f2",
+    "fixtures/golden/test_paper_300.json": "3b3ff09957220da86ef63e44e061060d19a1bec2ad12e64d45f386dcc2fdd973"
+  },
+  "fixture_version": "1.0.0",
+  "schema_version": 1
+}

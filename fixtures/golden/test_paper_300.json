@@ -1,0 +1,2495 @@
+{
+  "max_marks_per_subject": {
+    "CHEMISTRY": 100,
+    "MATHS": 100,
+    "PHYSICS": 100
+  },
+  "name": "टर्म 1 डायग्नोस्टिक टेस्ट",
+  "org_id": "DEFAULT_INSTITUTION",
+  "questions": [
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 255,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 255
+          },
+          "B": {
+            "x": 89,
+            "y": 255
+          },
+          "C": {
+            "x": 113,
+            "y": 255
+          },
+          "D": {
+            "x": 137,
+            "y": 255
+          }
+        },
+        "row": 0
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 1,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 272,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 272
+          },
+          "B": {
+            "x": 89,
+            "y": 272
+          },
+          "C": {
+            "x": 113,
+            "y": 272
+          },
+          "D": {
+            "x": 137,
+            "y": 272
+          }
+        },
+        "row": 1
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 2,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 289,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 289
+          },
+          "B": {
+            "x": 89,
+            "y": 289
+          },
+          "C": {
+            "x": 113,
+            "y": 289
+          },
+          "D": {
+            "x": 137,
+            "y": 289
+          }
+        },
+        "row": 2
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 3,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 306,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 306
+          },
+          "B": {
+            "x": 89,
+            "y": 306
+          },
+          "C": {
+            "x": 113,
+            "y": 306
+          },
+          "D": {
+            "x": 137,
+            "y": 306
+          }
+        },
+        "row": 3
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 4,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 323,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 323
+          },
+          "B": {
+            "x": 89,
+            "y": 323
+          },
+          "C": {
+            "x": 113,
+            "y": 323
+          },
+          "D": {
+            "x": 137,
+            "y": 323
+          }
+        },
+        "row": 4
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 5,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 340,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 340
+          },
+          "B": {
+            "x": 89,
+            "y": 340
+          },
+          "C": {
+            "x": 113,
+            "y": 340
+          },
+          "D": {
+            "x": 137,
+            "y": 340
+          }
+        },
+        "row": 5
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 6,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 357,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 357
+          },
+          "B": {
+            "x": 89,
+            "y": 357
+          },
+          "C": {
+            "x": 113,
+            "y": 357
+          },
+          "D": {
+            "x": 137,
+            "y": 357
+          }
+        },
+        "row": 6
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 7,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 374,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 374
+          },
+          "B": {
+            "x": 89,
+            "y": 374
+          },
+          "C": {
+            "x": 113,
+            "y": 374
+          },
+          "D": {
+            "x": 137,
+            "y": 374
+          }
+        },
+        "row": 7
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 8,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 391,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 391
+          },
+          "B": {
+            "x": 89,
+            "y": 391
+          },
+          "C": {
+            "x": 113,
+            "y": 391
+          },
+          "D": {
+            "x": 137,
+            "y": 391
+          }
+        },
+        "row": 8
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 9,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 408,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 408
+          },
+          "B": {
+            "x": 89,
+            "y": 408
+          },
+          "C": {
+            "x": 113,
+            "y": 408
+          },
+          "D": {
+            "x": 137,
+            "y": 408
+          }
+        },
+        "row": 9
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 10,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 425,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 425
+          },
+          "B": {
+            "x": 89,
+            "y": 425
+          },
+          "C": {
+            "x": 113,
+            "y": 425
+          },
+          "D": {
+            "x": 137,
+            "y": 425
+          }
+        },
+        "row": 10
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 11,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 442,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 442
+          },
+          "B": {
+            "x": 89,
+            "y": 442
+          },
+          "C": {
+            "x": 113,
+            "y": 442
+          },
+          "D": {
+            "x": 137,
+            "y": 442
+          }
+        },
+        "row": 11
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 12,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 459,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 459
+          },
+          "B": {
+            "x": 89,
+            "y": 459
+          },
+          "C": {
+            "x": 113,
+            "y": 459
+          },
+          "D": {
+            "x": 137,
+            "y": 459
+          }
+        },
+        "row": 12
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 13,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 476,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 476
+          },
+          "B": {
+            "x": 89,
+            "y": 476
+          },
+          "C": {
+            "x": 113,
+            "y": 476
+          },
+          "D": {
+            "x": 137,
+            "y": 476
+          }
+        },
+        "row": 13
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 14,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 493,
+        "col": 0,
+        "col_x": 30,
+        "options": {
+          "A": {
+            "x": 65,
+            "y": 493
+          },
+          "B": {
+            "x": 89,
+            "y": 493
+          },
+          "C": {
+            "x": 113,
+            "y": 493
+          },
+          "D": {
+            "x": 137,
+            "y": 493
+          }
+        },
+        "row": 14
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 15,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 255,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 255
+          },
+          "B": {
+            "x": 239,
+            "y": 255
+          },
+          "C": {
+            "x": 263,
+            "y": 255
+          },
+          "D": {
+            "x": 287,
+            "y": 255
+          }
+        },
+        "row": 0
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 16,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 272,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 272
+          },
+          "B": {
+            "x": 239,
+            "y": 272
+          },
+          "C": {
+            "x": 263,
+            "y": 272
+          },
+          "D": {
+            "x": 287,
+            "y": 272
+          }
+        },
+        "row": 1
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 17,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 289,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 289
+          },
+          "B": {
+            "x": 239,
+            "y": 289
+          },
+          "C": {
+            "x": 263,
+            "y": 289
+          },
+          "D": {
+            "x": 287,
+            "y": 289
+          }
+        },
+        "row": 2
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 18,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 306,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 306
+          },
+          "B": {
+            "x": 239,
+            "y": 306
+          },
+          "C": {
+            "x": 263,
+            "y": 306
+          },
+          "D": {
+            "x": 287,
+            "y": 306
+          }
+        },
+        "row": 3
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 19,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 323,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 323
+          },
+          "B": {
+            "x": 239,
+            "y": 323
+          },
+          "C": {
+            "x": 263,
+            "y": 323
+          },
+          "D": {
+            "x": 287,
+            "y": 323
+          }
+        },
+        "row": 4
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 20,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 340,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 340
+          },
+          "B": {
+            "x": 239,
+            "y": 340
+          },
+          "C": {
+            "x": 263,
+            "y": 340
+          },
+          "D": {
+            "x": 287,
+            "y": 340
+          }
+        },
+        "row": 5
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 21,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 357,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 357
+          },
+          "B": {
+            "x": 239,
+            "y": 357
+          },
+          "C": {
+            "x": 263,
+            "y": 357
+          },
+          "D": {
+            "x": 287,
+            "y": 357
+          }
+        },
+        "row": 6
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 22,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 374,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 374
+          },
+          "B": {
+            "x": 239,
+            "y": 374
+          },
+          "C": {
+            "x": 263,
+            "y": 374
+          },
+          "D": {
+            "x": 287,
+            "y": 374
+          }
+        },
+        "row": 7
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 23,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 391,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 391
+          },
+          "B": {
+            "x": 239,
+            "y": 391
+          },
+          "C": {
+            "x": 263,
+            "y": 391
+          },
+          "D": {
+            "x": 287,
+            "y": 391
+          }
+        },
+        "row": 8
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 24,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 408,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 408
+          },
+          "B": {
+            "x": 239,
+            "y": 408
+          },
+          "C": {
+            "x": 263,
+            "y": 408
+          },
+          "D": {
+            "x": 287,
+            "y": 408
+          }
+        },
+        "row": 9
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 25,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "PHYSICS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 425,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 425
+          },
+          "B": {
+            "x": 239,
+            "y": 425
+          },
+          "C": {
+            "x": 263,
+            "y": 425
+          },
+          "D": {
+            "x": 287,
+            "y": 425
+          }
+        },
+        "row": 10
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 26,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 442,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 442
+          },
+          "B": {
+            "x": 239,
+            "y": 442
+          },
+          "C": {
+            "x": 263,
+            "y": 442
+          },
+          "D": {
+            "x": 287,
+            "y": 442
+          }
+        },
+        "row": 11
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 27,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 459,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 459
+          },
+          "B": {
+            "x": 239,
+            "y": 459
+          },
+          "C": {
+            "x": 263,
+            "y": 459
+          },
+          "D": {
+            "x": 287,
+            "y": 459
+          }
+        },
+        "row": 12
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 28,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 476,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 476
+          },
+          "B": {
+            "x": 239,
+            "y": 476
+          },
+          "C": {
+            "x": 263,
+            "y": 476
+          },
+          "D": {
+            "x": 287,
+            "y": 476
+          }
+        },
+        "row": 13
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 29,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 493,
+        "col": 1,
+        "col_x": 180,
+        "options": {
+          "A": {
+            "x": 215,
+            "y": 493
+          },
+          "B": {
+            "x": 239,
+            "y": 493
+          },
+          "C": {
+            "x": 263,
+            "y": 493
+          },
+          "D": {
+            "x": 287,
+            "y": 493
+          }
+        },
+        "row": 14
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 30,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 255,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 255
+          },
+          "B": {
+            "x": 389,
+            "y": 255
+          },
+          "C": {
+            "x": 413,
+            "y": 255
+          },
+          "D": {
+            "x": 437,
+            "y": 255
+          }
+        },
+        "row": 0
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 31,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 272,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 272
+          },
+          "B": {
+            "x": 389,
+            "y": 272
+          },
+          "C": {
+            "x": 413,
+            "y": 272
+          },
+          "D": {
+            "x": 437,
+            "y": 272
+          }
+        },
+        "row": 1
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 32,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 289,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 289
+          },
+          "B": {
+            "x": 389,
+            "y": 289
+          },
+          "C": {
+            "x": 413,
+            "y": 289
+          },
+          "D": {
+            "x": 437,
+            "y": 289
+          }
+        },
+        "row": 2
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 33,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 306,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 306
+          },
+          "B": {
+            "x": 389,
+            "y": 306
+          },
+          "C": {
+            "x": 413,
+            "y": 306
+          },
+          "D": {
+            "x": 437,
+            "y": 306
+          }
+        },
+        "row": 3
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 34,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 323,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 323
+          },
+          "B": {
+            "x": 389,
+            "y": 323
+          },
+          "C": {
+            "x": 413,
+            "y": 323
+          },
+          "D": {
+            "x": 437,
+            "y": 323
+          }
+        },
+        "row": 4
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 35,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 340,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 340
+          },
+          "B": {
+            "x": 389,
+            "y": 340
+          },
+          "C": {
+            "x": 413,
+            "y": 340
+          },
+          "D": {
+            "x": 437,
+            "y": 340
+          }
+        },
+        "row": 5
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 36,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 357,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 357
+          },
+          "B": {
+            "x": 389,
+            "y": 357
+          },
+          "C": {
+            "x": 413,
+            "y": 357
+          },
+          "D": {
+            "x": 437,
+            "y": 357
+          }
+        },
+        "row": 6
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 37,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 374,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 374
+          },
+          "B": {
+            "x": 389,
+            "y": 374
+          },
+          "C": {
+            "x": 413,
+            "y": 374
+          },
+          "D": {
+            "x": 437,
+            "y": 374
+          }
+        },
+        "row": 7
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 38,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 391,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 391
+          },
+          "B": {
+            "x": 389,
+            "y": 391
+          },
+          "C": {
+            "x": 413,
+            "y": 391
+          },
+          "D": {
+            "x": 437,
+            "y": 391
+          }
+        },
+        "row": 8
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 39,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 408,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 408
+          },
+          "B": {
+            "x": 389,
+            "y": 408
+          },
+          "C": {
+            "x": 413,
+            "y": 408
+          },
+          "D": {
+            "x": 437,
+            "y": 408
+          }
+        },
+        "row": 9
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 40,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 425,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 425
+          },
+          "B": {
+            "x": 389,
+            "y": 425
+          },
+          "C": {
+            "x": 413,
+            "y": 425
+          },
+          "D": {
+            "x": 437,
+            "y": 425
+          }
+        },
+        "row": 10
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 41,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 442,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 442
+          },
+          "B": {
+            "x": 389,
+            "y": 442
+          },
+          "C": {
+            "x": 413,
+            "y": 442
+          },
+          "D": {
+            "x": 437,
+            "y": 442
+          }
+        },
+        "row": 11
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 42,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 459,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 459
+          },
+          "B": {
+            "x": 389,
+            "y": 459
+          },
+          "C": {
+            "x": 413,
+            "y": 459
+          },
+          "D": {
+            "x": 437,
+            "y": 459
+          }
+        },
+        "row": 12
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 43,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 476,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 476
+          },
+          "B": {
+            "x": 389,
+            "y": 476
+          },
+          "C": {
+            "x": 413,
+            "y": 476
+          },
+          "D": {
+            "x": 437,
+            "y": 476
+          }
+        },
+        "row": 13
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 44,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 493,
+        "col": 2,
+        "col_x": 330,
+        "options": {
+          "A": {
+            "x": 365,
+            "y": 493
+          },
+          "B": {
+            "x": 389,
+            "y": 493
+          },
+          "C": {
+            "x": 413,
+            "y": 493
+          },
+          "D": {
+            "x": 437,
+            "y": 493
+          }
+        },
+        "row": 14
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 45,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 255,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 255
+          },
+          "B": {
+            "x": 539,
+            "y": 255
+          },
+          "C": {
+            "x": 563,
+            "y": 255
+          },
+          "D": {
+            "x": 587,
+            "y": 255
+          }
+        },
+        "row": 0
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 46,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 272,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 272
+          },
+          "B": {
+            "x": 539,
+            "y": 272
+          },
+          "C": {
+            "x": 563,
+            "y": 272
+          },
+          "D": {
+            "x": 587,
+            "y": 272
+          }
+        },
+        "row": 1
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 47,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 289,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 289
+          },
+          "B": {
+            "x": 539,
+            "y": 289
+          },
+          "C": {
+            "x": 563,
+            "y": 289
+          },
+          "D": {
+            "x": 587,
+            "y": 289
+          }
+        },
+        "row": 2
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 48,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 306,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 306
+          },
+          "B": {
+            "x": 539,
+            "y": 306
+          },
+          "C": {
+            "x": 563,
+            "y": 306
+          },
+          "D": {
+            "x": 587,
+            "y": 306
+          }
+        },
+        "row": 3
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 49,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 323,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 323
+          },
+          "B": {
+            "x": 539,
+            "y": 323
+          },
+          "C": {
+            "x": 563,
+            "y": 323
+          },
+          "D": {
+            "x": 587,
+            "y": 323
+          }
+        },
+        "row": 4
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 50,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "CHEMISTRY"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 340,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 340
+          },
+          "B": {
+            "x": 539,
+            "y": 340
+          },
+          "C": {
+            "x": 563,
+            "y": 340
+          },
+          "D": {
+            "x": 587,
+            "y": 340
+          }
+        },
+        "row": 5
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 51,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 357,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 357
+          },
+          "B": {
+            "x": 539,
+            "y": 357
+          },
+          "C": {
+            "x": 563,
+            "y": 357
+          },
+          "D": {
+            "x": 587,
+            "y": 357
+          }
+        },
+        "row": 6
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 52,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 374,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 374
+          },
+          "B": {
+            "x": 539,
+            "y": 374
+          },
+          "C": {
+            "x": 563,
+            "y": 374
+          },
+          "D": {
+            "x": 587,
+            "y": 374
+          }
+        },
+        "row": 7
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 53,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 391,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 391
+          },
+          "B": {
+            "x": 539,
+            "y": 391
+          },
+          "C": {
+            "x": 563,
+            "y": 391
+          },
+          "D": {
+            "x": 587,
+            "y": 391
+          }
+        },
+        "row": 8
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 54,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 408,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 408
+          },
+          "B": {
+            "x": 539,
+            "y": 408
+          },
+          "C": {
+            "x": 563,
+            "y": 408
+          },
+          "D": {
+            "x": 587,
+            "y": 408
+          }
+        },
+        "row": 9
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 55,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 425,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 425
+          },
+          "B": {
+            "x": 539,
+            "y": 425
+          },
+          "C": {
+            "x": 563,
+            "y": 425
+          },
+          "D": {
+            "x": 587,
+            "y": 425
+          }
+        },
+        "row": 10
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 56,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 442,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 442
+          },
+          "B": {
+            "x": 539,
+            "y": 442
+          },
+          "C": {
+            "x": 563,
+            "y": 442
+          },
+          "D": {
+            "x": 587,
+            "y": 442
+          }
+        },
+        "row": 11
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 57,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 459,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 459
+          },
+          "B": {
+            "x": 539,
+            "y": 459
+          },
+          "C": {
+            "x": 563,
+            "y": 459
+          },
+          "D": {
+            "x": 587,
+            "y": 459
+          }
+        },
+        "row": 12
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 58,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 476,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 476
+          },
+          "B": {
+            "x": 539,
+            "y": 476
+          },
+          "C": {
+            "x": 563,
+            "y": 476
+          },
+          "D": {
+            "x": 587,
+            "y": 476
+          }
+        },
+        "row": 13
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 59,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 493,
+        "col": 3,
+        "col_x": 480,
+        "options": {
+          "A": {
+            "x": 515,
+            "y": 493
+          },
+          "B": {
+            "x": 539,
+            "y": 493
+          },
+          "C": {
+            "x": 563,
+            "y": 493
+          },
+          "D": {
+            "x": 587,
+            "y": 493
+          }
+        },
+        "row": 14
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 60,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 255,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 255
+          },
+          "B": {
+            "x": 689,
+            "y": 255
+          },
+          "C": {
+            "x": 713,
+            "y": 255
+          },
+          "D": {
+            "x": 737,
+            "y": 255
+          }
+        },
+        "row": 0
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 61,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 272,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 272
+          },
+          "B": {
+            "x": 689,
+            "y": 272
+          },
+          "C": {
+            "x": 713,
+            "y": 272
+          },
+          "D": {
+            "x": 737,
+            "y": 272
+          }
+        },
+        "row": 1
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 62,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 289,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 289
+          },
+          "B": {
+            "x": 689,
+            "y": 289
+          },
+          "C": {
+            "x": 713,
+            "y": 289
+          },
+          "D": {
+            "x": 737,
+            "y": 289
+          }
+        },
+        "row": 2
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 63,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 306,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 306
+          },
+          "B": {
+            "x": 689,
+            "y": 306
+          },
+          "C": {
+            "x": 713,
+            "y": 306
+          },
+          "D": {
+            "x": 737,
+            "y": 306
+          }
+        },
+        "row": 3
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 64,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 323,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 323
+          },
+          "B": {
+            "x": 689,
+            "y": 323
+          },
+          "C": {
+            "x": 713,
+            "y": 323
+          },
+          "D": {
+            "x": 737,
+            "y": 323
+          }
+        },
+        "row": 4
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 65,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 340,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 340
+          },
+          "B": {
+            "x": 689,
+            "y": 340
+          },
+          "C": {
+            "x": 713,
+            "y": 340
+          },
+          "D": {
+            "x": 737,
+            "y": 340
+          }
+        },
+        "row": 5
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 66,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 357,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 357
+          },
+          "B": {
+            "x": 689,
+            "y": 357
+          },
+          "C": {
+            "x": 713,
+            "y": 357
+          },
+          "D": {
+            "x": 737,
+            "y": 357
+          }
+        },
+        "row": 6
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 67,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 374,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 374
+          },
+          "B": {
+            "x": 689,
+            "y": 374
+          },
+          "C": {
+            "x": 713,
+            "y": 374
+          },
+          "D": {
+            "x": 737,
+            "y": 374
+          }
+        },
+        "row": 7
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 68,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 391,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 391
+          },
+          "B": {
+            "x": 689,
+            "y": 391
+          },
+          "C": {
+            "x": 713,
+            "y": 391
+          },
+          "D": {
+            "x": 737,
+            "y": 391
+          }
+        },
+        "row": 8
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 69,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 408,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 408
+          },
+          "B": {
+            "x": 689,
+            "y": 408
+          },
+          "C": {
+            "x": 713,
+            "y": 408
+          },
+          "D": {
+            "x": 737,
+            "y": 408
+          }
+        },
+        "row": 9
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 70,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 425,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 425
+          },
+          "B": {
+            "x": 689,
+            "y": 425
+          },
+          "C": {
+            "x": 713,
+            "y": 425
+          },
+          "D": {
+            "x": 737,
+            "y": 425
+          }
+        },
+        "row": 10
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 71,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 442,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 442
+          },
+          "B": {
+            "x": 689,
+            "y": 442
+          },
+          "C": {
+            "x": 713,
+            "y": 442
+          },
+          "D": {
+            "x": 737,
+            "y": 442
+          }
+        },
+        "row": 11
+      },
+      "correct_option": "D",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 72,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 459,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 459
+          },
+          "B": {
+            "x": 689,
+            "y": 459
+          },
+          "C": {
+            "x": 713,
+            "y": 459
+          },
+          "D": {
+            "x": 737,
+            "y": 459
+          }
+        },
+        "row": 12
+      },
+      "correct_option": "A",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 73,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 476,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 476
+          },
+          "B": {
+            "x": 689,
+            "y": 476
+          },
+          "C": {
+            "x": 713,
+            "y": 476
+          },
+          "D": {
+            "x": 737,
+            "y": 476
+          }
+        },
+        "row": 13
+      },
+      "correct_option": "B",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 74,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    },
+    {
+      "blank_marks": 0,
+      "bubble_coordinates": {
+        "center_y": 493,
+        "col": 4,
+        "col_x": 630,
+        "options": {
+          "A": {
+            "x": 665,
+            "y": 493
+          },
+          "B": {
+            "x": 689,
+            "y": 493
+          },
+          "C": {
+            "x": 713,
+            "y": 493
+          },
+          "D": {
+            "x": 737,
+            "y": 493
+          }
+        },
+        "row": 14
+      },
+      "correct_option": "C",
+      "negative_marks": 1,
+      "positive_marks": 4,
+      "question_id": 75,
+      "question_type": "SINGLE_CORRECT",
+      "subject": "MATHS"
+    }
+  ],
+  "schema_version": 1,
+  "subjects": [
+    "PHYSICS",
+    "CHEMISTRY",
+    "MATHS"
+  ],
+  "test_id": "TEST_300",
+  "total_max_marks": 300,
+  "total_questions": 75
+}

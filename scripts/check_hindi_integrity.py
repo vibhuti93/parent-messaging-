@@ -7,6 +7,7 @@ Part of Stage S0 guardrails for omr_dispatch_engine.
 from __future__ import annotations
 
 import glob
+import json
 import os
 import re
 import sys
@@ -20,6 +21,7 @@ ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DOCS_DIR = os.path.join(ROOT_DIR, "docs")
 CATALOG_PATH = os.path.join(DOCS_DIR, "message_catalog.md")
 TEMPLATES_DIR = os.path.join(DOCS_DIR, "templates")
+FIXTURES_GOLDEN_DIR = os.path.join(ROOT_DIR, "fixtures", "golden")
 
 # D-06 Banned terms written strictly as \u escapes, never literal Hindi
 BANNED_TERMS = [
@@ -231,12 +233,140 @@ def check_greeting_consistency(errors: list[str]) -> None:
                 )
 
 
+def scan_decoded_json_string(
+    val: str,
+    path_str: str,
+    rel_path: str,
+    errors: list[str],
+    combining_marks: set[str],
+) -> None:
+    # 1. NFC normalization check on decoded string
+    if not unicodedata.is_normalized("NFC", val):
+        errors.append(f"[NON-NFC NORMALIZATION] {rel_path} at {path_str} is not in Unicode NFC form")
+
+    # 2. Banned terms check on decoded string
+    for term in BANNED_TERMS:
+        if term in val:
+            term_escaped = term.encode("unicode_escape").decode("ascii")
+            errors.append(
+                f"[BANNED TERM] {rel_path} at {path_str} contains banned Hindi term ({term_escaped})"
+            )
+
+    # 3. Devanagari digits check on decoded string
+    for d in DEVANAGARI_DIGITS:
+        if d in val:
+            errors.append(
+                f"[DEVANAGARI DIGIT] {rel_path} at {path_str} contains Devanagari numeral '{d}'"
+            )
+
+    # 4. Orphan combining marks on decoded string
+    for i, ch in enumerate(val):
+        if ch in combining_marks:
+            if i == 0:
+                errors.append(
+                    f"[ORPHAN COMBINING MARK] {rel_path} at {path_str} mark at string start"
+                )
+            elif val[i - 1].isspace():
+                errors.append(
+                    f"[ORPHAN COMBINING MARK] {rel_path} at {path_str} mark follows whitespace"
+                )
+            elif ord(val[i - 1]) < 128:
+                errors.append(
+                    f"[ORPHAN COMBINING MARK] {rel_path} at {path_str} mark follows ASCII char '{val[i - 1]}'"
+                )
+
+
+def traverse_json_data(
+    data: object,
+    path: str,
+    rel_path: str,
+    errors: list[str],
+    combining_marks: set[str],
+) -> None:
+    if isinstance(data, dict):
+        for k, v in data.items():
+            scan_decoded_json_string(k, f"{path}.key('{k}')", rel_path, errors, combining_marks)
+            traverse_json_data(v, f"{path}.{k}", rel_path, errors, combining_marks)
+    elif isinstance(data, list):
+        for i, item in enumerate(data):
+            traverse_json_data(item, f"{path}[{i}]", rel_path, errors, combining_marks)
+    elif isinstance(data, str):
+        scan_decoded_json_string(data, path, rel_path, errors, combining_marks)
+
+
+def check_golden_fixtures_hindi_integrity(errors: list[str]) -> None:
+    combining_marks = get_devanagari_combining_marks()
+    json_files = glob.glob(os.path.join(FIXTURES_GOLDEN_DIR, "*.json"))
+
+    for fpath in sorted(json_files):
+        rel_path = os.path.relpath(fpath, ROOT_DIR)
+
+        # 1. Strict UTF-8 validation
+        try:
+            with open(fpath, "rb") as fp:
+                raw_bytes = fp.read()
+            text = raw_bytes.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            errors.append(f"[UTF-8 DECODE ERROR] {rel_path}: {exc}")
+            continue
+
+        # 2. Check for U+FFFD (Replacement character)
+        if "\ufffd" in text:
+            errors.append(f"[U+FFFD REPLACEMENT CHAR] {rel_path} contains U+FFFD")
+
+        # 3. Check NFC normalization on raw file text
+        if not unicodedata.is_normalized("NFC", text):
+            errors.append(f"[NON-NFC NORMALIZATION] {rel_path} is not in Unicode NFC form")
+
+        # 4. Check for banned terms (D-06) on raw text
+        for term in BANNED_TERMS:
+            if term in text:
+                term_escaped = term.encode("unicode_escape").decode("ascii")
+                errors.append(
+                    f"[BANNED TERM] {rel_path} contains banned Hindi term ({term_escaped})"
+                )
+
+        # 5. Check orphan Devanagari combining marks and Devanagari digits on raw text
+        lines = text.splitlines()
+        for line_no, line in enumerate(lines, 1):
+            for d in DEVANAGARI_DIGITS:
+                if d in line:
+                    errors.append(
+                        f"[DEVANAGARI DIGIT] {rel_path}:{line_no} contains Devanagari numeral '{d}'"
+                    )
+
+            for i, ch in enumerate(line):
+                if ch in combining_marks:
+                    if i == 0:
+                        errors.append(
+                            f"[ORPHAN COMBINING MARK] {rel_path}:{line_no} mark at line start"
+                        )
+                    elif line[i - 1].isspace():
+                        errors.append(
+                            f"[ORPHAN COMBINING MARK] {rel_path}:{line_no} mark follows whitespace"
+                        )
+                    elif ord(line[i - 1]) < 128:
+                        errors.append(
+                            f"[ORPHAN COMBINING MARK] {rel_path}:{line_no} mark follows ASCII char '{line[i - 1]}'"
+                        )
+
+        # 6. Parse JSON and scan decoded keys and string values
+        try:
+            parsed = json.loads(text)
+        except Exception as exc:
+            errors.append(f"[JSON PARSE ERROR] {rel_path}: {exc}")
+            continue
+
+        traverse_json_data(parsed, "$", rel_path, errors, combining_marks)
+
+
 def main() -> int:
     errors: list[str] = []
 
     check_encoding_and_structure(errors)
     check_banned_terms(errors)
     check_greeting_consistency(errors)
+    check_golden_fixtures_hindi_integrity(errors)
 
     if errors:
         print(f"[FAIL] Hindi integrity check failed with {len(errors)} error(s):")
@@ -244,7 +374,7 @@ def main() -> int:
             print(f"  - {err}")
         return 1
 
-    print("[HINDI INTEGRITY PASS] All docs UTF-8/NFC clean, zero orphan marks, zero unapproved banned terms, greetings consistent.")
+    print("[HINDI INTEGRITY PASS] All docs and golden fixtures UTF-8/NFC clean, zero orphan marks, zero unapproved banned terms, greetings consistent.")
     return 0
 
 

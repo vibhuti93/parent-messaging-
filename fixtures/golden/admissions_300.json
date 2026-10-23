@@ -1,0 +1,228 @@
+{
+  "cohort_label": "कक्षा 10-A",
+  "org_id": "DEFAULT_INSTITUTION",
+  "schema_version": 1,
+  "students": [
+    {
+      "child_display_name": "आरव",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "+91 98111-22202",
+      "raw_student_phone": "+91 98111-22201",
+      "roll_number": "01",
+      "student_id": "STU_01",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "प्रिया",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9811122203",
+      "raw_student_phone": "09811122203",
+      "roll_number": "02",
+      "student_id": "STU_02",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "रोहन",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9811122299",
+      "raw_student_phone": "9820010003",
+      "roll_number": "03",
+      "student_id": "STU_03",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "ईशान",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9811122299",
+      "raw_student_phone": "9820010004",
+      "roll_number": "04",
+      "student_id": "STU_04",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "कबीर",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9811122288",
+      "raw_student_phone": "9820010005",
+      "roll_number": "05",
+      "student_id": "STU_05",
+      "verified_sibling": true
+    },
+    {
+      "child_display_name": "अनन्या",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9811122288",
+      "raw_student_phone": "9820010006",
+      "roll_number": "06",
+      "student_id": "STU_06",
+      "verified_sibling": true
+    },
+    {
+      "child_display_name": "विहान",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "5511122207",
+      "raw_student_phone": "9820010007",
+      "roll_number": "07",
+      "student_id": "STU_07",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "आदित्य",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "UNKNOWN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010008",
+      "raw_student_phone": "9820010008",
+      "roll_number": "08",
+      "student_id": "STU_08",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "दीया",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "REVOKED",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010009",
+      "raw_student_phone": "9820010009",
+      "roll_number": "09",
+      "student_id": "STU_09",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "संजय",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "UNVERIFIED",
+      "raw_guardian_phone": "9830010010",
+      "raw_student_phone": "9820010010",
+      "roll_number": "10",
+      "student_id": "STU_10",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "नेहा",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010011",
+      "raw_student_phone": "9820010011",
+      "roll_number": "11",
+      "student_id": "STU_11",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "अर्जुन",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010012",
+      "raw_student_phone": "9820010012",
+      "roll_number": "12",
+      "student_id": "STU_12",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "तन्वी",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010013",
+      "raw_student_phone": "9820010013",
+      "roll_number": "13",
+      "student_id": "STU_13",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "आर्यन",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010014",
+      "raw_student_phone": "9820010014",
+      "roll_number": "14",
+      "student_id": "STU_14",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "खुशी",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010015",
+      "raw_student_phone": "9820010015",
+      "roll_number": "15",
+      "student_id": "STU_15",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "मनीष",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010016",
+      "raw_student_phone": "9820010016",
+      "roll_number": "16",
+      "student_id": "STU_16",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "रिया",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010017",
+      "raw_student_phone": "9820010017",
+      "roll_number": "17",
+      "student_id": "STU_17",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "पूजा",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010018",
+      "raw_student_phone": "9820010018",
+      "roll_number": "18",
+      "student_id": "STU_18",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "राहुल",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "REVOKED",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010019",
+      "raw_student_phone": "9820010019",
+      "roll_number": "19",
+      "student_id": "STU_19",
+      "verified_sibling": false
+    },
+    {
+      "child_display_name": "श्रेया",
+      "class_section": "कक्षा 10-A",
+      "consent_status": "OPT_IN",
+      "guardian_verification": "VERIFIED",
+      "raw_guardian_phone": "9830010020",
+      "raw_student_phone": "9820010020",
+      "roll_number": "20",
+      "student_id": "STU_20",
+      "verified_sibling": false
+    }
+  ],
+  "test_id": "TEST_300"
+}

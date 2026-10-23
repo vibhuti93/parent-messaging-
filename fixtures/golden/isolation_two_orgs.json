@@ -1,0 +1,35 @@
+{
+  "org_alpha": {
+    "org_id": "ORG_ALPHA",
+    "school_name": "आदर्श विद्यालय",
+    "students": [
+      {
+        "child_display_name": "आरव",
+        "class_section": "कक्षा 10-A",
+        "guardian_phone": "+919811122201",
+        "marks": 55,
+        "max_marks": 100,
+        "roll_number": "01",
+        "student_id": "STU_ALPHA_01",
+        "student_name": "आरव शर्मा"
+      }
+    ]
+  },
+  "org_beta": {
+    "org_id": "ORG_BETA",
+    "school_name": "सरस्वती विद्या मंदिर",
+    "students": [
+      {
+        "child_display_name": "विवेक",
+        "class_section": "कक्षा 8-B",
+        "guardian_phone": "+919811122201",
+        "marks": 90,
+        "max_marks": 100,
+        "roll_number": "01",
+        "student_id": "STU_BETA_01",
+        "student_name": "विवेक कुमार"
+      }
+    ]
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,155 @@
+{
+  "contacts": [
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_01"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "INTERCEPTION_RISK_SAME_NUMBER",
+      "is_quarantined": true,
+      "quarantine_flags": [
+        "INTERCEPTION_RISK_SAME_NUMBER"
+      ],
+      "student_id": "STU_02"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "DUPLICATE_PARENT_UNVERIFIED",
+      "is_quarantined": true,
+      "quarantine_flags": [
+        "DUPLICATE_PARENT_UNVERIFIED"
+      ],
+      "student_id": "STU_03"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "DUPLICATE_PARENT_UNVERIFIED",
+      "is_quarantined": true,
+      "quarantine_flags": [
+        "DUPLICATE_PARENT_UNVERIFIED"
+      ],
+      "student_id": "STU_04"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_05"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_06"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "INVALID_PHONE_NUMBER",
+      "is_quarantined": true,
+      "quarantine_flags": [
+        "INVALID_PHONE_NUMBER"
+      ],
+      "student_id": "STU_07"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "CONSENT_UNKNOWN",
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_08"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "CONSENT_REVOKED",
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_09"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "GUARDIAN_UNVERIFIED",
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_10"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_11"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_12"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_13"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_14"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_15"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_16"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_17"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_18"
+    },
+    {
+      "dispatch_eligible": false,
+      "exclusion_reason": "CONSENT_REVOKED",
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_19"
+    },
+    {
+      "dispatch_eligible": true,
+      "exclusion_reason": null,
+      "is_quarantined": false,
+      "quarantine_flags": [],
+      "student_id": "STU_20"
+    }
+  ],
+  "org_id": "DEFAULT_INSTITUTION",
+  "schema_version": 1,
+  "test_id": "TEST_300"
+}

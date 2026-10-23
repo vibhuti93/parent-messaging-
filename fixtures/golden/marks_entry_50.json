@@ -1,0 +1,52 @@
+{
+  "assessment_name": "यूनिट टेस्ट 1",
+  "cohort_label": "कक्षा 8-B",
+  "max_marks": 50,
+  "org_id": "DEFAULT_INSTITUTION",
+  "rows": [
+    {
+      "child_display_name": "आरव",
+      "marks": "30.0",
+      "roll_no": "01",
+      "status": "PRESENT",
+      "student_id": "ME_01"
+    },
+    {
+      "child_display_name": "प्रिया",
+      "marks": "47.0",
+      "roll_no": "02",
+      "status": "PRESENT",
+      "student_id": "ME_02"
+    },
+    {
+      "child_display_name": "रोहन",
+      "marks": "30.0",
+      "roll_no": "03",
+      "status": "PRESENT",
+      "student_id": "ME_03"
+    },
+    {
+      "child_display_name": "अनन्या",
+      "marks": "2.5",
+      "roll_no": "04",
+      "status": "PRESENT",
+      "student_id": "ME_04"
+    },
+    {
+      "child_display_name": "विक्रम",
+      "marks": "0.0",
+      "roll_no": "05",
+      "status": "PRESENT",
+      "student_id": "ME_05"
+    },
+    {
+      "child_display_name": "मीरा",
+      "marks": null,
+      "roll_no": "06",
+      "status": "ABSENT",
+      "student_id": "ME_06"
+    }
+  ],
+  "schema_version": 1,
+  "subject": "अंग्रेज़ी"
+}
