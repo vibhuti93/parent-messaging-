@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S0-R7 (`Stage S0-R7 — Fix Pass (docs and tooling only)`) — **COMPLETED**
-- **Next Stage:** Stage 1 (`S1 — Golden Dataset and Independent Contract`) — **BLOCKED on S1-BLOCK decisions in docs/DECISIONS_OPEN.md & operator sign-off**
+- **Active Stage:** Stage S1 (`S1 — Golden Dataset and Independent Contract`) — **COMPLETED**
+- **Next Stage:** Stage S2 (`S2 — Input Contracts and Import`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
-- **Fixture Manifest SHA-256:** `N/A` (Staged for S1 generation)
-- **Stage Tag:** `stage-0-r6` (commit: `8f59ebda2fcf46e52bb76da2c2abdb02c89b4600` on `agent-run`); `stage-0-r7` to be tagged by operator upon commit.
+- **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
+- **Stage Tag:** `stage-1` (to be tagged by the operator)
 
 ---
 
