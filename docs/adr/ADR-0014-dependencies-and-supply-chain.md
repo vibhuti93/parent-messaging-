@@ -1,7 +1,7 @@
 # ADR-0014: Dependency Justification and Supply Chain Hardening
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 Modern software supply chains are vulnerable to malicious package updates, dependency confusion, license incompatibilities, and sudden breaking changes in upstream libraries.

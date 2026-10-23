@@ -1,7 +1,7 @@
 # ADR-0009: Typed Configuration, Environment Validation, and SecretStr
 
 ## Status
-`PROPOSED`
+`ACCEPTED`
 
 ## Context
 The engine requires configuration parameters for API endpoints, pinned Graph API version (`v21.0`), timeouts, rate limits, audio paths, and security switches (`LIVE_DISPATCH_ENABLED`, `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED`).
