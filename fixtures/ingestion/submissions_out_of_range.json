@@ -1,0 +1,15 @@
+{
+  "org_id": "org_test",
+  "schema_version": 1,
+  "test_id": "TEST-1",
+  "submissions": [
+    {
+      "submission_id": "SUB-001",
+      "student_id": "STU-001",
+      "status": "PRESENT",
+      "responses": {
+        "999": "A"
+      }
+    }
+  ]
+}

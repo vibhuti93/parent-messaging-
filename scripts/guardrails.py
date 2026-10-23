@@ -247,10 +247,20 @@ def check_test_count_integrity(current_stage: int) -> tuple[str, list[str]]:
     except ValueError:
         return "FAILED", ["docs/.test_count_baseline contains an invalid integer"]
 
-    cmd = ["pytest", "--collect-only", "-q"]
+    import shutil
+
+    if shutil.which("uv"):
+        cmd = ["uv", "run", "pytest", "--collect-only"]
+    else:
+        cmd = [sys.executable, "-m", "pytest", "--collect-only"]
+
     proc = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
     match = re.search(r"(\d+)\s+tests? collected", proc.stdout)
-    current_count = int(match.group(1)) if match else 0
+    if not match:
+        matches = re.findall(r":\s*(\d+)", proc.stdout)
+        current_count = sum(int(m) for m in matches) if matches else 0
+    else:
+        current_count = int(match.group(1))
 
     if current_count < prev_count:
         return "FAILED", [

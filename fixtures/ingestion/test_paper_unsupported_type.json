@@ -1,0 +1,15 @@
+{
+  "org_id": "org_test",
+  "schema_version": 1,
+  "test_id": "TEST-UNSUPP",
+  "questions": [
+    {
+      "question_id": 1,
+      "subject": "Mathematics",
+      "question_type": "MULTI_CORRECT",
+      "correct_option": "A",
+      "positive_marks": 4,
+      "negative_marks": 1
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S1 (`S1 — Golden Dataset and Independent Contract`) — **COMPLETED**
-- **Next Stage:** Stage S2 (`S2 — Input Contracts and Import`)
+- **Active Stage:** Stage S2 (`S2 — Input Contracts and Import`) — **COMPLETED**
+- **Next Stage:** Stage S3 (`S3 — Scoring and Diagnostic Engine`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-1` (to be tagged by the operator)
+- **Stage Tag:** `stage-2`
 
 ---
 
@@ -66,3 +66,14 @@
 - **F8 (Invariants Synchronization):** Synchronized Invariants 15, 16, 17 into root `AGENTS.md`. Created `scripts/check_invariants_sync.py` enforcing exact alignment. Documented wording discrepancy (never logged vs masked).
 - **F9 (Meta Pricing & Voice Notes):** Re-verified row R-05 against official Meta pricing docs with retrieval date 2026-10-21 and exact India rates. Recorded 1 Oct 2026 service-window utility charging conflict as OPEN. Added row R-16 for `"voice": true` (Ogg/Opus mono) and renumbered R-17/R-18. Added item `(s)` for 24h customer service window opening to `DECISIONS_OPEN.md`, referenced in `S9.md` and `ADR-0019`.
 - **F10 (Review Rigor Requirements):** Updated `docs/prompt_pack/W2_review.md` adding requirements for raw command evidence, clean worktree execution, mandatory "Attempts to falsify" section (min 3 attempts), and zero-defect gating.
+
+---
+
+## Stage S2 Execution Evidence (Input Contracts and Import Completed)
+- **Data Models (`src/omr_dispatch/models.py`):** Implemented strict Pydantic v2 models with `extra="forbid"`, mandatory `org_id`, and `schema_version`. Version 1 supports `SINGLE_CORRECT` only (ADR-0004); all other question types raise `NotSupportedError`.
+- **Marks Numerics & Exactness (ADR-0002):** Marks parsed directly from decimal text as exact `fractions.Fraction` (e.g. `"2.5"` gives exactly `Fraction(5, 2)`). Zero `float` in core models. Rejects exponent notation, signs, thousands separators, NaN/inf, Devanagari numerals, and blanks. Only whole and half marks allowed (`denominator in (1, 2)`).
+- **Attendance & Boundary Semantics:** `PRESENT` with blank marks rejected (`PRESENT_WITH_BLANK_MARKS`); `ABSENT` with marks rejected (`ABSENT_WITH_MARKS`); blanks never read as zero. `0 <= marks <= max_marks` enforced.
+- **Importers (`src/omr_dispatch/ingestion.py`):** Ingests student roster, answer keys, OMR submissions, and marks entries. Guarantees atomic all-or-nothing import (zero partial import). Explicit required `org_id` argument stamps tenant context; tenant mismatches fail closed (`ORG_ID_MISMATCH`).
+- **Zero-Dependency Excel Parser:** Stdlib-based `.xlsx` reader using `zipfile` and `xml.etree.ElementTree` strictly handling sparse cell coordinates (`r` attribute) and rejecting malformed/entity-expanded XML safely.
+- **Central Configuration (`src/omr_dispatch/config.py`):** Typed `Settings` wrapping secrets in `SecretStr` and defaulting safety switches to disabled (`live_dispatch_enabled=False`, `deployment_compliance_acknowledged=False`, `include_roll_in_text=False`).
+- **Tests & Verification:** 42 new unit and rejection tests in `tests/test_stage2_ingestion.py` (73 total tests across S1 and S2). 22 bad-input fixtures under `fixtures/ingestion/`. All 5 mutation tests verified to fail and discarded. All 11 guardrails pass natively (0 skipped, 0 failed).

@@ -1,0 +1,13 @@
+{
+  "org_id": "ORG_OTHER",
+  "schema_version": 1,
+  "test_id": "TEST-1",
+  "questions": [
+    {
+      "question_id": "Q1",
+      "question_number": 1,
+      "question_type": "SINGLE_CORRECT",
+      "correct_option": "A"
+    }
+  ]
+}
