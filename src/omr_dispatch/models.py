@@ -13,9 +13,10 @@ Compliant with:
 from __future__ import annotations
 
 import re
+from datetime import date
 from enum import StrEnum
 from fractions import Fraction
-from typing import Annotated, Any, Generic, TypeVar
+from typing import Annotated, Any, Generic, Literal, TypeVar
 
 from pydantic import (
     BaseModel,
@@ -650,3 +651,316 @@ class MarksEntrySheet(BaseModel):
                         new_rows.append(r)
                 data["rows"] = new_rows
         return data
+
+
+# ------------------------------------------------------------------------------
+# Stage S3 Models: Assessments, Diagnostic Reports, and Contact Hygiene
+# Compliant with ADR-0002, ADR-0004, ADR-0010, ADR-0016, and ADR-0017.
+# ------------------------------------------------------------------------------
+
+NotAvailable = Literal["NOT_AVAILABLE"]
+NOT_AVAILABLE: NotAvailable = "NOT_AVAILABLE"
+
+
+class AssessmentKind(StrEnum):
+    """Assessment format classification (ADR-0016)."""
+
+    OMR_MCQ = "OMR_MCQ"
+    MARKS_ENTRY_TOTALS = "MARKS_ENTRY_TOTALS"
+    MARKS_ENTRY_QUESTION_WISE = "MARKS_ENTRY_QUESTION_WISE"
+
+    @property
+    def has_attempt_data(self) -> bool:
+        return self in (AssessmentKind.OMR_MCQ, AssessmentKind.MARKS_ENTRY_QUESTION_WISE)
+
+    @property
+    def has_negative_marking(self) -> bool:
+        return self == AssessmentKind.OMR_MCQ
+
+    @property
+    def has_question_level_data(self) -> bool:
+        return self in (AssessmentKind.OMR_MCQ, AssessmentKind.MARKS_ENTRY_QUESTION_WISE)
+
+
+class AssessmentPurpose(StrEnum):
+    """Institutional assessment purpose classification (ADR-0016)."""
+
+    WEEKLY_TEST = "WEEKLY_TEST"
+    UNIT_TEST = "UNIT_TEST"
+    MIDTERM = "MIDTERM"
+    TERM_FINAL = "TERM_FINAL"
+    PTM_LINKED = "PTM_LINKED"
+
+
+class Assessment(BaseModel):
+    """
+    Canonical multi-kind assessment entity schema (ADR-0016 Section 1).
+    """
+
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
+    assessment_id: str
+    kind: AssessmentKind
+    name: str
+    total_max_marks: int
+    date: date | str | None = None
+    cohort_id: str = ""
+    cohort_label: str = ""
+    subjects: list[str] = Field(default_factory=list)
+    max_marks_per_subject: dict[str, int] = Field(default_factory=dict)
+    marking_scheme_version: int = 1
+    purpose_flags: list[AssessmentPurpose] = Field(default_factory=list)
+    org_id: str = "DEFAULT_INSTITUTION"
+    schema_version: int = 1
+
+
+class StatusBand(StrEnum):
+    """Student examination status band (D-01)."""
+
+    RED = "RED"
+    YELLOW = "YELLOW"
+    GREEN = "GREEN"
+    ABSENT = "ABSENT"
+
+
+class SubjectDiagnosticLabel(StrEnum):
+    """Subject-level diagnostic classification label (D-03)."""
+
+    MASTERY_ZONE = "MASTERY_ZONE"
+    MODERATE_ZONE = "MODERATE_ZONE"
+    ACCURACY_BLEED = "ACCURACY_BLEED"
+    CONCEPTUAL_SPEED_GAP = "CONCEPTUAL_SPEED_GAP"
+    FOUNDATIONAL_CRISIS = "FOUNDATIONAL_CRISIS"
+    NO_ATTEMPT = "NO_ATTEMPT"
+
+
+class ContactQuarantineFlag(StrEnum):
+    """Contact safety quarantine reasons (Rule 9, ADR-0008)."""
+
+    INVALID_PHONE_NUMBER = "INVALID_PHONE_NUMBER"
+    INVALID_STUDENT_PHONE_NUMBER = "INVALID_STUDENT_PHONE_NUMBER"
+    INTERCEPTION_RISK_SAME_NUMBER = "INTERCEPTION_RISK_SAME_NUMBER"
+    DUPLICATE_PARENT_UNVERIFIED = "DUPLICATE_PARENT_UNVERIFIED"
+
+
+class ContactEvaluation(BaseModel):
+    """
+    Contact hygiene and safety quarantine evaluation result per student (S3 Task 2).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    student_id: str
+    is_quarantined: bool
+    quarantine_flags: list[str] = Field(default_factory=list)
+    dispatch_eligible: bool
+    exclusion_reason: str | None = None
+    normalized_guardian_phone: str | None = None
+    normalized_student_phone: str | None = None
+    manual_resolution_status: str | None = None
+    org_id: str = "DEFAULT_INSTITUTION"
+    schema_version: int = 1
+
+    def to_golden_dict(self) -> dict[str, Any]:
+        """Convert to dictionary strictly matching expected_contacts.json structure."""
+        return {
+            "dispatch_eligible": self.dispatch_eligible,
+            "exclusion_reason": self.exclusion_reason,
+            "is_quarantined": self.is_quarantined,
+            "quarantine_flags": self.quarantine_flags,
+            "student_id": self.student_id,
+        }
+
+
+class StudentDiagnosticReport(BaseModel):
+    """
+    Diagnostic report for a single student carrying all metrics required by S4 (S3 Task 3).
+    Academic scoring fields and contact hygiene fields are kept strictly separate.
+    """
+
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
+    student_id: str
+    roll_number: str
+    child_display_name: str
+    class_section: str
+    status: AttendanceStatus
+    attempted: int | NotAvailable | None = None
+    correct: int | NotAvailable | None = None
+    wrong: int | NotAvailable | None = None
+    blank: int | NotAvailable | None = None
+    gross_marks: int | Fraction | NotAvailable | None = None
+    bleed_marks: int | Fraction | NotAvailable | None = None
+    net_marks: int | Fraction | NotAvailable | None = None
+    marks: int | Fraction | str | None = None
+    max_marks: int | None = None
+    percentage: str | None = None
+    net_percentage: str | None = None
+    competition_rank: int | None = None
+    subject_ranks: dict[str, int | None] | None = None
+    overall_rank: int | None = None
+    status_band: str
+    requires_ptm_slip: bool
+    easy_missed_question_ids: list[int] | NotAvailable = Field(default_factory=list)
+    positive_marks_not_earned: int | NotAvailable | None = None
+    subject_diagnostics: dict[str, str] | NotAvailable | None = None
+    subject_breakdown: dict[str, dict[str, int]] | NotAvailable | None = None
+    enrolled_count: int = 0
+    present_count: int = 0
+    class_average: str | None = None
+    topper_score: int | Fraction | str | None = None
+    contact_eligibility: ContactEvaluation | None = None
+    dispatch_eligible: bool = False
+    exclusion_reason: str | None = None
+    message_text: str | None = None
+    org_id: str = "DEFAULT_INSTITUTION"
+    schema_version: int = 1
+
+    @property
+    def roll_no(self) -> str:
+        return self.roll_number
+
+    @property
+    def roll(self) -> str:
+        return self.roll_number
+
+    @model_validator(mode="before")
+    @classmethod
+    def resolve_aliases(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            d = dict(data)
+            if "roll_no" in d and "roll_number" not in d:
+                d["roll_number"] = d.pop("roll_no")
+            elif "roll" in d and "roll_number" not in d:
+                d["roll_number"] = d.pop("roll")
+            return d
+        return data
+
+
+class BatchMetrics(BaseModel):
+    """
+    Cohort-level evaluation metrics (S3 Task 3).
+    """
+
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
+    enrolled_count: int
+    present_count: int
+    absent_count: int
+    total_score_sum: int | Fraction | str | None = None
+    class_average: str | None = None
+    class_average_exact: str | None = None
+    class_average_fraction: str | None = None
+    topper_net_marks: int | Fraction | str | None = None
+    topper_marks: int | Fraction | str | None = None
+    ptm_eligible_count: int = 0
+    easy_question_ids: list[int] | NotAvailable = Field(default_factory=list)
+
+
+class EvaluationBundle(BaseModel):
+    """
+    Complete evaluation bundle for an assessment batch (S3 Task 3).
+    """
+
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
+    org_id: str = "DEFAULT_INSTITUTION"
+    schema_version: int = 1
+    test_id: str | None = None
+    assessment_name: str | None = None
+    subject: str | None = None
+    cohort_label: str | None = None
+    max_marks: int | None = None
+    kind: AssessmentKind = AssessmentKind.OMR_MCQ
+    batch_metrics: BatchMetrics
+    student_reports: list[StudentDiagnosticReport] = Field(default_factory=list)
+    contacts: list[ContactEvaluation] = Field(default_factory=list)
+
+    def to_golden_dict(self) -> dict[str, Any]:
+        """Convert to dictionary matching the golden reports JSON structure."""
+        if self.kind == AssessmentKind.MARKS_ENTRY_TOTALS:
+            out_metrics: dict[str, Any] = {
+                "absent_count": self.batch_metrics.absent_count,
+                "class_average": self.batch_metrics.class_average,
+                "enrolled_count": self.batch_metrics.enrolled_count,
+                "present_count": self.batch_metrics.present_count,
+                "ptm_eligible_count": self.batch_metrics.ptm_eligible_count,
+                "topper_marks": str(self.batch_metrics.topper_marks) if self.batch_metrics.topper_marks is not None else None,
+                "total_score_sum": str(self.batch_metrics.total_score_sum) if self.batch_metrics.total_score_sum is not None else None,
+            }
+            students_out = []
+            for r in self.student_reports:
+                st_dict: dict[str, Any] = {
+                    "child_display_name": r.child_display_name,
+                    "class_section": r.class_section,
+                    "competition_rank": r.competition_rank,
+                    "marks": str(r.marks) if r.marks is not None else None,
+                    "max_marks": r.max_marks,
+                    "message_text": r.message_text,
+                    "net_percentage": r.net_percentage,
+                    "percentage": r.percentage,
+                    "requires_ptm_slip": r.requires_ptm_slip,
+                    "roll_no": r.roll_number,
+                    "status": r.status.value,
+                    "status_band": r.status_band,
+                    "student_id": r.student_id,
+                }
+                students_out.append(st_dict)
+
+            return {
+                "assessment_name": self.assessment_name,
+                "batch_metrics": out_metrics,
+                "cohort_label": self.cohort_label,
+                "max_marks": self.max_marks,
+                "org_id": self.org_id,
+                "schema_version": self.schema_version,
+                "student_reports": students_out,
+                "subject": self.subject,
+            }
+
+        # OMR_MCQ
+        out_bm: dict[str, Any] = {
+            "absent_count": self.batch_metrics.absent_count,
+            "class_average": self.batch_metrics.class_average,
+            "class_average_exact": self.batch_metrics.class_average_exact,
+            "class_average_fraction": self.batch_metrics.class_average_fraction,
+            "easy_question_ids": self.batch_metrics.easy_question_ids if isinstance(self.batch_metrics.easy_question_ids, list) else [],
+            "enrolled_count": self.batch_metrics.enrolled_count,
+            "present_count": self.batch_metrics.present_count,
+            "ptm_eligible_count": self.batch_metrics.ptm_eligible_count,
+            "topper_net_marks": int(self.batch_metrics.topper_net_marks) if self.batch_metrics.topper_net_marks is not None else None,
+            "total_score_sum": int(self.batch_metrics.total_score_sum) if self.batch_metrics.total_score_sum is not None else None,
+        }
+        omr_students = []
+        for r in self.student_reports:
+            s_dict: dict[str, Any] = {
+                "attempted": r.attempted if r.status == AttendanceStatus.PRESENT else None,
+                "blank": r.blank if r.status == AttendanceStatus.PRESENT else None,
+                "bleed_marks": int(r.bleed_marks) if r.status == AttendanceStatus.PRESENT and r.bleed_marks is not None else None,
+                "child_display_name": r.child_display_name,
+                "class_section": r.class_section,
+                "competition_rank": r.competition_rank,
+                "correct": r.correct if r.status == AttendanceStatus.PRESENT else None,
+                "easy_missed_question_ids": r.easy_missed_question_ids if isinstance(r.easy_missed_question_ids, list) else [],
+                "gross_marks": int(r.gross_marks) if r.status == AttendanceStatus.PRESENT and r.gross_marks is not None else None,
+                "message_text": r.message_text,
+                "net_marks": int(r.net_marks) if r.status == AttendanceStatus.PRESENT and r.net_marks is not None else None,
+                "net_percentage": r.net_percentage,
+                "percentage": r.percentage,
+                "positive_marks_not_earned": r.positive_marks_not_earned,
+                "requires_ptm_slip": r.requires_ptm_slip,
+                "roll_number": r.roll_number,
+                "status": r.status.value,
+                "status_band": r.status_band,
+                "student_id": r.student_id,
+                "subject_diagnostics": r.subject_diagnostics if r.status == AttendanceStatus.PRESENT else None,
+                "wrong": r.wrong if r.status == AttendanceStatus.PRESENT else None,
+            }
+            omr_students.append(s_dict)
+
+        return {
+            "batch_metrics": out_bm,
+            "org_id": self.org_id,
+            "schema_version": self.schema_version,
+            "student_reports": omr_students,
+        }

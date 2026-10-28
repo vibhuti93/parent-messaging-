@@ -3,9 +3,34 @@ OMR Dispatch Engine (`omr_dispatch_engine`)
 A high-assurance, deterministic diagnostics and parent notification engine for schools.
 """
 
+from __future__ import annotations
+
 __version__ = "0.1.0"
 
+from omr_dispatch.cli import main as cli_main
+from omr_dispatch.cli import run_batch_pipeline
 from omr_dispatch.config import Settings, load_settings
+from omr_dispatch.contacts import (
+    PhoneNormalizationReason,
+    format_e164,
+    mask_phone,
+    normalize_indian_mobile,
+    normalize_indian_mobile_with_reason,
+    validate_admission_batch,
+)
+from omr_dispatch.diagnostics import (
+    check_requires_ptm_slip,
+    classify_status_band,
+    classify_subject_label,
+    compute_standard_competition_ranks,
+    evaluate_batch,
+    evaluate_marks_entry_totals_batch,
+    evaluate_omr_mcq_batch,
+    find_easy_questions,
+    format_decimal_1dp,
+    format_percentage_display,
+    format_percentage_raw,
+)
 from omr_dispatch.ingestion import (
     import_answer_key,
     import_marks_entry,
@@ -15,8 +40,16 @@ from omr_dispatch.ingestion import (
     import_test_paper,
 )
 from omr_dispatch.models import (
+    NOT_AVAILABLE,
+    Assessment,
+    AssessmentKind,
+    AssessmentPurpose,
     AttendanceStatus,
+    BatchMetrics,
+    ContactEvaluation,
+    ContactQuarantineFlag,
     CoordinateMap,
+    EvaluationBundle,
     ImportResult,
     IngestionError,
     IngestionErrorDetail,
@@ -24,6 +57,7 @@ from omr_dispatch.models import (
     MarksEntryRow,
     MarksEntrySheet,
     MarksValidationError,
+    NotAvailable,
     NotSupportedError,
     OMRDispatchError,
     OMRSubmissionsBatch,
@@ -32,16 +66,27 @@ from omr_dispatch.models import (
     QuestionType,
     ScanProvenance,
     SchemaValidationError,
+    StatusBand,
     StudentAdmissionRow,
+    StudentDiagnosticReport,
     StudentOMRSubmission,
     StudentRoster,
+    SubjectDiagnosticLabel,
     TestPaper,
     parse_marks_decimal,
 )
 
 __all__ = [
+    "NOT_AVAILABLE",
+    "Assessment",
+    "AssessmentKind",
+    "AssessmentPurpose",
     "AttendanceStatus",
+    "BatchMetrics",
+    "ContactEvaluation",
+    "ContactQuarantineFlag",
     "CoordinateMap",
+    "EvaluationBundle",
     "ImportResult",
     "IngestionError",
     "IngestionErrorDetail",
@@ -49,19 +94,37 @@ __all__ = [
     "MarksEntryRow",
     "MarksEntrySheet",
     "MarksValidationError",
+    "NotAvailable",
     "NotSupportedError",
     "OMRDispatchError",
     "OMRSubmissionsBatch",
     "OrgIdMismatchError",
+    "PhoneNormalizationReason",
     "QuestionMeta",
     "QuestionType",
     "ScanProvenance",
     "SchemaValidationError",
     "Settings",
+    "StatusBand",
     "StudentAdmissionRow",
+    "StudentDiagnosticReport",
     "StudentOMRSubmission",
     "StudentRoster",
+    "SubjectDiagnosticLabel",
     "TestPaper",
+    "check_requires_ptm_slip",
+    "classify_status_band",
+    "classify_subject_label",
+    "cli_main",
+    "compute_standard_competition_ranks",
+    "evaluate_batch",
+    "evaluate_marks_entry_totals_batch",
+    "evaluate_omr_mcq_batch",
+    "find_easy_questions",
+    "format_decimal_1dp",
+    "format_e164",
+    "format_percentage_display",
+    "format_percentage_raw",
     "import_answer_key",
     "import_marks_entry",
     "import_marks_entry_sheet",
@@ -69,5 +132,10 @@ __all__ = [
     "import_submissions",
     "import_test_paper",
     "load_settings",
+    "mask_phone",
+    "normalize_indian_mobile",
+    "normalize_indian_mobile_with_reason",
     "parse_marks_decimal",
+    "run_batch_pipeline",
+    "validate_admission_batch",
 ]
