@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S2 (`S2 — Input Contracts and Import`) — **COMPLETED**
-- **Next Stage:** Stage S3 (`S3 — Scoring and Diagnostic Engine`)
+- **Active Stage:** Stage S4 (`S4 — Conversational Hindi Templates: Bolchal Copy & Constraints`) — **COMPLETED (Workflow W7 Signed Off)**
+- **Next Stage:** Stage S5 (`S5 — Render Service & Media Preparation`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-2`
+- **Stage Tag:** `stage-3` (commit `20f38b5bc57ea23df27f5a498830c8ae27175d81`)
 
 ---
 
@@ -77,3 +77,24 @@
 - **Zero-Dependency Excel Parser:** Stdlib-based `.xlsx` reader using `zipfile` and `xml.etree.ElementTree` strictly handling sparse cell coordinates (`r` attribute) and rejecting malformed/entity-expanded XML safely.
 - **Central Configuration (`src/omr_dispatch/config.py`):** Typed `Settings` wrapping secrets in `SecretStr` and defaulting safety switches to disabled (`live_dispatch_enabled=False`, `deployment_compliance_acknowledged=False`, `include_roll_in_text=False`).
 - **Tests & Verification:** 42 new unit and rejection tests in `tests/test_stage2_ingestion.py` (73 total tests across S1 and S2). 22 bad-input fixtures under `fixtures/ingestion/`. All 5 mutation tests verified to fail and discarded. All 11 guardrails pass natively (0 skipped, 0 failed).
+
+---
+
+## Stage S3 Execution Evidence (Deterministic Diagnostics and Contact Hygiene Completed)
+- **Deterministic Diagnostics (`src/omr_dispatch/diagnostics.py`):** Pure core evaluation functions (`evaluate_student_omr`, `evaluate_batch_omr`, `evaluate_marks_entry_totals_batch`). Enforces standard competition rank (`1224`), integer cross-multiplication for D-01 percentage bands (`30.0%` and `60.0%`) and D-02 easy questions (`>= 75%` peer accuracy), and Decimal `ROUND_HALF_UP` for 1-decimal percentage display.
+- **Contact Hygiene & Quarantining (`src/omr_dispatch/contacts.py`):** Phone normalization against national format `^[6-9]\d{9}$`. Strict quarantine criteria (shared phone across distinct admissions, invalid phone, missing consent, missing student id). Explicit `org_id` on all phone and dispatch eligibility queries.
+- **Walking Skeleton CLI (`src/omr_dispatch/cli.py`):** Standalone zero-network CLI supporting `--kind OMR_MCQ` and `--kind MARKS_ENTRY_TOTALS`. Full pipeline from CSV ingestion to diagnostics to contact hygiene and JSON report manifest output.
+- **Tests & Verification:** 42 new unit and integration tests in `tests/test_stage3_diagnostics_and_hygiene.py` (115 total tests across S1-S3). Tagged `stage-3` (commit `20f38b5bc57ea23df27f5a498830c8ae27175d81`).
+
+---
+
+## Stage S4 Execution Evidence (Conversational Hindi Templates Completed)
+- **Template Constraints (`src/omr_dispatch/template_constraints.py`):** Strict Pydantic model enforcing S0 constraints (`max_body_length: 1024`, fixed anchors, no newlines or whitespace inside variables, max variable counts). Conservative defaults fallback sets `constraints_unverified=True` if constraints are unverified or missing.
+- **Conversational Hindi Templates (`src/omr_dispatch/hindi_templates.py`):**
+  - **Devanagari Grapheme Safety (ADR-0010):** Grapheme cluster segmentation preserving base consonants, combining matras, and conjuncts; safe 40-grapheme truncation; fallback to `"विद्यार्थी"` for invalid/empty names.
+  - **Latin Digits & Numeric Formatting (ADR-0002, ADR-0010):** All numbers formatted strictly with ASCII Latin digits (`0-9`), never Devanagari numerals. Negative scores display with standard minus sign (`-`). Trailing `.0` stripped on whole numbers.
+  - **Fixed Leading Greeting Anchor (Decision 5):** Every parent academic notification begins with byte-exact `"प्रिय अभिभावक, "` followed by child name and class/section. OTP challenge exempt per Decision 5 and message catalog.
+  - **Observable Diagnostic Facts (D-03, D-06):** Observable diagnostic lines with zero internal enums leaked and zero banned Hindi vocabulary.
+  - **Golden Equivalence:** 100% character-for-character match against all 20 golden OMR students, all 6 marks entry students, and Operator Decision 4 approved message.
+- **Tests & Verification:** 25 new tests in `tests/test_stage4_hindi_templates.py` (140 total passing tests across S1-S4). All 4 deliberate mutations verified to fail and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
+- **Workflow W7 Sign-Off:** Human-in-the-loop Hindi-fluent review for golden copy approved (rating 9.7/10) by Operator.
