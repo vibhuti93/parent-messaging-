@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S4 (`S4 — Conversational Hindi Templates: Bolchal Copy & Constraints`) — **COMPLETED (Workflow W7 Signed Off)**
-- **Next Stage:** Stage S5 (`S5 — Render Service & Media Preparation`)
+- **Active Stage:** Stage S5 (`S5 — OMR Proof Strip and Scan Provenance`) — **COMPLETED (Gate 5 Passed)**
+- **Next Stage:** Stage S6 (`S6 — Scorecard Image & PDF Rendering`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-3` (commit `20f38b5bc57ea23df27f5a498830c8ae27175d81`)
+- **Stage Tag:** `stage-4` (commit resolving to `stage-4`)
 
 ---
 
@@ -98,3 +98,21 @@
   - **Golden Equivalence:** 100% character-for-character match against all 20 golden OMR students, all 6 marks entry students, and Operator Decision 4 approved message.
 - **Tests & Verification:** 25 new tests in `tests/test_stage4_hindi_templates.py` (140 total passing tests across S1-S4). All 4 deliberate mutations verified to fail and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
 - **Workflow W7 Sign-Off:** Human-in-the-loop Hindi-fluent review for golden copy approved (rating 9.7/10) by Operator.
+
+---
+
+## Stage S5 Execution Evidence (OMR Proof Strip and Scan Provenance Completed)
+- **Proof Strip Generator & Provenance (`src/omr_dispatch/omr_proof.py`):** Non-destructive Pillow overlay engine generating pixel-accurate proof strips. Tracks full scan provenance including source SHA-256, source reference, dimensions, coordinate-map version, ISO UTC timestamp, and recorded geometric transforms (`crop`).
+- **Transform Discipline:** Applies crop offsets `(crop_left, crop_top, crop_right, crop_bottom)` exactly once (`cropped_x = source_x - crop_left`, `cropped_y = source_y - crop_top`). Zero silent rescaling.
+- **Fail-Closed Validation (`REVIEW_REQUIRED`):** Fail-closed handling for missing coordinate maps, empty question coordinates, corrupt images, missing scan files, out-of-bounds coordinates (source and cropped bounds), dimension mismatches, and low alignment confidence (evaluated with exact `Fraction`).
+- **Pillow Annotation Overlay & Legend:**
+  - Correct response: `#1E8E3E` (RGB `(30, 142, 62)`) green ring and checkmark at/around selected bubble.
+  - Wrong response: `#D93025` (RGB `(217, 48, 37)`) red cross at selected bubble + `#1E8E3E` green outline on correct answer key bubble.
+  - Blank easy question: `#F9AB00` (RGB `(249, 171, 0)`) amber outline on key bubble.
+  - Blank non-easy question: Clean unannotated bubble.
+  - Legend: Deterministic visual legend indicating Correct, Wrong, and Blank Easy outside mapped bubble area.
+- **Absence & Signature Integrity:**
+  - ABSENT students return explicit `ABSENT_NO_PROOF` with no replacement sheet.
+  - Source signature block pixels preserved byte-for-byte; zero synthetic signatures generated in production paths.
+- **Source Immutability:** Input PIL objects and disk files verified 100% byte-for-byte unchanged before and after rendering.
+- **Tests & Verification:** 17 new tests in `tests/test_stage5_omr_proof.py` (157 total passing tests across S1–S5). All 4 deliberate mutations caught and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
