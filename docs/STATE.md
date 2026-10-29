@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S12 (`S12 — Orchestrator, CLI, Audit, and Retention`) — **COMPLETED**
-- **Next Stage:** Deployment Checklist & Production Release
+- **Active Stage:** Stage S13 (`S13 — Cross-Stage Release Gate & Verification Audit`) — **COMPLETED**
+- **Next Stage:** Operator Review & Handover
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-11` (commit resolving to `stage-11`)
+- **Stage Tag:** `stage-12` (commit resolving to `stage-12`)
 
 ---
 
@@ -321,3 +321,34 @@
   - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
   - Type Check: `uv run mypy src` reports `Success: no issues found in 24 source files`.
   - Linter: `uv run ruff check .` reports `All checks passed!`.
+
+---
+
+## Stage S13 Execution Evidence (Cross-Stage Release Gate & Verification Audit Completed)
+- **Task 1: Clean Toolchain & Hermetic Environment Verification:**
+  - Frozen lockfile verification: `uv sync --frozen` passed with code 0 (checked 35 packages in 6ms).
+  - Runtime binaries: Python 3.12.1 (win32), real `ffmpeg` (version 9.0.1-essentials_build), real `ffprobe` (version 9.0.1-essentials_build).
+  - Devanagari typography assets: Verified SHA-256 digests of `NotoSansDevanagari-Regular.ttf` (`a048998...`), `NotoSansDevanagari-Bold.ttf` (`a8318ef...`), and `OFL.txt` (`0dab92d...`) against `FONTS_METADATA.json`.
+  - Audio tokens catalog: Complete inventory of 114 audio token files in `assets/audio_tokens/` verified against `manifest.json`.
+  - Chromium & rasterizer: Headless Chromium via `PlaywrightRenderer` and `pypdfium2` PDF rasterizer operational with page-level route interception preventing any external network requests.
+  - Air-gapped boundary assertion: Zero outbound requests during testing; provider dry-run and local loopback (`127.0.0.1:0`) isolation verified.
+- **Task 2: End-to-End Artifact Generation & Inspection Matrix:**
+  - Diagnostic JSONs: Evaluated all 20 golden students via `evaluate_batch`. Verified 100% match against `fixtures/golden/expected_reports.json` literals (scores, gross, bleed, competition rank, status band, wrong/correct counts).
+  - Hindi Text Messages: Natural Khariboli phrasing; starts with byte-exact `"प्रिय अभिभावक, "`; child display name and class/section explicitly named; zero banned terms (D-06); OTP challenge explicitly exempt per catalog.
+  - Scorecard PNGs: Rendered and sampled across all 4 performance tiers via Pillow. RED (`STU_01`, RGB `(217, 48, 37)` `#D93025`), YELLOW (`STU_04`, RGB `(249, 171, 0)` `#F9AB00`), GREEN (`STU_02`, RGB `(30, 142, 62)` `#1E8E3E`), ABSENT (`STU_17`, RGB `(95, 99, 104)` `#5F6368`). Exact dimensions 800x1150 px; file sizes 42.7 KB to 71.7 KB strictly under 500 KB budget. Absent students strictly styled in neutral grey without performance color framing.
+  - PTM PDF Slips: Full progression across 0, 1, 8, 9, 11, 16, and 17 slips producing 0, 1, 1, 2, 2, 2, and 3 pages with explicit empty result for n=0 and zero layout clipping.
+  - Proof Strips: OMR proof strip generated for `STU_01` (800x370), transforms applied (`crop`), bubble mark overlays (#1E8E3E green ring on correct, #D93025 red cross on wrong, answer key green outline, legend outside mapped bubble area).
+  - Audio Voice Notes: Stitched OGG/Opus notes synthesized via FFmpeg (`STU_01` 21.497s, `STU_02` 25.049s, `STU_17` 17.369s). Probed with `ffprobe`: Opus codec, 1 mono channel, 48,000 Hz, durations strictly within 15–25s target ($\le 45$s hard cap). Zero synthetic tones or number loops.
+  - Security & State: 13-state machine transitions, constant-time HMAC-SHA256 signature verification (`hmac.compare_digest`), out-of-order monotonic status protection (READ -> DELIVERED rejected), zero-PII QR URL, and privacy masking (`mask_phone` and `[REDACTED_NAME]`/`[REDACTED_CLASS]`).
+- **Task 3: 16-Point Release Blocker Audit:**
+  - Formally audited all 16 blockers in `docs/prompt_pack/S13.md`; certified 16 of 16 CLEARED with zero defects.
+- **Task 4: Release Verification Report:**
+  - Compiled comprehensive release audit report to `docs/release_verification_report.md`.
+- **Verification Commands & Execution Evidence:**
+  - `uv sync --frozen`: Exit Code 0 (Checked 35 packages in 6ms)
+  - `uv run --frozen pytest -v`: 316 passed in 37.90s (0 failed, 0 skipped)
+  - `uv run ruff check .`: Exit Code 0 (All checks passed!)
+  - `uv run mypy src`: Exit Code 0 (Success: no issues found in 24 source files)
+  - `python scripts/guardrails.py`: Exit Code 0 (PASSED 11 / SKIPPED 0 / FAILED 0)
+  - Git Diff against `stage-12`: `docs/CURRENT_STAGE`, `docs/STATE.md`, `docs/release_verification_report.md`
+  - Manifest SHA-256: `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a` (Unmodified)
