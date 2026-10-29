@@ -1,0 +1,43 @@
+{
+  "rate_limit_429": {
+    "error": {
+      "message": "(#130429) Rate limit hit",
+      "type": "OAuthException",
+      "code": 130429,
+      "error_data": {
+        "messaging_product": "whatsapp",
+        "details": "Cloud API message throughput limit exceeded."
+      },
+      "fbtrace_id": "F5qK_rate_limit_trace"
+    }
+  },
+  "auth_error_401": {
+    "error": {
+      "message": "Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 460,
+      "fbtrace_id": "F9aZ_auth_trace"
+    }
+  },
+  "server_error_500": {
+    "error": {
+      "message": "An unknown error occurred while processing the request on WhatsApp servers.",
+      "type": "OAuthException",
+      "code": 131000,
+      "fbtrace_id": "F1xY_server_trace"
+    }
+  },
+  "permanent_error_400": {
+    "error": {
+      "message": "(#131026) Message undeliverable",
+      "type": "OAuthException",
+      "code": 131026,
+      "error_data": {
+        "messaging_product": "whatsapp",
+        "details": "Receiver is not on WhatsApp or has blocked the sender."
+      },
+      "fbtrace_id": "F3wQ_perm_trace"
+    }
+  }
+}

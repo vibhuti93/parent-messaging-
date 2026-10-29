@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S8 (`S8 — Messaging Policy Engine and Durable State`) — **COMPLETED**
-- **Next Stage:** Stage S9 (`S9 — WhatsApp Provider Adapter (Template Validation & Send Pipeline)`)
+- **Active Stage:** Stage S9 (`S9 — Provider Adapter, Webhooks, Retries`) — **COMPLETED**
+- **Next Stage:** Stage S10 (`S10 — Scheduled Dispatch Orchestrator`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-6` (commit resolving to `stage-6`)
+- **Stage Tag:** `stage-8` (commit resolving to `stage-8`)
 
 ---
 
@@ -199,3 +199,38 @@
   - 25 new tests in `tests/test_stage8_policy_and_state.py` (229 total passing tests across S1–S8).
   - Dual-engine repository contract test suite passes against both SQLite and PostgreSQL.
   - All 11 guardrails pass natively (0 skipped, 0 failed). Mypy strict passes (0 issues across 16 files).
+
+---
+
+## Stage S9 Execution Evidence (Provider Adapter, Webhooks, and Retries Completed)
+- **Messaging Provider Interface & WhatsApp Cloud Adapter (`src/omr_dispatch/messaging/provider.py`, `src/omr_dispatch/messaging/whatsapp_cloud.py`):**
+  - **Contract & Protocols (Task 1):** Defined `MessagingProvider` protocol with typed methods: `send_template`, `send_freeform_text`, `send_media`, `upload_media`, and `check_health`.
+  - **Strict Per-Org Sender Identity (ADR-0019, Invariants 15 & 16):** Every provider operation strictly resolves credentials, `phone_number_id`, and app secret from the calling tenant's `SenderIdentity`. Zero fallback to shared global tokens or phone IDs. Tenant context mismatches fail closed with `TenantContextMissingError`.
+  - **Multipart Media Upload:** Implemented `upload_media` using RFC 2046 multipart/form-data encoding to upload JPEG, PNG, Opus/OGG, and PDF files, returning durable Meta media IDs.
+  - **Service Window Audio Guard (Task 4 & DECISIONS_OPEN item s):** Audio voice notes outside an active 24h customer window fail closed immediately with `ServiceWindowClosedError` without network transmission.
+  - **Dry-Run Mode:** Supports hermetic offline testing (`dry_run=True`), validating request payloads and returning synthetic wamids and media IDs with zero network calls.
+- **Five-Class Error Classification & Bounded Backoff Engine (`src/omr_dispatch/messaging/retry.py`):**
+  - **Five Error Classes (Task 2):**
+    - `RETRY_SAFE`: Rate limits (`429`, `130429`, `80007`) safely retried with exponential backoff and jitter, honoring `Retry-After`.
+    - `OUTCOME_UNKNOWN`: Ambiguous server outcomes (`5xx`, timeouts, socket resets) classified as `OUTCOME_UNKNOWN`; strictly ZERO auto-retries (Invariants 13 & 18).
+    - `OPERATOR_ACTION`: Authentication/billing issues (`401`, `190`, `131037`) fail closed immediately; tenant isolated.
+    - `PERMANENT`: Client errors (`400`, `131026` non-WhatsApp user) fail closed with zero retries.
+    - `UNKNOWN`: Unrecognized errors fail closed with `OUTCOME_UNKNOWN` semantics.
+  - **Numerics & Time (ADR-0002, ADR-0005):** Zero `float()` calls; all delays represented in integer milliseconds. Full decorrelated jitter and bounded delay capping enforced.
+- **Webhook Demultiplexing & Signature Verification (`src/omr_dispatch/messaging/webhooks.py`):**
+  - **Tenant Resolution (Task 3 & ADR-0019):** Single inbound endpoint resolves `org_id` via `entry[].changes[].value.metadata.phone_number_id` before applying any state changes. Unknown phone IDs are rejected with HTTP 404 (logging omits payload for privacy hygiene).
+  - **HMAC SHA-256 Signature Verification:** Constant-time comparison verifies `X-Hub-Signature-256` using the specific tenant's resolved app secret. Rejects invalid signatures with HTTP 401.
+  - **Deduplication:** Duplicate webhook deliveries are acknowledged with HTTP 200 within Meta SLA (`duplicate_acknowledged`) without raising duplicate key errors.
+  - **Order Safety & Monotonic Progression:** Incoming out-of-order events (e.g. `delivered` after `READ`) are durably recorded in `dispatch_events`, but strictly never regress `dispatches.current_status` from `READ` back to `DELIVERED`.
+  - **State Reconciliation:** Dispatches left in `UNKNOWN_NEEDS_REVIEW` due to prior network timeouts are deterministically reconciled to `DELIVERED` or `FAILED` via inbound webhook evidence.
+- **Dual-Engine Gate 9 Tests (`tests/test_stage9_provider_and_webhooks.py`):**
+  - All tests execute against a real local loopback `HTTPServer` on `127.0.0.1:0`.
+  - Requests validated against authoritative fixtures in `tests/fixtures/provider_contract/**`.
+  - Dual-engine contract verified: Webhook demultiplexing passes identically against both `SQLiteDispatchRepository` and `PostgresDispatchRepository`.
+  - Includes explicit contract disclaimer that local tests prove request/state-machine behavior, not Meta Cloud API production delivery.
+- **Verification Commands & Evidence:**
+  - 25 new tests in `tests/test_stage9_provider_and_webhooks.py` (254 total passing tests across S1–S9).
+  - All 4 deliberate mutations caught and reverted.
+  - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
+  - Type Check: `uv run mypy src` reports `Success: no issues found in 20 source files`.
+  - Linter: `uv run ruff check .` reports `All checks passed!`.

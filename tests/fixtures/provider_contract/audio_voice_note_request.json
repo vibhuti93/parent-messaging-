@@ -1,0 +1,9 @@
+{
+  "messaging_product": "whatsapp",
+  "recipient_type": "individual",
+  "to": "919811122201",
+  "type": "audio",
+  "audio": {
+    "id": "meta_media_audio_123"
+  }
+}

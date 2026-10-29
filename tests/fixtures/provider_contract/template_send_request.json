@@ -1,0 +1,46 @@
+{
+  "messaging_product": "whatsapp",
+  "recipient_type": "individual",
+  "to": "919811122201",
+  "type": "template",
+  "template": {
+    "name": "parent_scorecard_v1",
+    "language": {
+      "code": "hi"
+    },
+    "components": [
+      {
+        "type": "header",
+        "parameters": [
+          {
+            "type": "image",
+            "image": {
+              "id": "meta_media_scorecard_12345"
+            }
+          }
+        ]
+      },
+      {
+        "type": "body",
+        "parameters": [
+          {
+            "type": "text",
+            "text": "आरव"
+          },
+          {
+            "type": "text",
+            "text": "कक्षा 10-A"
+          },
+          {
+            "type": "text",
+            "text": "55"
+          },
+          {
+            "type": "text",
+            "text": "300"
+          }
+        ]
+      }
+    ]
+  }
+}
