@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S10 (`S10 — Multi-Tenant Scheduler & Send Window Engine`) — **COMPLETED**
-- **Next Stage:** Stage S11 (`S11 — Parent Confirmation (QR + OTP)`)
+- **Active Stage:** Stage S11 (`S11 — Parent Confirmation (QR + OTP)`) — **COMPLETED**
+- **Next Stage:** Stage S12 (`S12 — End-to-End Walking Skeleton Verification`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-9` (commit resolving to `stage-9`)
+- **Stage Tag:** `stage-10` (commit resolving to `stage-10`)
 
 ---
 
@@ -262,4 +262,35 @@
   - 4 deliberate mutations caught and reverted.
   - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
   - Type Check: `uv run mypy src` reports `Success: no issues found in 21 source files`.
+  - Linter: `uv run ruff check .` reports `All checks passed!`.
+
+---
+
+## Stage S11 Execution Evidence (Parent Confirmation (QR + OTP) Completed)
+- **Opaque Token Generation & Secure Hash-Only Storage (`src/omr_dispatch/confirmation.py`):**
+  - **Cryptographically Random Tokens:** Generated via `secrets.token_urlsafe(32)` providing $\ge 32$ bytes entropy. Scoped strictly per tenant (`org_id`), sender (`sender_id`), student (`student_id`), assessment (`assessment_id`), and PTM event (`ptm_event_id`).
+  - **PTM-Linked Guard:** Confirmation tokens strictly apply only to PTM-linked assessments (`is_ptm_linked=True`); non-PTM requests fail closed with `NonPtmAssessmentError`.
+  - **Hash-Only Database Storage:** Persists strictly the SHA-256 hex digest (`token_hash`) in `parent_confirmations`. Raw tokens are returned exactly once upon creation for QR encoding and are never stored in the database or audit logs.
+  - **Zero-PII QR URL Payload:** Generates HTTPS URL containing strictly the opaque token query parameter (`https://confirm.institution.org/verify?token=<OPAQUE_TOKEN>`). Formally verified to contain zero student names, roll numbers, marks, or guardian phone numbers.
+  - **QrTokenProvider Protocol Compatibility:** `ConfirmationManager` satisfies the `@runtime_checkable QrTokenProvider` protocol for seamless integration with `PlaywrightRenderer`.
+- **Security Controls, Rate Limits, and Lifecycle Management:**
+  - **Configurable TTL & Expiry:** Tokens enforce default 7-day TTL (`DEFAULT_TOKEN_TTL_SECONDS = 604800`). Expired tokens fail closed with `TokenExpiredError`.
+  - **Single-Use Replay Protection:** Confirmed tokens transition to `CONFIRMED` and reject subsequent confirmation attempts with `TokenAlreadyUsedError`.
+  - **Explicit Revocation:** Administrative revocation transitions token to `REVOKED` and rejects subsequent challenges/verifications with `TokenRevokedError`.
+  - **Strict Session Rate Limiting (<= 5 Attempts):** Failed OTP attempts are tracked in integer math. Submitting 5 incorrect OTP attempts triggers automatic lockout (`LOCKED_OUT`) via `SessionLockedOutError`; 6th attempt is blocked immediately even with the correct OTP.
+  - **Tenant Isolation:** Tokens presented across tenant boundaries fail closed with `UnauthorizedTenantAccessError`. Operations lacking explicit `org_id` context fail closed with `TenantContextMissingError` (Invariant 15).
+  - **Core Numerics (ADR-0002):** Zero `float()` calls across `src/omr_dispatch/confirmation.py`. All attempts, limits, and TTL seconds use exact integer math.
+  - **Time Hygiene (ADR-0005):** Zero unanchored `datetime.now()` calls; all token generation and verification functions mandate timezone-aware UTC datetime parameters (`now`).
+- **Guardian Contact Verification & OTP Challenge Dispatch:**
+  - **Precondition Verification:** Requires validated Indian mobile number (`normalize_indian_mobile`), explicit guardian consent (`has_consent=True`), and non-quarantined status (`is_quarantined=False`). Unmet preconditions fail closed with `UnverifiedGuardianContactError`.
+  - **Sender Readiness (ADR-0019):** OTP challenges require the calling org's sender identity to be in `READY` status. Unready senders fail closed with `SenderNotReadyError`.
+  - **Keyed OTP Hashing & Meta Authentication Template:** Generates 6-digit numeric OTPs, stored via keyed HMAC-SHA256. Dispatches via `TemplateSendRequest` targeting `guardian_otp_challenge_v1` with copy-code buttons.
+  - **Assurance Boundary:** Successful confirmation records `DIGITAL_OTP` verification with explicit disclaimer that paper signature lines remain optional and unverified.
+- **Persistence & Restart Recovery (`ConfirmationStore`):**
+  - Durable SQLite WAL-mode persistence for confirmation records, attempt counters, and sanitized audit trail. Verified that token states, counters, and lockout progressions survive repository re-initialization.
+- **Verification Commands & Evidence:**
+  - 20 new tests in `tests/test_stage11_confirmation.py` (297 total passing tests across S1–S11).
+  - 4 deliberate mutations caught and reverted.
+  - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
+  - Type Check: `uv run mypy src` reports `Success: no issues found in 22 source files`.
   - Linter: `uv run ruff check .` reports `All checks passed!`.
