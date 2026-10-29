@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S9 (`S9 — Provider Adapter, Webhooks, Retries`) — **COMPLETED**
-- **Next Stage:** Stage S10 (`S10 — Scheduled Dispatch Orchestrator`)
+- **Active Stage:** Stage S10 (`S10 — Multi-Tenant Scheduler & Send Window Engine`) — **COMPLETED**
+- **Next Stage:** Stage S11 (`S11 — Parent Confirmation (QR + OTP)`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-8` (commit resolving to `stage-8`)
+- **Stage Tag:** `stage-9` (commit resolving to `stage-9`)
 
 ---
 
@@ -233,4 +233,33 @@
   - All 4 deliberate mutations caught and reverted.
   - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
   - Type Check: `uv run mypy src` reports `Success: no issues found in 20 source files`.
+  - Linter: `uv run ruff check .` reports `All checks passed!`.
+
+---
+
+## Stage S10 Execution Evidence (Multi-Tenant Scheduler & Send Window Engine Completed)
+- **Pure Schedule Planning (`src/omr_dispatch/scheduler.py`):**
+  - **Deterministic Planning (`plan_schedule`):** Pure deterministic calculation anchored in `ZoneInfo("Asia/Kolkata")` with explicit `now: datetime` injection. Primary send window scheduled at D-10 Sunday 20:30 IST (`20:30:00+05:30`).
+  - **Sunday Window Validation:** Strictly enforces `weekday() == 6` for events claiming the primary Sunday OMR window. Non-Sunday events fail closed with explicit `InvalidScheduleWindowError`.
+  - **Target Fixture Match (D-10):** Event `2026-10-18 14:15+05:30` (Sunday) produces primary send `2026-10-18 20:30:00+05:30`, and reminder send `2026-10-19 10:00:00+05:30` (Monday morning) strictly when `reminder_enabled=True`. Exactly zero reminders generated when disabled.
+  - **Distinct Idempotency Identities:** Primary vs. reminder dispatches compute distinct SHA-256 idempotency identities.
+- **Multi-Tenant Fair Scheduling & Daily Cap Pacing:**
+  - **Deficit Weighted Round-Robin (DWRR):** Implemented `DWRRQueue` maintaining integer quantum credits and deficit tracking per tenant. Proves that large tenants (e.g. Org A with 1,000 jobs) cannot starve small tenants (Org B with 10 jobs finishes in Round 1).
+  - **Core Numerics Exactness (ADR-0002):** Zero `float()` calls in scheduler. All quantums, deficits, weights, caps, and intervals are exact integers.
+  - **Daily Cap Spreading (`pace_batch_over_days`):** Batches exceeding a tenant's daily message quota (e.g. 600 items with 250 daily limit) spread across consecutive eligible days within allowed send windows, automatically skipping academic/institutional holidays.
+- **Edge Conditions & Send Window Integrity:**
+  - **Late Import:** Imports after window start are detected and deferred (`DEFERRED_LATE_IMPORT`) by default to prevent partial/rushed dispatches.
+  - **Missed Window:** Current time exceeding window closure transitions jobs to `MISSED_WINDOW`.
+  - **Holiday Override:** Institutional holidays postpone primary dispatches to the next eligible non-holiday day (`DEFERRED_HOLIDAY`).
+  - **Provider Outage:** Upstream outage halts queued dispatches safely without dropping jobs (`HOLD_PROVIDER_OUTAGE`).
+  - **Unapproved Template:** Missing template approval holds dispatches (`HOLD_UNAPPROVED_TEMPLATE`) without dropping jobs.
+  - **Freeform Bypass Guardrail (Invariants 13 & 14):** Freeform messages are strictly prohibited from bypassing send window rules, failing closed with `WindowRuleBypassForbiddenError`.
+- **Durable Persistence & Single-Instance Dispatch Lock:**
+  - **Restart Recovery (`SchedulerStore`):** Schedules and queue orders persisted to SQLite survive store reloads from disk with byte-exact window and metadata fidelity.
+  - **Single-Instance Lock (`DispatchLock`):** Concurrency lock backed by SQLite and reentrant mutex prevents multiple worker instances from claiming or dispatching the same scheduled job simultaneously.
+- **Verification Commands & Evidence:**
+  - 23 new tests in `tests/test_stage10_scheduler.py` (277 total passing tests across S1–S10).
+  - 4 deliberate mutations caught and reverted.
+  - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
+  - Type Check: `uv run mypy src` reports `Success: no issues found in 21 source files`.
   - Linter: `uv run ruff check .` reports `All checks passed!`.
