@@ -1,8 +1,8 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S6 (`S6 — Devanagari Rendering, Scorecard PNG, PTM PDF`) — **COMPLETED**
-- **Next Stage:** Stage S7 (`S7 — Voice Note Audio Generation`)
+- **Active Stage:** Stage S7 (`S7 — Hindi Audio (S7A Asset Intake & S7B Audio Engine)`) — **COMPLETED**
+- **Next Stage:** Stage S8 (`S8 — Persistence, Schema Migration, Multi-Tenant Storage`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
@@ -136,3 +136,33 @@
   - `QrTokenProvider` protocol interface supplies opaque confirmation tokens. Renders exact integer SVG QR matrix with zero personal data encoded. Unverified physical signature line rendered.
 - **Tests & Verification:** 24 new tests in `tests/test_stage6_renderer.py` (181 total passing tests across S1–S6). 4 deliberate mutations caught and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
 - **Open Risks & Deferred Verification:** QR matrix phone-scannability verified structurally and attribute-wise (zero PII, opaque token attribute), with optical barcode decoding deferred to Stage S11 when the acknowledgment endpoint is wired; PDF slip non-overlap verified via DOM bounding-box geometry with scale-2 rasterisation verifying non-blank pages.
+
+---
+
+## Stage S7 Execution Evidence (Hindi Audio S7A Asset Intake & S7B Audio Engine Completed)
+- **Token Asset Intake & Recording Sheet (`assets/audio_tokens/`, `docs/audio_recording_sheet.md`):**
+  - Cataloged 107 existing audio clips in `assets/audio_tokens/manifest.json` with token ID, spoken text, voice (`hi_IN_neutral`), license, sample rate (24,000 Hz), channels (1 mono), MP3 codec, SHA-256 hash, and duration in integer milliseconds.
+  - Recording sheet specifies full vocabulary: numbers 0–100, arithmetic terms ("सौ", "माइनस"), greeting ("प्रिय अभिभावक"), "कुल नंबर", "में से", absence phrases, and pause tokens.
+  - Mandates gender-neutral phrasing ("आपके बच्चे"); neither child name nor class/section is ever spoken in audio (Invariant 10).
+  - Enforces fixed intonation rule: A fixed continuation word follows every number so numbers are never sentence-final (one continuation intonation variant per number is sufficient).
+  - Preflight validator `validate_audio_tokens(tokens_dir)` verifies headers, formats, sample rates, channels, duration bounds, and SHA-256 digests against manifest; missing required tokens fail loudly.
+- **Audio Token Stitcher (`RECORDED_TOKEN_STITCH`, `src/omr_dispatch/audio_engine.py`):**
+  - Implemented `synthesize_token_voice_note(report, catalog, out_path)` stitching tokens via real FFmpeg (`concat` demuxer) and transcoding to WhatsApp-compatible Opus OGG.
+  - Maps report facts to canonical token sequences: golden STU_01 maps to net 55 / 25 deductions / 300 max; absent STU_17 maps to neutral attendance context (300 max, 16 present) with zero score never framed; negative net scores map using `"माइनस"` (`w_minus`) + number.
+  - Target duration 15–25s enforced (STU_01 renders at ~18.1s); hard maximum 45s (D-08). Over-duration triggers concise fallback; unresolvable overflows raise `AudioDurationOverflowError`.
+- **Network TTS Adapter Interface (`NETWORK_TTS`):**
+  - Implemented `NetworkTTSProvider` protocol interface and `synthesize_network_tts(...)`. Default disabled via `Settings.network_tts_enabled=False`. Fails closed (`NetworkTTSDisabledError`) when not opted-in.
+  - Offline execution verified: pure local token stitching requires zero external network calls. Tones or noise are never returned as speech.
+- **FFmpeg WhatsApp OGG/Opus Transcoder:**
+  - Implemented `transcode_to_whatsapp_ogg(in_path, out_path)` using real FFmpeg (`-c:a libopus -b:a 32k -ar 48000 -ac 1`). Direct renaming from WAV/MP3 to `.ogg` is strictly rejected.
+  - On non-zero exit or timeout, partial files are deleted and `FFmpegExecutionError` / `FFmpegTimeoutError` is raised.
+- **Secure Caching (Invariant 10):**
+  - Cache keys derived strictly from mode, voice/catalog version, language, rate/pitch, normalized token sequence, and encoder settings version (`v1-opus48k-mono32k`).
+  - Filenames and paths are 64-character SHA-256 digests with zero student names, roll numbers, or rendered message text.
+  - Cache hit returns immediately with byte copy, skipping FFmpeg invocation entirely.
+- **Numerics & Hygiene (ADR-0002, ADR-0005, ADR-0008, ADR-0009):**
+  - Zero `float()` calls in `audio_engine.py`: all durations parsed via `Decimal.quantize(..., rounding=ROUND_HALF_UP)` or exact integer milliseconds.
+  - Zero `os.environ` or `os.getenv` calls in `audio_engine.py`.
+  - Zero unanchored `datetime.now()` calls.
+  - Zero raw `print()` calls in source files.
+- **Tests & Verification:** 23 new tests in `tests/test_stage7_audio_engine.py` (204 total passing tests across S1–S7). All 4 deliberate mutations caught and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
