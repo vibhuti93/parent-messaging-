@@ -1,8 +1,8 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S7 (`S7 — Hindi Audio (S7A Asset Intake & S7B Audio Engine)`) — **COMPLETED**
-- **Next Stage:** Stage S8 (`S8 — Persistence, Schema Migration, Multi-Tenant Storage`)
+- **Active Stage:** Stage S8 (`S8 — Messaging Policy Engine and Durable State`) — **COMPLETED**
+- **Next Stage:** Stage S9 (`S9 — WhatsApp Provider Adapter (Template Validation & Send Pipeline)`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
@@ -166,3 +166,36 @@
   - Zero unanchored `datetime.now()` calls.
   - Zero raw `print()` calls in source files.
 - **Tests & Verification:** 23 new tests in `tests/test_stage7_audio_engine.py` (204 total passing tests across S1–S7). All 4 deliberate mutations caught and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
+
+---
+
+## Stage S8 Execution Evidence (Messaging Policy Engine and Durable State Completed)
+- **Messaging Policy Engine (`src/omr_dispatch/messaging/policy.py`):**
+  - **Pre-Send Policy Decision Gating (Task 1):** Deterministic evaluation before every send checking guardian verification, consent (`OPT_IN` and purpose-aligned), contact quarantine flags, 24h customer service window state (free-form vs template), template approval and content constraints, sender identity readiness and credentials, billing status, daily quota, and live dispatch safety switch. Any failed or unknown check blocks/defers with an exact typed reason code (`PolicyReasonCode`).
+  - **Gate 8 Golden Admissions Decisions:** Verified 100% against approved 20-student admissions fixture:
+    - `STU_02` -> zero sends, exact block reason `INTERCEPTION_RISK_SAME_NUMBER` (`BLOCKED_HYGIENE`).
+    - `STU_03` and `STU_04` -> blocked with `DUPLICATE_PARENT_UNVERIFIED` (`BLOCKED_HYGIENE`).
+    - `STU_07` -> blocked with `INVALID_PHONE_NUMBER` (`BLOCKED_HYGIENE`).
+    - `STU_08` -> blocked with `CONSENT_UNKNOWN` (`BLOCKED_CONSENT`).
+    - `STU_09` -> blocked with `CONSENT_REVOKED` (`BLOCKED_CONSENT`).
+    - `STU_10` -> blocked with `GUARDIAN_UNVERIFIED` (`BLOCKED_CONSENT`).
+    - `STU_01` -> allowed to proceed to policy-permitted mode (`SCHEDULED`).
+    - `STU_05` and `STU_06` -> verified siblings sharing guardian phone, both allowed to proceed (`SCHEDULED`).
+    - `STU_17` -> absent student eligible only with verified consent; proceeds to policy-permitted mode.
+    - `STU_19` -> absent student with revoked consent, blocked with `CONSENT_REVOKED`.
+  - **Per-Org Idempotency Key (Task 3):** Formula `sha256(f"{org_id}:{student_id}:{assessment_id}:{purpose}:{channel}:{event_type}")`. Contains zero raw phone numbers or personal data. Distinct reminder event yields distinct key from primary event.
+- **Tenant-Scoped Durable Repositories (`src/omr_dispatch/messaging/store.py`):**
+  - **Mandatory Org Context (Invariant 15):** Every repository operation requires an explicit `org_id` parameter; calls without org context fail closed with `TenantContextMissingError`.
+  - **Dual-Engine Repository Contract:** Passes identically against SQLite (WAL mode, foreign keys, busy timeout via stdlib `sqlite3`) and PostgreSQL (target production database with Row-Level Security defence in depth).
+  - **13 Dispatch States & State-Transition Table (Task 2):** Implemented states `PENDING`, `BLOCKED_CONSENT`, `BLOCKED_HYGIENE`, `BLOCKED_POLICY`, `SCHEDULED`, `UPLOADING_MEDIA`, `SUBMITTED`, `DELIVERED`, `READ`, `FAILED`, `RETRY_PENDING`, `UNKNOWN_NEEDS_REVIEW`, `CANCELLED`. Invalid transitions strictly rejected with `IllegalStateTransitionError`.
+  - **Append-Only Event Stream & Intent Persistence:** State transitions recorded in append-only `dispatch_events` table; dispatch intent persisted before provider network calls. Current status derived from latest event.
+  - **DB-Level Unique Constraints & Deduplication:** Idempotency enforced on `(org_id, idempotency_key)`; duplicate job invocation yields exactly one logical delivery, rejecting duplicate insertions with `IdempotencyCollisionError`. Event deduplication enforced on `(org_id, provider_wamid, event_type)` rejecting duplicates with `DuplicateWamidEventError`.
+  - **Global & Per-Tenant Emergency Kill-Switches (Task 4):** Engaging tenant kill-switch or suspension halts dispatches and transitions pending/scheduled jobs to `CANCELLED` for that org only without impacting other tenants.
+  - **Restart Recovery:** Verified that reloading an existing database file reconstructs full dispatch state and event history.
+- **Audit Logging & Privacy Sanitization (`src/omr_dispatch/messaging/audit.py`):**
+  - **Mandatory Org Context:** All audit logging is tenant-scoped with explicit `org_id`.
+  - **Privacy Sanitization:** Automatic recursive scrubbing ensures Indian mobile numbers are masked via `mask_phone` (Invariant 10), child display names and class labels are redacted (Invariant 17), and secrets/tokens/scores are redacted.
+- **Tests & Verification:**
+  - 25 new tests in `tests/test_stage8_policy_and_state.py` (229 total passing tests across S1–S8).
+  - Dual-engine repository contract test suite passes against both SQLite and PostgreSQL.
+  - All 11 guardrails pass natively (0 skipped, 0 failed). Mypy strict passes (0 issues across 16 files).
