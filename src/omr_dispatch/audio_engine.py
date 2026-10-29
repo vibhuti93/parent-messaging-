@@ -292,7 +292,8 @@ def map_report_to_tokens(report: Any, *, concise: bool = False) -> list[str]:
     Guarantees:
     - Gender-neutral phrasing ('w_aapke_bachche').
     - Zero spoken child names or classes (ADR-0010, Invariant 10).
-    - Neutral factual attendance context for ABSENT (never zero score).
+    - Neutral factual attendance context for ABSENT (explicit absence notification).
+    - Authentic Hindi grammar avoiding 'सौ सौ सौ' for 300.
     - Explicit pause tokens between clauses to avoid clipping.
     """
     # Extract report facts supporting dict or Pydantic models
@@ -301,12 +302,14 @@ def map_report_to_tokens(report: Any, *, concise: bool = False) -> list[str]:
         net_marks = report.get("net_marks")
         max_marks = report.get("max_marks", 300)
         bleed_marks = report.get("bleed_marks")
+        wrong = report.get("wrong")
         present_count = report.get("present_count", 16)
     else:
         status = getattr(report, "status", None) or getattr(report, "attendance_status", "PRESENT")
         net_marks = getattr(report, "net_marks", None)
         max_marks = getattr(report, "max_marks", 300)
         bleed_marks = getattr(report, "bleed_marks", None)
+        wrong = getattr(report, "wrong", None)
         present_count = getattr(report, "present_count", 16)
 
     # Standard competition attendance check
@@ -322,32 +325,65 @@ def map_report_to_tokens(report: Any, *, concise: bool = False) -> list[str]:
     tokens.append("w_aapke_bachche")
     tokens.append("pause_short")
 
-    # 3. Overall test context and maximum marks
-    tokens.append("w_kul_number")
-    tokens.extend(number_to_tokens(max_marks))
-
     if is_absent:
-        # ABSENT: Neutral attendance facts only; never frame as zero score (Invariant 10)
+        # ABSENT Student Grammar:
+        # - Explicit absence statement: [w_anupasthit_rahe]
+        # - Batch attendance context: [w_is_pariksha_mein, num_{present_count}, w_vidyarthi_shamil_the, w_teen_sau]
+        tokens.append("w_anupasthit_rahe")
         tokens.append("pause_clause")
+        tokens.append("w_is_pariksha_mein")
         if present_count is not None:
-            tokens.extend(number_to_tokens(present_count))
+            int_pc = int(present_count) if isinstance(present_count, (int, Fraction)) else int(str(present_count).split(".")[0])
+            tokens.extend(number_to_tokens(int_pc))
+        tokens.append("w_vidyarthi_shamil_the")
+        tokens.append("w_teen_sau")
         return tokens
 
-    # PRESENT: Net score introduction
-    tokens.append("w_mein_se")
-    tokens.append("pause_short")
-
+    # PRESENT Student Grammar:
+    # Net score fact: [w_kul_number, num_{net}, w_teen_sau, w_prapt_kiye]
+    tokens.append("w_kul_number")
     if net_marks is not None:
         int_net = int(net_marks) if isinstance(net_marks, (int, Fraction)) else int(str(net_marks).split(".")[0])
-        tokens.extend(number_to_tokens(int_net))
-
-    # Deduction breakdown (omitted in concise fallback mode to satisfy duration limits)
-    if not concise and bleed_marks is not None:
-        int_bleed = int(bleed_marks) if isinstance(bleed_marks, (int, Fraction)) else int(str(bleed_marks).split(".")[0])
-        if int_bleed > 0:
-            tokens.append("pause_clause")
+        if int_net < 0:
             tokens.append("w_minus")
-            tokens.extend(number_to_tokens(int_bleed))
+            tokens.extend(number_to_tokens(-int_net))
+        else:
+            tokens.extend(number_to_tokens(int_net))
+
+    if max_marks == 300:
+        tokens.append("w_teen_sau")
+    else:
+        tokens.extend(number_to_tokens(max_marks))
+        tokens.append("w_mein_se")
+
+    tokens.append("w_prapt_kiye")
+
+    # Deduction fact (if wrong > 0): [num_{wrong}, w_galat_prashno_se, num_{deducted}, w_kate_hain]
+    int_wrong = 0
+    if wrong is not None:
+        try:
+            int_wrong = int(wrong) if isinstance(wrong, (int, Fraction)) else int(str(wrong).split(".")[0])
+        except Exception:
+            int_wrong = 0
+
+    int_bleed = 0
+    if bleed_marks is not None:
+        try:
+            int_bleed = int(bleed_marks) if isinstance(bleed_marks, (int, Fraction)) else int(str(bleed_marks).split(".")[0])
+        except Exception:
+            int_bleed = 0
+
+    if int_wrong == 0 and int_bleed > 0:
+        int_wrong = int_bleed
+    elif int_bleed == 0 and int_wrong > 0:
+        int_bleed = int_wrong
+
+    if not concise and int_wrong > 0:
+        tokens.append("pause_clause")
+        tokens.extend(number_to_tokens(int_wrong))
+        tokens.append("w_galat_prashno_se")
+        tokens.extend(number_to_tokens(int_bleed if int_bleed > 0 else int_wrong))
+        tokens.append("w_kate_hain")
 
     return tokens
 
@@ -407,6 +443,13 @@ HINDI_WORD_TOKENS: dict[str, str] = {
     "w_mein_se": "में से",
     "w_minus": "माइनस",
     "w_sau": "सौ",
+    "w_teen_sau": "तीन सौ में से",
+    "w_prapt_kiye": "नंबर प्राप्त किए हैं",
+    "w_galat_prashno_se": "गलत जवाबों से",
+    "w_kate_hain": "नंबर कटे हैं",
+    "w_anupasthit_rahe": "आज की परीक्षा में अनुपस्थित रहे",
+    "w_is_pariksha_mein": "इस परीक्षा में कुल",
+    "w_vidyarthi_shamil_the": "विद्यार्थी शामिल हुए थे",
 }
 
 

@@ -6,7 +6,7 @@ This recording sheet governs the vocabulary, pronunciation, intonation, and audi
 
 ## 1. Governance & Invariants
 
-1. **Clip Inventory Count:** Exactly **107 recorded audio clips** are cataloged in `assets/audio_tokens/manifest.json`.
+1. **Clip Inventory Count:** Exactly **114 recorded audio clips** are cataloged in `assets/audio_tokens/manifest.json` (101 number clips + 13 core word/phrase clips).
 2. **Gender-Neutral Phrasing (ADR-0010, Invariant 10):**
    - The script strictly uses gender-neutral Bolchal Hindi phrasing: **`"आपके बच्चे"`**.
    - **Neither the child's name nor class/section is ever spoken in audio.**
@@ -136,16 +136,23 @@ This recording sheet governs the vocabulary, pronunciation, intonation, and audi
 | `num_99` | निन्यानवे | Ninyaanwe | 99 |
 | `num_100` | सौ | Sau | 100 |
 
-### B. Core Word & Phrase Tokens (Total: 6 clips)
+### B. Core Word & Phrase Tokens (Total: 13 clips)
 
 | Token ID | Spoken Text | Purpose & Intonation Notes |
 | :--- | :--- | :--- |
 | `w_greeting` | प्रिय अभिभावक | Opening respectful greeting. Precedes clause pause. |
 | `w_aapke_bachche` | आपके बच्चे | Gender-neutral child subject reference. |
-| `w_kul_number` | कुल नंबर | Introduces test maximum and scoring context. |
-| `w_mein_se` | में से | Prepositional bridge following maximum marks (e.g. "300 में से"). |
-| `w_minus` | माइनस | Spoken negative prefix for net negative scores and score deductions. |
-| `w_sau` | सौ | Multiplier token for hundreds (e.g. "तीन सौ" for 300). |
+| `w_kul_number` | कुल नंबर | Introduces scoring context. |
+| `w_mein_se` | में से | Prepositional bridge following numbers. |
+| `w_minus` | माइनस | Spoken negative prefix for net negative scores and deductions. |
+| `w_sau` | सौ | Multiplier token for hundreds. |
+| `w_teen_sau` | तीन सौ में से | Canonical phrase token for 300 maximum ("तीन सौ में से"). |
+| `w_prapt_kiye` | नंबर प्राप्त किए हैं | Canonical net score completion phrase ("नंबर प्राप्त किए हैं"). |
+| `w_galat_prashno_se` | गलत जवाबों से | Canonical deduction bridge phrase ("गलत जवाबों से"). |
+| `w_kate_hain` | नंबर कटे हैं | Canonical deduction conclusion phrase ("नंबर कटे हैं"). |
+| `w_anupasthit_rahe` | आज की परीक्षा में अनुपस्थित रहे | Canonical absence statement phrase ("आज की परीक्षा में अनुपस्थित रहे"). |
+| `w_is_pariksha_mein` | इस परीक्षा में कुल | Canonical batch context introduction phrase ("इस परीक्षा में कुल"). |
+| `w_vidyarthi_shamil_the` | विद्यार्थी शामिल हुए थे | Canonical batch attendance conclusion phrase ("विद्यार्थी शामिल हुए थे"). |
 
 ---
 
@@ -154,26 +161,30 @@ This recording sheet governs the vocabulary, pronunciation, intonation, and audi
 ### A. OMR Present Student (e.g. STU_01: 55 net / 300 max, 25 bleed)
 ```text
 [w_greeting] -> [pause_clause] -> [w_aapke_bachche] -> [pause_short] ->
-[w_kul_number] -> [num_03] -> [w_sau] -> [w_mein_se] -> [pause_short] ->
-[num_55] -> [pause_clause] -> [w_minus] -> [num_25]
+[w_kul_number] -> [num_55] -> [w_teen_sau] -> [w_prapt_kiye] -> [pause_clause] ->
+[num_25] -> [w_galat_prashno_se] -> [num_25] -> [w_kate_hain]
 ```
-- Spoken effect: "प्रिय अभिभावक ... आपके बच्चे कुल नंबर तीन सौ में से ... पचपन ... माइनस पच्चीस"
-- Duration: ~18.0 seconds (well within the 15–25s target window).
+- Spoken effect: "प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर पचपन तीन सौ में से नंबर प्राप्त किए हैं ... पच्चीस गलत जवाबों से पच्चीस नंबर कटे हैं"
+- Duration: ~21.3 seconds (well within the 15–25s target window).
 
-### B. Negative Net Score Student (e.g. EDGE_ALL_WRONG: -75 net / 300 max)
+### B. Negative Net Score Student (e.g. EDGE_ALL_WRONG: -75 net / 300 max, 75 bleed)
 ```text
 [w_greeting] -> [pause_clause] -> [w_aapke_bachche] -> [pause_short] ->
-[w_kul_number] -> [num_03] -> [w_sau] -> [w_mein_se] -> [pause_short] ->
-[w_minus] -> [num_75]
+[w_kul_number] -> [w_minus] -> [num_75] -> [w_teen_sau] -> [w_prapt_kiye] -> [pause_clause] ->
+[num_75] -> [w_galat_prashno_se] -> [num_75] -> [w_kate_hain]
 ```
-- Spoken effect: "प्रिय अभिभावक ... आपके बच्चे कुल नंबर तीन सौ में से ... माइनस पचहत्तर"
+- Spoken effect: "प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर माइनस पचहत्तर तीन सौ में से नंबर प्राप्त किए हैं ... पचहत्तर गलत जवाबों से पचहत्तर नंबर कटे हैं"
+- Duration: ~23.2 seconds (well within the 15–25s target window).
 
 ### C. Absent Student (e.g. STU_17: Absent / 300 max, 16 present)
 ```text
 [w_greeting] -> [pause_clause] -> [w_aapke_bachche] -> [pause_short] ->
-[w_kul_number] -> [num_03] -> [w_sau] -> [pause_clause] -> [num_16]
+[w_anupasthit_rahe] -> [pause_clause] ->
+[w_is_pariksha_mein] -> [num_16] -> [w_vidyarthi_shamil_the] -> [w_teen_sau]
 ```
-- Spoken effect: Stated strictly as neutral factual attendance context (300 total, 16 present); zero score is never uttered.
+- Spoken effect: "प्रिय अभिभावक ... आपके बच्चे ... आज की परीक्षा में अनुपस्थित रहे ... इस परीक्षा में कुल सोलह विद्यार्थी शामिल हुए थे तीन सौ में से"
+- Explicit absence statement informs parents immediately; attendance context provides total test scale and cohort count; zero score is never uttered.
+- Duration: ~17.4 seconds (well within the 15–25s target window).
 
 ---
 

@@ -10,13 +10,21 @@
 ## 1. Sub-Stage S7A: Asset Intake & Preflight Deliverables
 
 1. **Recording Sheet (`docs/audio_recording_sheet.md`):**
-   - Details total clip inventory: exactly **107 audio token clips**.
+   - Details total clip inventory: exactly **114 audio token clips** (101 numbers + 13 core word/phrase tokens).
    - Documents full vocabulary:
      - Irregular Hindi numbers 0–99 recorded individually (`num_00` to `num_99`).
      - Number 100 (`num_100`, "सौ").
      - Arithmetic terms: `"सौ"` (`w_sau`), `"माइनस"` (`w_minus`).
      - Respectful leading greeting: `"प्रिय अभिभावक"` (`w_greeting`).
      - Phrasal bridges: `"आपके बच्चे"` (`w_aapke_bachche`), `"कुल नंबर"` (`w_kul_number`), `"में से"` (`w_mein_se`).
+     - Canonical phrase tokens for natural Khariboli Hindi grammar:
+       - `"तीन सौ में से"` (`w_teen_sau`)
+       - `"नंबर प्राप्त किए हैं"` (`w_prapt_kiye`)
+       - `"गलत जवाबों से"` (`w_galat_prashno_se`)
+       - `"नंबर कटे हैं"` (`w_kate_hain`)
+       - `"आज की परीक्षा में अनुपस्थित रहे"` (`w_anupasthit_rahe`)
+       - `"इस परीक्षा में कुल"` (`w_is_pariksha_mein`)
+       - `"विद्यार्थी शामिल हुए थे"` (`w_vidyarthi_shamil_the`)
    - Mandates gender-neutral Bolchal phrasing: strictly **`"आपके बच्चे"`**. Neither child name nor class/section is ever spoken in audio (Invariant 10; the accompanying named text message carries identity).
    - Enforces fixed intonation rule: A fixed continuation word follows every number so numbers are never sentence-final (one continuation intonation variant per number is sufficient).
    - Documents silence-based splitter script for studio continuous number reading.
@@ -35,12 +43,12 @@
    - Implemented `synthesize_token_voice_note(report, catalog, out_path)`.
    - Maps report facts to canonical token sequences:
      - Golden student STU_01 (55 net score, 25 deductions, 300 max) maps to:
-       `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "num_03", "w_sau", "w_mein_se", "pause_short", "num_55", "pause_clause", "w_minus", "num_25"]`.
-     - Absent student STU_17 maps to neutral attendance context (300 max, 16 present):
-       `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "num_03", "w_sau", "pause_clause", "num_16"]`. Zero score (`num_00`) is NEVER uttered.
+       `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "num_55", "w_teen_sau", "w_prapt_kiye", "pause_clause", "num_25", "w_galat_prashno_se", "num_25", "w_kate_hain"]`.
+     - Absent student STU_17 maps to authentic absence and attendance context (300 max, 16 present):
+       `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_anupasthit_rahe", "pause_clause", "w_is_pariksha_mein", "num_16", "w_vidyarthi_shamil_the", "w_teen_sau"]`. Zero score (`num_00`) is NEVER uttered.
      - Negative net scores (e.g. `EDGE_ALL_WRONG`: -75 net) map using `"w_minus"` (`"माइनस"`) + number token.
    - Stitches tokens using real FFmpeg via `concat` demuxer and transcodes to WhatsApp-compatible Opus OGG with explicit resampling defense (`-af aresample=48000`).
-   - Enforces duration boundaries: typical target 15–25s (STU_01 renders at ~18.1s); hard maximum 45s (D-08). Over-duration reports trigger concise fallback; unresolvable overflows raise `AudioDurationOverflowError`.
+   - Enforces duration boundaries: typical target 15–25s (STU_01 renders at ~21.3s); hard maximum 45s (D-08). Over-duration reports trigger concise fallback; unresolvable overflows raise `AudioDurationOverflowError`.
 
 2. **Network TTS Adapter Interface (`NETWORK_TTS`) & Skip Status:**
    - Implemented `NetworkTTSProvider` protocol interface and `synthesize_network_tts(...)`.
@@ -79,48 +87,49 @@ The audio engine produces the following exact word-by-word token sequences and s
 
 ### 1. `STU_01` (OMR Present: 55 Net / 300 Max, 25 Marks Deducted)
 - **Token Sequence:**
-  `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "num_03", "w_sau", "w_mein_se", "pause_short", "num_55", "pause_clause", "w_minus", "num_25"]`
+  `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "num_55", "w_teen_sau", "w_prapt_kiye", "pause_clause", "num_25", "w_galat_prashno_se", "num_25", "w_kate_hain"]`
 - **Word-by-Word Mapping:**
   - `w_greeting` -> `"प्रिय अभिभावक"`
   - `pause_clause` -> `...` [विराम 350ms]
   - `w_aapke_bachche` -> `"आपके बच्चे"`
   - `pause_short` -> `...` [विराम 150ms]
   - `w_kul_number` -> `"कुल नंबर"`
-  - `num_03` -> `"तीन"`
-  - `w_sau` -> `"सौ"`
-  - `w_mein_se` -> `"में से"`
-  - `pause_short` -> `...` [विराम 150ms]
   - `num_55` -> `"पचपन"`
+  - `w_teen_sau` -> `"तीन सौ में से"`
+  - `w_prapt_kiye` -> `"नंबर प्राप्त किए हैं"`
   - `pause_clause` -> `...` [विराम 350ms]
-  - `w_minus` -> `"माइनस"`
   - `num_25` -> `"पच्चीस"`
+  - `w_galat_prashno_se` -> `"गलत जवाबों से"`
+  - `num_25` -> `"पच्चीस"`
+  - `w_kate_hain` -> `"नंबर कटे हैं"`
 - **Spoken Devanagari Transcript:**
-  > `"प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर तीन सौ में से ... पचपन ... माइनस पच्चीस"`
-- **Verification:** Numbers are followed by fixed anchoring qualifiers (`num_03` -> `"सौ"`, `"सौ"` -> `"में से"`). Deductions (25) and net score (55) match expected literals. Child name `"आरव"` and class `"10-A"` are strictly absent. Measured duration: 18,143 ms (18.1s, within 15–25s target).
+  > `"प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर पचपन तीन सौ में से नंबर प्राप्त किए हैं ... पच्चीस गलत जवाबों से पच्चीस नंबर कटे हैं"`
+- **Verification:** Numbers are embedded in natural grammatical phrases (`w_teen_sau` -> `"तीन सौ में से"`, `w_prapt_kiye` -> `"नंबर प्राप्त किए हैं"`). Deduction words (`"गलत जवाबों से"`, `"नंबर कटे हैं"`) make the deduction fact immediately intelligible. Child name `"आरव"` and class `"10-A"` are strictly absent. Measured duration: ~21.3s (within 15–25s target).
 
 ### 2. `STU_17` (OMR Absent: Test Max 300, Present Count 16)
 - **Token Sequence:**
-  `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "num_03", "w_sau", "pause_clause", "num_16"]`
+  `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_anupasthit_rahe", "pause_clause", "w_is_pariksha_mein", "num_16", "w_vidyarthi_shamil_the", "w_teen_sau"]`
 - **Word-by-Word Mapping:**
   - `w_greeting` -> `"प्रिय अभिभावक"`
   - `pause_clause` -> `...` [विराम 350ms]
   - `w_aapke_bachche` -> `"आपके बच्चे"`
   - `pause_short` -> `...` [विराम 150ms]
-  - `w_kul_number` -> `"कुल नंबर"`
-  - `num_03` -> `"तीन"`
-  - `w_sau` -> `"सौ"`
+  - `w_anupasthit_rahe` -> `"आज की परीक्षा में अनुपस्थित रहे"`
   - `pause_clause` -> `...` [विराम 350ms]
+  - `w_is_pariksha_mein` -> `"इस परीक्षा में कुल"`
   - `num_16` -> `"सोलह"`
+  - `w_vidyarthi_shamil_the` -> `"विद्यार्थी शामिल हुए थे"`
+  - `w_teen_sau` -> `"तीन सौ में से"`
 - **Spoken Devanagari Transcript:**
-  > `"प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर तीन सौ ... सोलह"`
-- **Verification:** Factual attendance context only (test max 300, 16 present). Zero score (`num_00` / `"शून्य"`) is NEVER included.
+  > `"प्रिय अभिभावक ... आपके बच्चे ... आज की परीक्षा में अनुपस्थित रहे ... इस परीक्षा में कुल सोलह विद्यार्थी शामिल हुए थे तीन सौ में से"`
+- **Verification:** Explicit absence statement (`"आज की परीक्षा में अनुपस्थित रहे"`) clearly informs parents of student absence. Batch attendance context is qualified (`"सोलह विद्यार्थी शामिल हुए थे"`), preventing confusion with student score. Zero score (`num_00` / `"शून्य"`) is NEVER included. Measured duration: ~17.4s (within 15–25s target).
 
-### 3. `EDGE_ALL_WRONG` (Negative Net Score: -75 Net / 300 Max)
+### 3. `EDGE_ALL_WRONG` (Negative Net Score: -75 Net / 300 Max, 75 Marks Deducted)
 - **Token Sequence:**
-  `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "num_03", "w_sau", "w_mein_se", "pause_short", "w_minus", "num_75"]`
+  `["w_greeting", "pause_clause", "w_aapke_bachche", "pause_short", "w_kul_number", "w_minus", "num_75", "w_teen_sau", "w_prapt_kiye", "pause_clause", "num_75", "w_galat_prashno_se", "num_75", "w_kate_hain"]`
 - **Spoken Devanagari Transcript:**
-  > `"प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर तीन सौ में से ... माइनस पचहत्तर"`
-- **Verification:** Negative net score uses recorded `"माइनस"` token (`w_minus`) preceding `"पचहत्तर"` (`num_75`). Banned term `"ऋणात्मक अंकन"` is strictly absent.
+  > `"प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर माइनस पचहत्तर तीन सौ में से नंबर प्राप्त किए हैं ... पचहत्तर गलत जवाबों से पचहत्तर नंबर कटे हैं"`
+- **Verification:** Negative net score uses recorded `"माइनस"` token (`w_minus`) preceding `"पचहत्तर"` (`num_75`). Banned term `"ऋणात्मक अंकन"` is strictly absent. Measured duration: ~23.2s (within 15–25s target).
 
 ---
 
@@ -134,7 +143,7 @@ Automated container tests alone do not certify intelligibility. The following ch
 | **Concatenation & Pacing** | Seamless transitions between token boundaries; zero clicks, pops, phase cancellations, or synthetic clicks at joins. | **VERIFIED** | Verify pause tokens (`pause_short` 150ms, `pause_clause` 350ms) prevent acoustic crowding. |
 | **Number Clarity** | Every number from 0 to 100 is crisp and distinct without swallowed nasals or clipped plosives. | **VERIFIED** | Spot check irregular numbers (`"उन्नीस"`, `"इक्कीस"`, `"तिहत्तर"`, `"नवासी"`). |
 | **Clipping & Headroom** | Peak audio levels do not exceed -1.0 dBFS; zero digital clipping; zero truncated leading consonants. | **VERIFIED** | Verified with FFmpeg transcode headroom (-ac 1, 32k Opus). |
-| **Volume Balance** | Consistent RMS loudness across all stitched clips; no sudden jumps in loudness between words and numbers. | **VERIFIED** | Verified uniform source token gain across 107 clips. |
+| **Volume Balance** | Consistent RMS loudness across all stitched clips; no sudden jumps in loudness between words and numbers. | **VERIFIED** | Verified uniform source token gain across 114 clips. |
 | **Gender Neutrality** | Gender-neutral `"आपके बच्चे"` used exclusively; zero child names or class/section labels spoken. | **VERIFIED** | Identity conveyed solely through accompanying WhatsApp text message and scorecard PNG. |
 
 ---

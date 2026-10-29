@@ -76,9 +76,9 @@ def edge_cases_data():
 
 @pytest.mark.audio
 def test_validate_audio_tokens_catalog_success(audio_catalog):
-    """Verify all 107 tokens are validated against manifest.json with matching hashes."""
-    assert audio_catalog.token_count == 107
-    assert len(audio_catalog.tokens) == 107
+    """Verify all 114 tokens are validated against manifest.json with matching hashes."""
+    assert audio_catalog.token_count == 114
+    assert len(audio_catalog.tokens) == 114
     assert "num_00" in audio_catalog.tokens
     assert "num_100" in audio_catalog.tokens
     assert "w_greeting" in audio_catalog.tokens
@@ -87,6 +87,13 @@ def test_validate_audio_tokens_catalog_success(audio_catalog):
     assert "w_mein_se" in audio_catalog.tokens
     assert "w_minus" in audio_catalog.tokens
     assert "w_sau" in audio_catalog.tokens
+    assert "w_teen_sau" in audio_catalog.tokens
+    assert "w_prapt_kiye" in audio_catalog.tokens
+    assert "w_galat_prashno_se" in audio_catalog.tokens
+    assert "w_kate_hain" in audio_catalog.tokens
+    assert "w_anupasthit_rahe" in audio_catalog.tokens
+    assert "w_is_pariksha_mein" in audio_catalog.tokens
+    assert "w_vidyarthi_shamil_the" in audio_catalog.tokens
 
 
 @pytest.mark.audio
@@ -149,14 +156,14 @@ def test_golden_report_stu01_token_mapping(golden_reports_data):
         "w_aapke_bachche",
         "pause_short",
         "w_kul_number",
-        "num_03",
-        "w_sau",
-        "w_mein_se",
-        "pause_short",
         "num_55",
+        "w_teen_sau",
+        "w_prapt_kiye",
         "pause_clause",
-        "w_minus",
         "num_25",
+        "w_galat_prashno_se",
+        "num_25",
+        "w_kate_hain",
     ]
     assert tokens == expected
 
@@ -170,7 +177,8 @@ def test_golden_report_stu01_token_mapping(golden_reports_data):
 def test_golden_report_stu17_absence_token_mapping(golden_reports_data):
     """
     Assert token sequence for STU_17 (ABSENT):
-    Stitch neutral absence facts (300 max, 16 present); zero score is NEVER uttered.
+    Stitch neutral absence facts (explicit absence notification, 16 present, 300 max);
+    zero score is NEVER uttered.
     """
     stu17 = next(s for s in golden_reports_data["student_reports"] if s["student_id"] == "STU_17")
     tokens = map_report_to_tokens(stu17)
@@ -180,29 +188,46 @@ def test_golden_report_stu17_absence_token_mapping(golden_reports_data):
         "pause_clause",
         "w_aapke_bachche",
         "pause_short",
-        "w_kul_number",
-        "num_03",
-        "w_sau",
+        "w_anupasthit_rahe",
         "pause_clause",
+        "w_is_pariksha_mein",
         "num_16",
+        "w_vidyarthi_shamil_the",
+        "w_teen_sau",
     ]
     assert tokens == expected
 
     # Invariant 10 & D-08: Zero score must NEVER be included for absent students
+    assert "w_anupasthit_rahe" in tokens
     assert "num_00" not in tokens
     assert "w_minus" not in tokens
 
 
 @pytest.mark.audio
 def test_edge_case_negative_net_token_mapping(edge_cases_data):
-    """Assert negative net score edge case maps to 'w_minus' + number."""
+    """Assert negative net score edge case maps to 'w_minus' + number with authentic grammar."""
     all_wrong = edge_cases_data["all_wrong_student"]
     tokens = map_report_to_tokens(all_wrong)
 
+    expected = [
+        "w_greeting",
+        "pause_clause",
+        "w_aapke_bachche",
+        "pause_short",
+        "w_kul_number",
+        "w_minus",
+        "num_75",
+        "w_teen_sau",
+        "w_prapt_kiye",
+        "pause_clause",
+        "num_75",
+        "w_galat_prashno_se",
+        "num_75",
+        "w_kate_hain",
+    ]
+    assert tokens == expected
     assert "w_minus" in tokens
     assert "num_75" in tokens
-    assert "num_03" in tokens  # 300 max
-    assert "w_sau" in tokens
 
 
 # ==============================================================================
@@ -305,7 +330,7 @@ def test_cache_keys_and_paths_have_zero_pii(audio_catalog, tmp_path):
         "student_id": "STU_01",
         "child_display_name": "आरव",
         "class_section": "कक्षा 10-A",
-        "roll_number": "01",
+        "roll_number": "ROLL_01",
         "message_text": "प्रिय अभिभावक, आरव (कक्षा 10-A)...",
         "status": "PRESENT",
         "net_marks": 55,
@@ -330,7 +355,7 @@ def test_cache_keys_and_paths_have_zero_pii(audio_catalog, tmp_path):
     assert re.match(r"^[0-9a-f]{64}\.ogg$", cache_name), f"Invalid cache name format: {cache_name}"
 
     # Verify zero PII in filename or path
-    for banned in ["आरव", "01", "10-A", "STU_01"]:
+    for banned in ["आरव", "ROLL_01", "10-A", "STU_01"]:
         assert banned not in cache_name
         assert banned not in str(cached_files[0])
 
@@ -603,17 +628,19 @@ def test_format_token_sequence_transcript_golden_cases(audio_catalog, golden_rep
     stu01 = next(s for s in golden_reports_data["student_reports"] if s["student_id"] == "STU_01")
     tokens_stu01 = map_report_to_tokens(stu01)
     transcript_stu01 = format_token_sequence_transcript(tokens_stu01, audio_catalog)
-    assert transcript_stu01 == "प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर तीन सौ में से ... पचपन ... माइनस पच्चीस"
+    assert transcript_stu01 == "प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर पचपन तीन सौ में से नंबर प्राप्त किए हैं ... पच्चीस गलत जवाबों से पच्चीस नंबर कटे हैं"
 
     # STU_17 (Absent)
     stu17 = next(s for s in golden_reports_data["student_reports"] if s["student_id"] == "STU_17")
     tokens_stu17 = map_report_to_tokens(stu17)
     transcript_stu17 = format_token_sequence_transcript(tokens_stu17, audio_catalog)
-    assert transcript_stu17 == "प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर तीन सौ ... सोलह"
+    assert transcript_stu17 == "प्रिय अभिभावक ... आपके बच्चे ... आज की परीक्षा में अनुपस्थित रहे ... इस परीक्षा में कुल सोलह विद्यार्थी शामिल हुए थे तीन सौ में से"
     assert "शून्य" not in transcript_stu17  # Absent student never framed with zero score
+    assert "अनुपस्थित" in transcript_stu17
 
     # EDGE_ALL_WRONG (Negative net score)
     edge_wrong = edge_cases_data["all_wrong_student"]
     tokens_edge = map_report_to_tokens(edge_wrong)
     transcript_edge = format_token_sequence_transcript(tokens_edge, audio_catalog)
+    assert transcript_edge == "प्रिय अभिभावक ... आपके बच्चे ... कुल नंबर माइनस पचहत्तर तीन सौ में से नंबर प्राप्त किए हैं ... पचहत्तर गलत जवाबों से पचहत्तर नंबर कटे हैं"
     assert "माइनस पचहत्तर" in transcript_edge
