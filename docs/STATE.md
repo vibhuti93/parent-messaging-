@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S11 (`S11 — Parent Confirmation (QR + OTP)`) — **COMPLETED**
-- **Next Stage:** Stage S12 (`S12 — End-to-End Walking Skeleton Verification`)
+- **Active Stage:** Stage S12 (`S12 — Orchestrator, CLI, Audit, and Retention`) — **COMPLETED**
+- **Next Stage:** Deployment Checklist & Production Release
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-10` (commit resolving to `stage-10`)
+- **Stage Tag:** `stage-11` (commit resolving to `stage-11`)
 
 ---
 
@@ -234,7 +234,6 @@
   - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
   - Type Check: `uv run mypy src` reports `Success: no issues found in 20 source files`.
   - Linter: `uv run ruff check .` reports `All checks passed!`.
-
 ---
 
 ## Stage S10 Execution Evidence (Multi-Tenant Scheduler & Send Window Engine Completed)
@@ -263,7 +262,6 @@
   - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
   - Type Check: `uv run mypy src` reports `Success: no issues found in 21 source files`.
   - Linter: `uv run ruff check .` reports `All checks passed!`.
-
 ---
 
 ## Stage S11 Execution Evidence (Parent Confirmation (QR + OTP) Completed)
@@ -293,4 +291,33 @@
   - 4 deliberate mutations caught and reverted.
   - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
   - Type Check: `uv run mypy src` reports `Success: no issues found in 22 source files`.
+  - Linter: `uv run ruff check .` reports `All checks passed!`.
+---
+
+## Stage S12 Execution Evidence (Orchestrator, CLI, Audit, and Retention Completed)
+- **Application Service Layer (`src/omr_dispatch/orchestrator.py`):**
+  - **ADR-0018 Boundary Implementation:** Implemented all mandatory service functions (`validate_batch`, `evaluate_batch`, `build_send_plan`, `approve_batch`, `cancel_batch`, `get_job_status`, `list_review_queue`, `resolve_review_item`, `get_artifact`, `execute_dry_run`, `execute_live_send`, `tenant_onboard`, `tenant_suspend`).
+  - **Security Context & Multi-Tenant Scoping:** Every service function mandates a typed `Principal` security context (`actor_type`, `actor_id`, `org_id`, `roles`). Enforces tenant isolation: actors can only access their own `org_id` unless granted `PLATFORM_ADMIN`. Cross-tenant requests fail closed with `UnauthorizedError`.
+  - **Dual-Switch Safety Mandate (Invariant 8 & D-09):** `execute_live_send` strictly enforces that BOTH `LIVE_DISPATCH_ENABLED=true` AND `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=true` before invoking any outbound provider dispatch. If either switch is false, dispatch is refused with `SafetySwitchError`.
+  - **Emergency Kill-Switch (ADR-0020):** `tenant_suspend` sets `emergency_kill_switch=true` and immediately cancels all pending/scheduled dispatches for that tenant. `execute_live_send` fails closed with `TenantSuspendedError` if invoked against a suspended tenant.
+- **Thin Command-Line Interface (`src/omr_dispatch/cli.py`):**
+  - Thin CLI wrapper over the orchestrator service layer. Every command mandates an explicit institutional tenant identifier (`--org-id`). Omitting or providing a blank `--org-id` fails closed.
+  - Subcommands implemented: `validate`, `evaluate`, `render`, `audio`, `plan-dispatch`, `dry-run`, `send`, `report`, `purge`, `review-queue`, `tenant-onboard`, `tenant-suspend`, `sender-configure`, `sender-status`, `run-batch`.
+  - `send` requires dual safety switches via settings or explicit `--live-dispatch` and `--compliance-ack` CLI flags.
+  - **Privacy Hygiene (Invariants 10 & 17):** Zero student personal names, roll numbers, marks, or raw phone numbers logged or output to stdout/stderr. All phone numbers are strictly masked (`mask_phone`).
+- **Data Retention Engine & Consent Revocation (`src/omr_dispatch/retention.py`):**
+  - **D-13 Development Defaults:** Automated cleanup purging transient media artifacts older than 30 days (`transient_media_days`), expired confirmation tokens, and dispatches older than 90 days (`audit_log_days`).
+  - **Dry-Run Inspection Mode:** Inspects candidate purge records without unlinking files or deleting database records.
+  - **Cryptographic Tombstones:** Generates SHA-256 cryptographic proof (`PurgeTombstone`) recording record counts, bytes freed, and hash of deleted records for compliance audits.
+  - **Consent Revocation Propagation (OPT_OUT):** Guardian consent revocation immediately cancels all pending and scheduled dispatches for that student, revokes active confirmation tokens, and logs an immutable audit event (`CONSENT_REVOCATION_PROPAGATED`).
+- **Verification Commands & Evidence:**
+  - 19 new tests in `tests/test_stage12_orchestrator.py` (316 total passing tests across S1–S12).
+  - Gate 12 exact golden batch counts verified: 20 total students, 17 PTM slips, 8 blocked students (`STU_02`, `STU_03`, `STU_04`, `STU_07`, `STU_08`, `STU_09`, `STU_10`, `STU_19`), 12 eligible dispatches, 16 scorecards, 20 voice notes, zero duplicate deliveries on rerun.
+  - 4 deliberate mutations caught and reverted:
+    1. Bypass dual-switch safety check in `execute_live_send` -> Caught by `test_send_refused_when_both_switches_false` (`Failed: DID NOT RAISE SafetySwitchError`).
+    2. Allow CLI dry-run without `--org-id` -> Caught by `test_cli_omitted_org_id_fails` (`Failed: DID NOT RAISE SystemExit`).
+    3. Disable consent revocation propagation -> Caught by `test_consent_revocation_cancels_dispatches_and_tokens` (`AssertionError: assert 0 == 1`).
+    4. Permit `STU_02` (interception risk) to bypass blocking -> Caught by `test_golden_batch_dry_run_exact_counts` (`AssertionError: assert 7 == 8`).
+  - Guardrails: `python scripts/guardrails.py` reports `PASSED 11 / SKIPPED 0 / FAILED 0`.
+  - Type Check: `uv run mypy src` reports `Success: no issues found in 24 source files`.
   - Linter: `uv run ruff check .` reports `All checks passed!`.
