@@ -1,0 +1,23 @@
+{
+  "font_family": "Noto Sans Devanagari",
+  "version": "v20201206-phase3",
+  "license": "SIL Open Font License 1.1",
+  "download_date": "2026-10-28",
+  "files": {
+    "NotoSansDevanagari-Regular.ttf": {
+      "source_url": "https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/hinted/ttf/NotoSansDevanagari/NotoSansDevanagari-Regular.ttf",
+      "sha256": "a0489982cdfa20a4ac46313862a362b6720c5c016253f5518b24293f97a46e52",
+      "size_bytes": 229020
+    },
+    "NotoSansDevanagari-Bold.ttf": {
+      "source_url": "https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/hinted/ttf/NotoSansDevanagari/NotoSansDevanagari-Bold.ttf",
+      "sha256": "a8318ef0f6f2f159f4367cd10a5e69d48b2b9a54cde39593772b124a28dbb04e",
+      "size_bytes": 237260
+    },
+    "OFL.txt": {
+      "source_url": "https://raw.githubusercontent.com/googlefonts/noto-fonts/v20201206-phase3/LICENSE",
+      "sha256": "0dab92d0544f7b233403f14b84a663bdbfa746982eda629e7f4f9ffe1b036feb",
+      "size_bytes": 4377
+    }
+  }
+}

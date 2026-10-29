@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<title>अभिभावक-शिक्षक बैठक (PTM) पर्चियां</title>
+<style>
+@page {
+    size: A4 portrait;
+    margin: 6mm;
+}
+
+@font-face {
+    font-family: 'Noto Sans Devanagari';
+    src: url('data:font/ttf;base64,{{ font_regular_base64 }}') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Noto Sans Devanagari';
+    src: url('data:font/ttf;base64,{{ font_bold_base64 }}') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Noto Sans Devanagari', sans-serif;
+    color: #202124;
+    background: #FFFFFF;
+    -webkit-font-smoothing: antialiased;
+}
+
+.page {
+    width: 100%;
+    height: 284mm;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 4mm;
+    page-break-after: always;
+    break-after: page;
+}
+
+.page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+}
+
+.slip {
+    border: 1px dashed #70757A;
+    border-radius: 4px;
+    padding: 3mm 4mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 68mm;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    background: #FFFFFF;
+}
+
+/* Slip Header */
+.slip-header {
+    border-bottom: 1px solid #DADCE0;
+    padding-bottom: 1.5mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.institution-title {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1A73E8;
+    line-height: 1.1;
+}
+.slip-subtitle {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #5F6368;
+    margin-top: 0.5mm;
+}
+.slip-badge {
+    background: #E8F0FE;
+    color: #1967D2;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 1mm 2mm;
+    border-radius: 2px;
+}
+
+/* Student Info */
+.student-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5mm;
+    font-size: 9pt;
+}
+.student-name {
+    font-weight: 700;
+    color: #202124;
+}
+.student-class {
+    color: #3C4043;
+}
+
+/* Performance / Invitation Copy */
+.slip-body {
+    font-size: 8pt;
+    line-height: 1.35;
+    color: #3C4043;
+    margin-top: 1.5mm;
+    flex-grow: 1;
+}
+
+/* Confirmation / Signature Footer */
+.slip-footer {
+    border-top: 1px solid #E8EAED;
+    padding-top: 1.5mm;
+    margin-top: 1mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.sign-box {
+    flex-grow: 1;
+}
+.sign-line {
+    border-bottom: 1px solid #202124;
+    width: 48mm;
+    height: 7mm;
+    margin-bottom: 1mm;
+}
+.sign-caption {
+    font-size: 7pt;
+    color: #5F6368;
+}
+
+.qr-box {
+    margin-left: 3mm;
+    text-align: center;
+}
+.qr-box svg {
+    display: block;
+    width: 14mm;
+    height: 14mm;
+}
+.qr-caption {
+    font-size: 5.5pt;
+    color: #80868B;
+    margin-top: 0.5mm;
+}
+</style>
+</head>
+<body>
+{% for page_slips in slip_pages %}
+<div class="page">
+    {% for slip in page_slips %}
+    <div class="slip" data-student-id="{{ slip.student_id }}">
+        <div>
+            <div class="slip-header">
+                <div>
+                    <div class="institution-title">{{ slip.institution_header }}</div>
+                    <div class="slip-subtitle">{{ slip.assessment_name }}</div>
+                </div>
+                <div class="slip-badge">PTM पर्ची</div>
+            </div>
+
+            <div class="student-row">
+                <span class="student-name">{{ slip.child_display_name }}</span>
+                <span class="student-class">
+                    कक्षा: <strong>{{ slip.class_section }}</strong>
+                    {% if slip.roll_number %} | रोल: <strong>{{ slip.roll_number }}</strong>{% endif %}
+                </span>
+            </div>
+
+            <div class="slip-body">
+                {{ slip.performance_text_hi }}
+            </div>
+        </div>
+
+        <div class="slip-footer">
+            <div class="sign-box">
+                <div class="sign-line"></div>
+                <div class="sign-caption">अभिभावक के हस्ताक्षर (Parent Signature) • दिनांक: ...........</div>
+            </div>
+
+            {% if slip.qr_svg %}
+            <div class="qr-box" data-qr-token="{{ slip.qr_token }}">
+                {{ slip.qr_svg | safe }}
+                <div class="qr-caption">सत्यापन कोड</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+</body>
+</html>

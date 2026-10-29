@@ -1,12 +1,12 @@
 # Project State & Execution Log (`docs/STATE.md`)
 
 ## Current Status
-- **Active Stage:** Stage S5 (`S5 — OMR Proof Strip and Scan Provenance`) — **COMPLETED (Gate 5 Passed)**
-- **Next Stage:** Stage S6 (`S6 — Scorecard Image & PDF Rendering`)
+- **Active Stage:** Stage S6 (`S6 — Devanagari Rendering, Scorecard PNG, PTM PDF`) — **COMPLETED**
+- **Next Stage:** Stage S7 (`S7 — Voice Note Audio Generation`)
 - **Live Dispatch:** **DISABLED** (`LIVE_DISPATCH_ENABLED=false` and `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`)
 - **Legal/Compliance:** **DEFERRED** (fully collected and tracked in `docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 - **Fixture Manifest SHA-256:** `baa580ebd32a942998b0aca4c01624e5d29f34da658155f33b0b42025452867a`
-- **Stage Tag:** `stage-4` (commit resolving to `stage-4`)
+- **Stage Tag:** `stage-6` (commit resolving to `stage-6`)
 
 ---
 
@@ -116,3 +116,23 @@
   - Source signature block pixels preserved byte-for-byte; zero synthetic signatures generated in production paths.
 - **Source Immutability:** Input PIL objects and disk files verified 100% byte-for-byte unchanged before and after rendering.
 - **Tests & Verification:** 17 new tests in `tests/test_stage5_omr_proof.py` (157 total passing tests across S1–S5). All 4 deliberate mutations caught and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
+
+---
+
+## Stage S6 Execution Evidence (Devanagari Rendering, Scorecard PNG, PTM PDF Completed)
+- **Typography & Font Integrity (`assets/fonts/`):** Bundled licensed Noto Sans Devanagari (Regular and Bold, `v20201206-phase3`) under SIL OFL 1.1 with verified SHA-256 digests (`a048998...` and `a8318ef...`) in frozen metadata (`FONTS_METADATA.json`). Embedded via base64 local `@font-face` ensuring zero external network calls. Verified in-browser readiness (`document.fonts.ready` + `document.fonts.check`).
+- **Context-Managed `PlaywrightRenderer` (`src/omr_dispatch/renderer.py`):** Launches Playwright's bundled Chromium (`156.0.8078.4`) in headless mode without system browser fallbacks. Page-level route interception aborts any non-local requests. Automatic cleanup of browser and child processes on exit.
+- **Scorecard PNG Generation:**
+  - Pixel-exact 800x1150 at scale 1 (`device_scale_factor=1`).
+  - D-07 banner color mapping (`#1E8E3E` Green, `#F9AB00` Yellow, `#D93025` Red, `#5F6368` Absent/Neutral) verified with Pillow pixel sampling.
+  - Strict file size budget < 500 KB enforced; over-budget renders fail explicitly (`BUDGET_EXCEEDED`) without silent degradation.
+  - Assessment variant handling: `OMR_MCQ` includes score, mark-bleed breakdown, easy questions missed, subject table, and embedded OMR proof strip from real PNG bytes; `MARKS_ENTRY_TOTALS` shows subject totals only and omits proof, easy questions, and diagnostic bleed (omits `NOT_AVAILABLE` metrics, never showing 0); `ABSENT` displays neutral grey banner without score framing.
+  - Strict Jinja2 autoescaping prevents XSS injection across all student identity fields.
+- **PTM Slip A4 PDF Generation:**
+  - A4 portrait (`@page { size: A4 portrait; margin: 6mm; }`), 2x4 grid (8 slips per page), total pages = `ceil(n/8)`.
+  - Explicit empty result for `n = 0` (0 pages, no blank PDF).
+  - Page counts verified for $n \in \{0, 1, 8, 9, 11, 16, 17\}$ slips producing $\{0, 1, 1, 2, 2, 2, 3\}$ pages.
+  - Rasterisation and inspection with `pypdfium2` verifies non-blank pages and absence of text clipping or page overlap.
+  - `QrTokenProvider` protocol interface supplies opaque confirmation tokens. Renders exact integer SVG QR matrix with zero personal data encoded. Unverified physical signature line rendered.
+- **Tests & Verification:** 24 new tests in `tests/test_stage6_renderer.py` (181 total passing tests across S1–S6). 4 deliberate mutations caught and reverted. All 11 guardrails pass natively (0 skipped, 0 failed).
+- **Open Risks & Deferred Verification:** QR matrix phone-scannability verified structurally and attribute-wise (zero PII, opaque token attribute), with optical barcode decoding deferred to Stage S11 when the acknowledgment endpoint is wired; PDF slip non-overlap verified via DOM bounding-box geometry with scale-2 rasterisation verifying non-blank pages.
