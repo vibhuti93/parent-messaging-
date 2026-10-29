@@ -63,6 +63,11 @@ This document enumerates every parent-facing WhatsApp notification message suppo
 प्रिय अभिभावक, {child_name} (रोल नं. {roll_no}, {class_section}) के {test_name} ({subject}) में {max_marks} में से {marks} नंबर आए हैं ({percentage})। {present_count} उपस्थित बच्चों में {child_name} का रैंक {rank} है। क्लास का औसत स्कोर {class_average} है। क्लास में सबसे ज़्यादा नंबर {topper_marks} हैं।
 ```
 
+### Interactive Action Button (Decision s)
+- **Quick-Reply Action Button:** `"ऑडियो सुनें"` (`Listen to Audio`)
+- **Payload:** `ACTION_LISTEN_AUDIO`
+- **Purpose:** Outbound template action button. When tapped by guardian, sends an inbound interaction opening the 24-hour customer service window required for subsequent audio voice note delivery.
+
 ---
 
 ## 2. `OMR_PRESENT` (OMR Diagnostic Scorecard Caption)
@@ -93,6 +98,11 @@ This document enumerates every parent-facing WhatsApp notification message suppo
 ```text
 प्रिय अभिभावक, {child_name} ({class_section}) के {test_name} में कुल नंबर: {max_marks} में से {net_marks} नंबर आए हैं ({net_percentage})। {present_count} उपस्थित बच्चों में {child_name} का रैंक {rank} है। क्लास का औसत स्कोर {class_average} है।
 ```
+
+### Interactive Action Button (Decision s)
+- **Quick-Reply Action Button:** `"ऑडियो सुनें"` (`Listen to Audio`)
+- **Payload:** `ACTION_LISTEN_AUDIO`
+- **Purpose:** Outbound template action button. When tapped by guardian, sends an inbound interaction opening the 24-hour customer service window required for subsequent audio voice note delivery.
 
 ---
 
@@ -190,3 +200,4 @@ This document enumerates every parent-facing WhatsApp notification message suppo
 Per release verification and privacy invariants, only the following message artifacts in the system lack explicit child name and class/section tokens:
 1. **`GUARDIAN_OTP_CHALLENGE`**: Standard authentication template message delivering 6-digit verification passcodes. Lacks student name and class due to Meta WhatsApp Authentication category restrictions.
 2. **Recorded Token Audio Note (`voice_note_script_hi`)**: Companion voice note payload delivering spoken diagnostics. Uses gender-neutral phrasing (`"आपके बच्चे"`) without spoken child name or class (ADR-0010, S7). It is strictly delivered inside the 24-hour service window as an optional extra or quoted reply to the primary named text message, and never dispatched standalone.
+3. **Interactive Audio Action Button (`AUDIO_QUICK_REPLY_BUTTON_HI`)**: Standard quick-reply action button labeled `"ऑडियो सुनें"` attached to outbound scorecard templates for Decision (s) service window initiation. Does not contain student PII.

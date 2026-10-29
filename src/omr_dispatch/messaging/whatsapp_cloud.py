@@ -109,9 +109,13 @@ class WhatsAppCloudProvider:
     def _build_endpoint_url(self, phone_number_id: str, path: str) -> str:
         """Construct full Graph API URL using pinned version from config."""
         clean_path = path.lstrip("/")
+        if clean_path:
+            if self.api_version:
+                return f"{self.base_url}/{self.api_version}/{phone_number_id}/{clean_path}"
+            return f"{self.base_url}/{phone_number_id}/{clean_path}"
         if self.api_version:
-            return f"{self.base_url}/{self.api_version}/{phone_number_id}/{clean_path}"
-        return f"{self.base_url}/{phone_number_id}/{clean_path}"
+            return f"{self.base_url}/{self.api_version}/{phone_number_id}"
+        return f"{self.base_url}/{phone_number_id}"
 
     def _execute_http_request(
         self,

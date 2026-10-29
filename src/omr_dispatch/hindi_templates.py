@@ -64,6 +64,13 @@ SUBJECT_DIAGNOSTIC_FACTS_HI: dict[str, str] = {
     "MODERATE_ZONE": "सामान्य प्रदर्शन रहा; अभ्यास से और बेहतर हो सकता है।",
 }
 
+# ------------------------------------------------------------------------------
+# Decision (s) Interactive Quick-Reply Action Button for Audio Voice Notes
+# ------------------------------------------------------------------------------
+
+AUDIO_QUICK_REPLY_BUTTON_HI: str = "ऑडियो सुनें"
+AUDIO_QUICK_REPLY_PAYLOAD: str = "ACTION_LISTEN_AUDIO"
+
 # D-06 Banned terms written strictly with unicode escapes to avoid guardrail trigger
 BANNED_HINDI_TERMS = [
     "\u090b\u0923\u093e\u0924\u094d\u092e\u0915 \u0905\u0902\u0915\u0928",  # rinatmak ankan
@@ -198,6 +205,7 @@ class RenderedBolchalContent(BaseModel):
     mark_bleed_line_hi: str
     low_hanging_line_hi: str
     voice_note_script_hi: str
+    quick_reply_button_hi: str | None = Field(default=AUDIO_QUICK_REPLY_BUTTON_HI)
     ptm_slip_text_hi: str | None = None
     message_caption_hi: str
     message_text: str | None = None

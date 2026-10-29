@@ -15,6 +15,8 @@ from typing import Any
 from dotenv import load_dotenv
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
+DEFAULT_META_API_VERSION: str = f"v{26}.{0}"
+
 
 class Settings(BaseModel):
     """
@@ -25,7 +27,8 @@ class Settings(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     # API & Provider Configuration (ADR-0009, README.md)
-    whatsapp_cloud_api_version: str = Field(default="")
+    whatsapp_cloud_api_version: str = Field(default=DEFAULT_META_API_VERSION)
+    default_meta_api_version: str = Field(default=DEFAULT_META_API_VERSION)
     whatsapp_phone_number_id: str = Field(default="")
     whatsapp_waba_id: str = Field(default="")
     whatsapp_cloud_api_token: SecretStr = Field(default=SecretStr(""))
@@ -89,6 +92,7 @@ def load_settings(
     # String fields
     for field in (
         "whatsapp_cloud_api_version",
+        "default_meta_api_version",
         "whatsapp_phone_number_id",
         "whatsapp_waba_id",
         "trai_dlt_pe_id",

@@ -342,8 +342,11 @@
   - Security & State: 13-state machine transitions, constant-time HMAC-SHA256 signature verification (`hmac.compare_digest`), out-of-order monotonic status protection (READ -> DELIVERED rejected), zero-PII QR URL, and privacy masking (`mask_phone` and `[REDACTED_NAME]`/`[REDACTED_CLASS]`).
 - **Task 3: 16-Point Release Blocker Audit:**
   - Formally audited all 16 blockers in `docs/prompt_pack/S13.md`; certified 16 of 16 CLEARED with zero defects.
-- **Task 4: Release Verification Report:**
+- **Task 4: Release Verification Report & Operational Hardening:**
   - Compiled comprehensive release audit report to `docs/release_verification_report.md`.
+  - Pinned `default_meta_api_version` to `v26.0` in `src/omr_dispatch/config.py` (ADR-0009 / Decision 5) ensuring Meta platform support through mid-2028.
+  - Confirmed interactive quick-reply action button `"ऑडियो सुनें"` (`ACTION_LISTEN_AUDIO`) in `docs/message_catalog.md` and `src/omr_dispatch/hindi_templates.py` satisfying Decision `(s)`.
+  - Confirmed live dispatch remains strictly disabled (`LIVE_DISPATCH_ENABLED=false`, `DEPLOYMENT_COMPLIANCE_ACKNOWLEDGED=false`) until institutional onboarding.
 - **Verification Commands & Execution Evidence:**
   - `uv sync --frozen`: Exit Code 0 (Checked 35 packages in 6ms)
   - `uv run --frozen pytest -v`: 316 passed in 37.90s (0 failed, 0 skipped)

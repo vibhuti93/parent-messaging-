@@ -12,7 +12,46 @@
 
 ## 1. Executive Summary
 
-This report documents the final cross-stage release gate audit for `omr_dispatch_engine` conducted under Stage S13. The codebase was audited in a clean environment against the locked dependency tree (`uv.lock`), all frozen fixtures (`fixtures/golden/`), the global invariants (`docs/prompt_pack/00_global_invariants.md`), all accepted ADRs (ADR-0001 through ADR-0011, and ADR-0014 through ADR-0020), and the 16 release blocker mandates specified in `docs/prompt_pack/S13.md`.
+This report documents the final cross-stage release gate audit for `omr_dispatch_engine` conducted under Stage S13. The codebase was audited in a clean environment against the locked dependency tree (`uv.lock`), all frozen fixtures (`fixtures/golden/`), the global invariants (`docs/prompt_pack/00_global_invariants.md`), al# Execution Directive: Final Operational Hardening & Stage S13 Tagging
+
+Complete the following operational hardening items, verify that the test suite remains 100% green, and finalize the repository at git tag `stage-13`:
+
+---
+
+### 1. Target Operational Hardening Tasks
+1. **Meta Graph API Version Lifecycle (`config.py`):**
+   - Update `default_meta_api_version` in `src/omr_dispatch/config.py` from `v21.0` to `v26.0` (as recommended in `docs/DECISIONS_OPEN.md` and `docs/release_verification_report.md` to guarantee operational support through mid-2028).
+   - Ensure all provider URL builders in `whatsapp_cloud.py` resolve `v26.0` seamlessly without breaking payload schemas.
+2. **Audio Window Interactive Fallback Copy (`hindi_templates.py` & `message_catalog.md`):**
+   - Confirm the parent message catalog includes the interactive quick-reply action button `"ऑडियो सुनें"` for non-window voice note requests, satisfying Decision `(s)`.
+3. **Report & State Synchronization:**
+   - Update `docs/release_verification_report.md` and `docs/STATE.md` to reflect the `v26.0` version pin and note that live dispatch remains safely disabled until institutional onboarding.
+
+---
+
+### 2. Full Regression & Guardrail Verification
+Execute and verify the full verification toolchain:
+- `uv run --frozen pytest -v` (Assert all 316+ tests pass)
+- `uv run ruff check .`
+- `uv run mypy src`
+- `python scripts/guardrails.py` (Must yield `PASSED 11 / SKIPPED 0 / FAILED 0`)
+
+---
+
+### 3. Git Finalization & Tagging
+1. Stage all deliverables:
+   - `docs/CURRENT_STAGE`
+   - `docs/STATE.md`
+   - `docs/release_verification_report.md`
+   - Any modified configuration files (`src/omr_dispatch/config.py`)
+2. Commit with the message:
+   `chore(release): complete Stage S13 release gate, bump Meta API to v26.0, and seal stage-13`
+3. Tag the commit with `stage-13`:
+   `git tag stage-13`
+4. Print the raw outputs of:
+   - `git describe --tags --exact-match` (must resolve to `stage-13`)
+   - `git status --porcelain` (must be completely clean)
+   - `git log --oneline -n 14` (showing all 13 stages cleanly tagged)l accepted ADRs (ADR-0001 through ADR-0011, and ADR-0014 through ADR-0020), and the 16 release blocker mandates specified in `docs/prompt_pack/S13.md`.
 
 ### Summary of Audit Results:
 - **Clean Toolchain Verification:** Python 3.12.1, FFmpeg 9.0.1, FFprobe 9.0.1, Playwright Chromium headless, and SIL OFL 1.1 fonts verified with matching SHA-256 digests.
@@ -230,9 +269,9 @@ PASSED 11 / SKIPPED 0 / FAILED 0
 
 ## 6. Operational Limitations, Open Decisions, & Pre-Deployment Checklist Status
 
-### 6.1 Open Architectural Decisions (`docs/DECISIONS_OPEN.md`)
-1. **Decision 5 (Meta Graph API Version Lifecycle):** Currently pinned to `v21.0` in configuration. Official source verification indicates that `v21.0` reached its two-year guarantee end date on 2026-10-02, but remains active until **January 21, 2027** (~93 days remaining). An upgrade to `v26.0` (active through mid-2028) is formally recommended and documented in `docs/DECISIONS_OPEN.md`.
-2. **Decision (s) (24-Hour Customer Service Window Initiation for Audio Notes):** Audio voice notes outside an active 24-hour service window fail closed (`ServiceWindowClosedError`). The production mechanism for guardian-initiated window opening (e.g. template quick-reply button `"ऑडियो सुनें"`) is recorded as `OWNER-CONFIRM` and deferred to operational onboarding.
+### 6.1 Architecture & Hardening Closures (`docs/DECISIONS_OPEN.md`)
+1. **Decision 5 (Meta Graph API Version Pin Hardened to `v26.0`):** Pinned `default_meta_api_version` in `src/omr_dispatch/config.py` to `v26.0` (active through mid-2028). Replaced stale baseline `v21.0` (sunsetting January 2027), ensuring long-term operational stability and full provider payload compatibility without runtime schema breaks.
+2. **Decision (s) (Customer Service Window Initiation via Interactive Action Button):** Audio voice notes outside an active 24-hour service window fail closed (`ServiceWindowClosedError`). Satisfied Decision `(s)` by adding interactive quick-reply action button `"ऑडियो सुनें"` (`ACTION_LISTEN_AUDIO`) to `docs/message_catalog.md` and `src/omr_dispatch/hindi_templates.py` (`AUDIO_QUICK_REPLY_BUTTON_HI`). Tapping this button creates an inbound guardian interaction opening the 24-hour customer window for audio dispatch.
 
 ### 6.2 Pre-Deployment Checklist Status (`docs/PRE_DEPLOYMENT_CHECKLIST.md`)
 Per Stage S0 and operator instructions, all statutory compliance and production account clearances remain formally deferred to `docs/PRE_DEPLOYMENT_CHECKLIST.md`. Prior to production deployment or handling live parent data, the deploying organization must complete:
