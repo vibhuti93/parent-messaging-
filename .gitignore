@@ -12,3 +12,5 @@ venv/
 *.egg-info/
 dist/
 build/
+
+test_run_output/
