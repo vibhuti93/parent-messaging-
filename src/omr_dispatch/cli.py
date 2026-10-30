@@ -216,7 +216,7 @@ def run_batch_pipeline(
 
     manifest_file = output_path / "run_manifest.json"
     manifest_file.write_text(
-        json.dumps(manifest_data, indent=2, ensure_ascii=False),
+        json.dumps(manifest_data, indent=2, ensure_ascii=False, default=str),
         encoding="utf-8",
     )
 
